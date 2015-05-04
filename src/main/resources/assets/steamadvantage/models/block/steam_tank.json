@@ -1,0 +1,11 @@
+{
+    "parent": "steamadvantage:block/steam_machine_base",
+    "textures": {
+        "front": "steamadvantage:materials/bolted_copper",
+        "top": "steamadvantage:materials/bolted_copper",
+        "bottom": "steamadvantage:materials/bolted_copper",
+        "back": "steamadvantage:materials/bolted_copper",
+        "side": "steamadvantage:materials/bolted_copper",
+        "metal": "poweradvantage:materials/brass"
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=east": { "model": "steamadvantage:steam_crusher", "y": 90 },
+        "facing=north": { "model": "steamadvantage:steam_crusher" },
+        "facing=south": { "model": "steamadvantage:steam_crusher", "y": 180 },
+        "facing=west": { "model": "steamadvantage:steam_crusher", "y": 270 }
+    }
+}

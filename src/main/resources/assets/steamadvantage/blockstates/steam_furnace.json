@@ -1,8 +1,8 @@
 {
     "variants": {
-        "facing=east": { "model": "poweradvantage:fluid_drain", "y": 90 },
-        "facing=north": { "model": "poweradvantage:fluid_drain" },
-        "facing=south": { "model": "poweradvantage:fluid_drain", "y": 180 },
-        "facing=west": { "model": "poweradvantage:fluid_drain", "y": 270 }
+        "facing=east": { "model": "steamadvantage:steam_furnace", "y": 90 },
+        "facing=north": { "model": "steamadvantage:steam_furnace" },
+        "facing=south": { "model": "steamadvantage:steam_furnace", "y": 180 },
+        "facing=west": { "model": "steamadvantage:steam_furnace", "y": 270 }
     }
 }
