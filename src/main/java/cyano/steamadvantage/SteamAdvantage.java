@@ -50,6 +50,12 @@ public class SteamAdvantage
     	Configuration config = new Configuration(event.getSuggestedConfigurationFile());
     	config.load();
     	
+    	// TODO: make init classes
+    	// TODO: make utility class for machine GUIs (to draw needles)
+    	// TODO: make block and tile entity classes
+    	// TODO: flames on furnaces for random tick updates
+    	// TODO: language translations
+    	
     	
     	config.save();
 		    	
