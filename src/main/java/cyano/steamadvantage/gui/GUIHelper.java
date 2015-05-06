@@ -1,11 +1,28 @@
 package cyano.steamadvantage.gui;
 
+import net.minecraftforge.fml.common.FMLLog;
+
 public abstract class GUIHelper {
 
 	
 	public static void drawNeedle(float pivotX, float pivotY, float zLevel,
 			float value) {
 		
+
+		final float pixelSize = 1.0f / 256; // conversion factor
+		
+		net.minecraft.client.renderer.WorldRenderer renderer = net.minecraft.client.renderer.Tessellator.getInstance().getWorldRenderer();
+
+		renderer.startDrawingQuads();
+
+		renderer.addVertexWithUV( 0, 0, zLevel, 0, 0);
+		renderer.addVertexWithUV( 0, 2, zLevel, 0, 1);
+		renderer.addVertexWithUV( 2, 2, zLevel, 1, 1);
+		renderer.addVertexWithUV( 2, 0, zLevel, 1, 0);
+		
+		net.minecraft.client.renderer.Tessellator.getInstance().draw();
+		
+	/*	
 		final float pixelSize = 1.0f / 256; // conversion factor
 		
 		final float PI = 3.141592654f;
@@ -33,5 +50,7 @@ public abstract class GUIHelper {
 		renderer.addVertexWithUV( sin * needleL + cos * needleR + offsetX, cos * needleL + sin * needleR + offsetY, zLevel, needleX + needleW, needleY); // top-right corner
 		
 		net.minecraft.client.renderer.Tessellator.getInstance().draw();
+		
+		*/
 	}
 }

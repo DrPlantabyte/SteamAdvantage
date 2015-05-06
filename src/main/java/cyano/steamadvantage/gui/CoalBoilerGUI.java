@@ -1,6 +1,7 @@
 package cyano.steamadvantage.gui;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.simple.SimpleMachineGUI;
 import cyano.poweradvantage.math.Integer2D;
 import cyano.steamadvantage.SteamAdvantage;
@@ -34,14 +35,18 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 	 * the GUI
 	 * @param z This is the z coordinate (no units) into the depth of the screen
 	 */
+	@Override
 	public void drawGUIDecorations(Object srcEntity, GUIContainer guiContainer, int x, int y, float  z){
-		float pressure = 0f; // TODO: set to number from 0 to 1
-		float temperature = 0f; // TODO: set to number from 0 to 1
+		FMLLog.info("rendering"); // TODO: remove debug code
+		float steam = 0f; // TODO: set to number from 0 to 1
+		float water = 0f; // TODO: set to number from 0 to 1
 		float burnTime = 0f; // TODO: set to number from 0 to 1
-		float pressurePivotX = 43.5f;
-		float pressurePivotY = 39.5f;
+		float steamPivotX = 43.5f;
+		float steamPivotY = 39.5f;
 		
-		GUIHelper.drawNeedle(pressurePivotX, pressurePivotY, z, pressure);
+		guiContainer.drawTexturedModalRect(x+steamPivotX, y+steamPivotY, 176, 0, 7, 35);
+		
+		//GUIHelper.drawNeedle(pressurePivotX, pressurePivotY, z, pressure);
 	}
 
 
