@@ -28,8 +28,7 @@ public class CoalBoilerBlock extends cyano.poweradvantage.api.simple.BlockSimple
 
 	@Override
 	public PoweredEntity createNewTileEntity(World world, int metaDataValue) {
-		// TODO Auto-generated method stub
-		return null;
+		return new CoalBoilerTileEntity();
 	}
 
 	@Override

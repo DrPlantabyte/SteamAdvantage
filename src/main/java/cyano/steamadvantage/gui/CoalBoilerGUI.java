@@ -5,9 +5,9 @@ import cyano.poweradvantage.api.simple.SimpleMachineGUI;
 import cyano.poweradvantage.math.Integer2D;
 import cyano.steamadvantage.SteamAdvantage;
 
-public class CloalBoilerGUI extends SimpleMachineGUI{
+public class CoalBoilerGUI extends SimpleMachineGUI{
 
-	public CloalBoilerGUI() {
+	public CoalBoilerGUI() {
 		super(
 				new ResourceLocation(SteamAdvantage.MODID+":textures/gui/container/coal_boiler"), 
 				new Integer2D[] {new Integer2D(80,80)}

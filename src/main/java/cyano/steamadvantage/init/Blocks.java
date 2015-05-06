@@ -12,6 +12,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.GUIBlock;
+import cyano.steamadvantage.machines.CoalBoilerBlock;
 
 public abstract class Blocks {
 	private static final Map<String,Block> allBlocks = new HashMap<>();
@@ -26,7 +27,7 @@ public abstract class Blocks {
 	public static void init(){
 		if(initDone) return;
 		
-		
+		steam_boiler_coal = (GUIBlock)addBlock(new CoalBoilerBlock(),"steam_boiler_coal");
 		
 		initDone = true;
 	}
