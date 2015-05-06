@@ -40,7 +40,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	@Override
 	public int[] getDataFieldArray() {
 		// TODO sync burnTime, pressure, and water volume
-		return null;
+		return new int[0];
 	}
 
 	@Override

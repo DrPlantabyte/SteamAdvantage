@@ -105,6 +105,7 @@ public class SteamAdvantage
 	private void clientInit(FMLInitializationEvent event){
 		// client-only code
 		Items.registerItemRenders(event);
+		Blocks.registerItemRenders(event);
 	}
 	@SideOnly(Side.SERVER)
 	private void serverInit(FMLInitializationEvent event){

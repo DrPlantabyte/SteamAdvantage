@@ -7,16 +7,12 @@ import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBucket;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
-import cyano.poweradvantage.PowerAdvantage;
-import cyano.poweradvantage.events.BucketHandler;
+import cyano.steamadvantage.SteamAdvantage;
 
 public abstract class Items {
 
@@ -41,7 +37,7 @@ public abstract class Items {
 		return n;
 	}
 	private static Item addItem(String unlocalizedName, Item i){
-		i.setUnlocalizedName(PowerAdvantage.MODID+"."+unlocalizedName);
+		i.setUnlocalizedName(SteamAdvantage.MODID+"."+unlocalizedName);
 		GameRegistry.registerItem(i, unlocalizedName);
 		i.setCreativeTab(cyano.poweradvantage.init.ItemGroups.tab_powerAdvantage);
 		allItems.put(unlocalizedName, i);
@@ -61,7 +57,7 @@ public abstract class Items {
 		for(Map.Entry<String, Item> e :  getAllRegisteredItems()){
 			Minecraft.getMinecraft().getRenderItem().getItemModelMesher()
 			.register(e.getValue(), 0, 
-					new ModelResourceLocation(PowerAdvantage.MODID+":"+e.getKey(), "inventory"));
+					new ModelResourceLocation(SteamAdvantage.MODID+":"+e.getKey(), "inventory"));
 		}
 	}
 	

@@ -10,8 +10,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.GUIBlock;
+import cyano.steamadvantage.SteamAdvantage;
 import cyano.steamadvantage.machines.CoalBoilerBlock;
 
 public abstract class Blocks {
@@ -34,7 +34,7 @@ public abstract class Blocks {
 	
 
 	private static Block addBlock(Block block, String name ){
-		block.setUnlocalizedName(PowerAdvantage.MODID+"."+name);
+		block.setUnlocalizedName(SteamAdvantage.MODID+"."+name);
 		GameRegistry.registerBlock(block, name);
 		block.setCreativeTab(cyano.poweradvantage.init.ItemGroups.tab_powerAdvantage);
 		allBlocks.put(name, block);
@@ -48,7 +48,7 @@ public abstract class Blocks {
 			Block block = e.getValue();
 			Minecraft.getMinecraft().getRenderItem().getItemModelMesher()
 			.register(net.minecraft.item.Item.getItemFromBlock(block), 0, 
-				new ModelResourceLocation(PowerAdvantage.MODID+":"+name, "inventory"));
+				new ModelResourceLocation(SteamAdvantage.MODID+":"+name, "inventory"));
 		}
 	}
 

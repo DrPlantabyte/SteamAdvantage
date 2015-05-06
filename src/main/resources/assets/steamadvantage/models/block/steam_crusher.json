@@ -6,6 +6,6 @@
         "bottom": "steamadvantage:materials/bolted_iron",
         "back": "steamadvantage:materials/bolted_iron",
         "side": "steamadvantage:materials/bolted_iron",
-        "metal": "poweradvantage:materials/brass"
+        "metal": "poweradvantage:materials/bolted_iron"
     }
 }
