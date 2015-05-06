@@ -1,5 +1,6 @@
 package cyano.steamadvantage;
 
+import cyano.steamadvantage.init.*;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -58,6 +59,9 @@ public class SteamAdvantage
     	
     	
     	config.save();
+    	
+    	Blocks.init();
+    	Items.init();
 		    	
     	if(event.getSide() == Side.CLIENT){
 			clientPreInit(event);
@@ -84,7 +88,10 @@ public class SteamAdvantage
     public void init(FMLInitializationEvent event)
     {
     	
-
+    	Entities.init();
+    	GUI.init();
+    	TreasureChests.init();
+    	
     	if(event.getSide() == Side.CLIENT){
 			clientInit(event);
 		}
@@ -97,7 +104,7 @@ public class SteamAdvantage
 	@SideOnly(Side.CLIENT)
 	private void clientInit(FMLInitializationEvent event){
 		// client-only code
-		// TODO: create renders
+		Items.registerItemRenders(event);
 	}
 	@SideOnly(Side.SERVER)
 	private void serverInit(FMLInitializationEvent event){
