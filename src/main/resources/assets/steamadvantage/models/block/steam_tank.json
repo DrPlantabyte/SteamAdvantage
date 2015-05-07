@@ -6,6 +6,6 @@
         "bottom": "steamadvantage:materials/bolted_copper",
         "back": "steamadvantage:materials/bolted_copper",
         "side": "steamadvantage:materials/bolted_copper",
-        "metal": "poweradvantage:materials/bolted_copper"
+        "metal": "steamadvantage:materials/bolted_copper"
     }
 }

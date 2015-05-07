@@ -37,16 +37,15 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 	 */
 	@Override
 	public void drawGUIDecorations(Object srcEntity, GUIContainer guiContainer, int x, int y, float  z){
-		FMLLog.info("rendering"); // TODO: remove debug code
-		float steam = 0f; // TODO: set to number from 0 to 1
+		float steam = 0.25f; // TODO: set to number from 0 to 1
 		float water = 0f; // TODO: set to number from 0 to 1
 		float burnTime = 0f; // TODO: set to number from 0 to 1
-		float steamPivotX = 43.5f;
-		float steamPivotY = 39.5f;
+		float steamPivotX = 44f;
+		float steamPivotY = 40f;
 		
-		guiContainer.drawTexturedModalRect(x+steamPivotX, y+steamPivotY, 176, 0, 7, 35);
+		//guiContainer.drawTexturedModalRect(x+steamPivotX, y+steamPivotY, 176, 0, 7, 35);
 		
-		//GUIHelper.drawNeedle(pressurePivotX, pressurePivotY, z, pressure);
+		GUIHelper.drawNeedle(x+steamPivotX, y+steamPivotY, z, steam);
 	}
 
 
