@@ -2,6 +2,7 @@ package cyano.steamadvantage.machines;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -18,14 +19,113 @@ import cyano.steamadvantage.init.Power;
 
 public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerSource implements IFluidHandler{
 
+	
 	private final FluidTank tank;
 	
-	private ItemStack[] inventory;
+	private final ItemStack[] inventory;
+	
+	private int burnTime = 0;
+	private int totalBurnTime = 0;
+	
+	private final int[] dataSyncArray = new int[4];
 	
 	public CoalBoilerTileEntity() {
 		super(Power.steam_power, 1000, CoalBoilerTileEntity.class.getSimpleName());
 		tank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME * 4);
 		inventory = new ItemStack[1];
+	}
+
+	
+	@Override
+	public void tickUpdate(boolean isServerWorld) {
+		if(isServerWorld){
+			// server-side logic
+			if(burnTime > 0){
+				burnTime--;
+				boilWater();
+			} else {
+				int fuel = getFuelBurnTime();
+				if( fuel > 0 && (!hasRedstoneSignal()) ){
+					burnTime = fuel;
+					totalBurnTime = fuel;
+				}
+				energyDecay();
+			}
+		}
+	}
+
+	private boolean hasRedstoneSignal() {
+		for(int i = 0; i < EnumFacing.values().length; i++){
+			if(getWorld().getRedstonePower(getPos(), EnumFacing.values()[i]) > 0) return true;
+		}
+		return false;
+	}
+
+
+	private void energyDecay() {
+		if(getEnergy() > 0){
+			subtractEnergy(Power.ENERGY_LOST_PER_TICK,Power.steam_power);
+		}
+	}
+
+
+	private int getFuelBurnTime() {
+		if(inventory[0] == null) return 0;
+		return TileEntityFurnace.getItemBurnTime(inventory[0]);
+	}
+
+
+	private void boilWater() {
+		if(getTank().getFluidAmount() >= 1 && (getEnergyCapacity() - getEnergy()) >= 1){
+			getTank().drain(1, true);
+			addEnergy(1,Power.steam_power);
+		}
+	}
+
+	private float oldEnergy = 0;
+	private int oldBurnTime = 0;
+	private int oldWater = 0;
+	@Override
+	public void powerUpdate(){
+		super.powerUpdate();
+		// powerUpdate occurs once every 8 world ticks and is scheduled such that neighboring 
+		// machines don't powerUpdate in the same world tick. To reduce network congestion, 
+		// I'm doing the synchonization logic here instead of in the tickUpdate method
+		boolean updateFlag = false;
+
+		if(oldEnergy != getEnergy()){
+			oldEnergy = getEnergy();
+			updateFlag = true;
+		}
+		if(oldBurnTime != burnTime){
+			oldBurnTime = burnTime;
+			updateFlag = true;
+		}
+		if(oldWater != getTank().getFluidAmount()){
+			oldWater = getTank().getFluidAmount();
+			updateFlag = true;
+		}
+		
+		if(updateFlag){
+			this.markDirty();
+		}
+	}
+	
+	public float getWaterLevel(){
+		return ((float)getTank().getFluidAmount()) / ((float)getTank().getCapacity());
+	}
+	
+	public float getSteamLevel(){
+		return this.getEnergy() / this.getEnergyCapacity();
+	}
+	
+	public float getBurnLevel(){
+		if(burnTime == 0){
+			return 0;
+		} else if (totalBurnTime == 0){
+			return 1;
+		}
+		return ((float)burnTime)/((float)totalBurnTime);
 	}
 	
 	public FluidTank getTank(){
@@ -39,24 +139,24 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 
 	@Override
 	public int[] getDataFieldArray() {
-		// TODO sync burnTime, pressure, and water volume
-		return new int[0];
+		return dataSyncArray;
 	}
 
 	@Override
 	public void prepareDataFieldsForSync() {
-		// TODO sync burnTime, pressure, and water volume
+		dataSyncArray[0] = Float.floatToRawIntBits(this.getEnergy());
+		dataSyncArray[1] = this.getTank().getFluidAmount();
+		dataSyncArray[2] = this.burnTime;
+		dataSyncArray[3] = this.totalBurnTime;
+		
 	}
 
 	@Override
 	public void onDataFieldUpdate() {
-		// TODO sync burnTime, pressure, and water volume
-	}
-
-	@Override
-	public void tickUpdate(boolean isServerWorld) {
-		// TODO Auto-generated method stub
-		
+		this.setEnergy(Float.intBitsToFloat(dataSyncArray[0]), this.getType());
+		this.getTank().setFluid(new FluidStack(FluidRegistry.WATER,dataSyncArray[1]));
+		this.burnTime = dataSyncArray[2];
+		this.totalBurnTime = dataSyncArray[3];
 	}
 	
 
@@ -70,7 +170,8 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
         NBTTagCompound tankTag = new NBTTagCompound();
         this.getTank().writeToNBT(tankTag);
         tagRoot.setTag("Tank", tankTag);
-		// TODO write burnTime
+		if(this.burnTime > 0)tagRoot.setInteger("BurnTime", this.burnTime);
+		if(this.totalBurnTime > 0)tagRoot.setInteger("BurnTimeTotal", this.totalBurnTime);
 	}
 	/**
 	 * Handles data saving and loading
@@ -87,7 +188,16 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
     			getTank().setFluid(null);
     		}
         }
-		// TODO read burnTime
+		if(tagRoot.hasKey("BurnTime")){
+			this.burnTime = tagRoot.getInteger("BurnTime");
+		} else {
+			this.burnTime = 0;
+		}
+		if(tagRoot.hasKey("BurnTimeTotal")){
+			this.totalBurnTime = tagRoot.getInteger("BurnTimeTotal");
+		} else {
+			this.totalBurnTime = 0;
+		}
     }
 	
 	///// Overrides to make this a multi-type block /////

@@ -5,6 +5,7 @@ import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.simple.SimpleMachineGUI;
 import cyano.poweradvantage.math.Integer2D;
 import cyano.steamadvantage.SteamAdvantage;
+import cyano.steamadvantage.machines.CoalBoilerTileEntity;
 
 public class CoalBoilerGUI extends SimpleMachineGUI{
 
@@ -14,6 +15,8 @@ public class CoalBoilerGUI extends SimpleMachineGUI{
 				new Integer2D[] {new Integer2D(80,80)}
 		);
 	}
+	
+	// TODO: implement maximum needle movement speed of 0.015625f per update
 	
 
 	/**
@@ -37,15 +40,27 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 	 */
 	@Override
 	public void drawGUIDecorations(Object srcEntity, GUIContainer guiContainer, int x, int y, float  z){
-		float steam = 0.25f; // TODO: set to number from 0 to 1
-		float water = 0f; // TODO: set to number from 0 to 1
-		float burnTime = 0f; // TODO: set to number from 0 to 1
-		float steamPivotX = 44f;
-		float steamPivotY = 40f;
 		
-		//guiContainer.drawTexturedModalRect(x+steamPivotX, y+steamPivotY, 176, 0, 7, 35);
+		if(srcEntity.getClass() == CoalBoilerTileEntity.class){
+			CoalBoilerTileEntity target = (CoalBoilerTileEntity)srcEntity;
+
+			
+			float steamPivotX = 44f;
+			float steamPivotY = 40f;
+			
+			float waterPivotX = 132f;
+			float waterPivotY = 40f;
+			
+			float steam = target.getSteamLevel(); 
+			float water = target.getWaterLevel(); 
+			float burn = target.getBurnLevel();
+
+			GUIHelper.drawNeedle(x+steamPivotX, y+steamPivotY, z, steam);
+			GUIHelper.drawNeedle(x+waterPivotX, y+waterPivotY, z, water);
+			GUIHelper.drawFlameProgress(x+80,y+58,burn,guiContainer);
+			
+		}
 		
-		GUIHelper.drawNeedle(x+steamPivotX, y+steamPivotY, z, steam);
 	}
 
 

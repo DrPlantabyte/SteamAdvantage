@@ -1,8 +1,6 @@
 package cyano.steamadvantage.gui;
 
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraftforge.fml.common.FMLLog;
+import cyano.poweradvantage.api.simple.SimpleMachineGUI.GUIContainer;
 
 public abstract class GUIHelper {
 
@@ -66,6 +64,19 @@ public abstract class GUIHelper {
 		}
 		net.minecraft.client.renderer.Tessellator.getInstance().draw();
 		
+	}
+	
+	public static void drawFlameProgress(int x, int y, float flameHeight, GUIContainer gc){
+		if(flameHeight <= 0) return;
+		final int flameTexX = 200;
+		final int flameTexY = 0;
+		final int width = 14;
+		final int height = 14;
+		int h = (int)(flameHeight*height);
+		if(h == 0 ) h = 1;
+		if(h > 0){
+			gc.drawTexturedModalRect(x, y+h, flameTexX, flameTexY+h, width, height - h);
+		}
 	}
 	/*
 	// from Forge source:
