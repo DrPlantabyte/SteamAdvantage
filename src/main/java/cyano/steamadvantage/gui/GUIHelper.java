@@ -5,6 +5,16 @@ import cyano.poweradvantage.api.simple.SimpleMachineGUI.GUIContainer;
 public abstract class GUIHelper {
 
 	
+	public static float maxDelta(float newValue,float oldValue,float maxChange){
+		if((newValue - oldValue) > maxChange){
+			return oldValue + maxChange;
+		}
+		if((oldValue - newValue) > maxChange){
+			return oldValue - maxChange;
+		}
+		return newValue;
+	}
+	
 	public static void drawNeedle(float pivotX, float pivotY, float zLevel,
 			float value) {
 		
