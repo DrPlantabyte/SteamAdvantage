@@ -1,5 +1,7 @@
 package cyano.steamadvantage.machines;
 
+import java.util.Arrays;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
@@ -11,6 +13,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.fluid.FluidRequest;
@@ -107,7 +110,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		}
 		
 		if(updateFlag){
-			this.markDirty();
+			super.sync();
 		}
 	}
 	
@@ -148,7 +151,6 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		dataSyncArray[1] = this.getTank().getFluidAmount();
 		dataSyncArray[2] = this.burnTime;
 		dataSyncArray[3] = this.totalBurnTime;
-		
 	}
 
 	@Override
@@ -206,12 +208,66 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		return true;
 	}
 	
+	/**
+	 * Adds "energy" as a fluid to the FluidTank returned by getTank(). This implementation ignores 
+	 * all non-fluid energy types.
+	 * @param amount amount of energy/fluid to add
+	 * @param type the type of energy/fluid being added.
+	 * @return The amount that was actually added
+	 */
+    @Override
+	public float addEnergy(float amount, ConduitType type){
+    	if(Fluids.isFluidType(type)){
+			if(this.canFill(null, Fluids.conduitTypeToFluid(type))){
+				return this.fill(null, new FluidStack(Fluids.conduitTypeToFluid(type),(int)amount), true);
+			} else {
+				return 0;
+			}
+		}else{
+			return super.addEnergy(amount, type);
+		}
+	}
+    /**
+     * Sets the tank contents using the energy API method
+	 * @param amount amount of energy/fluid to add
+	 * @param type the type of energy/fluid being added.
+     */
+	@Override
+	public void setEnergy(float amount,ConduitType type) {
+		if(Fluids.isFluidType(type)){
+			getTank().setFluid(new FluidStack(Fluids.conduitTypeToFluid(type),(int)amount));
+		}else{
+			super.setEnergy(amount, type);
+		}
+	}
+	/**
+	 * Subtracts "energy" as a fluid to the FluidTank returned by getTank(). This implementation 
+	 * ignores all non-fluid energy types.
+	 * @param amount amount of energy/fluid to add
+	 * @param type the type of energy/fluid being added.
+	 * @return The amount that was actually added
+	 */
+    @Override
+	public float subtractEnergy(float amount, ConduitType type){
+		if(Fluids.isFluidType(type)){
+			if(this.canDrain(null, Fluids.conduitTypeToFluid(type))){
+				return this.drain(null, new FluidStack(Fluids.conduitTypeToFluid(type),(int)amount), true).amount;
+			} else {
+				return 0;
+			}
+		}else{
+			return super.subtractEnergy(amount, type);
+		}
+	}
+	
 	@Override
 	public PowerRequest getPowerRequest(ConduitType offer) {
 		if(Fluids.conduitTypeToFluid(offer) == FluidRegistry.WATER){
-			return new FluidRequest(FluidRequest.MEDIUM_PRIORITY+1,
+			// TODO: accept lava as fuel
+			PowerRequest request = new FluidRequest(FluidRequest.MEDIUM_PRIORITY+1,
 					(getTank().getCapacity() - getTank().getFluidAmount()),
 					this);
+			return request;
 		} else {
 			return PowerRequest.REQUEST_NOTHING;
 		}
