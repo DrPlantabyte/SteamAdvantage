@@ -17,13 +17,13 @@ public class CoalBoilerGUI extends SimpleMachineGUI{
 	}
 	
 	
-	private boolean constrainUpdate = false; // slow needle speed after first update
 	private static final float maxNeedleSpeed = 0.015625f;
 	
 	private float oldSteam = 0;
 	private float oldWater = 0;
 	
 
+	private long lastUpdate = 0;
 	/**
 	 * Override this method to draw on the GUI window.
 	 * <br><br>
@@ -60,18 +60,19 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 			float water = target.getWaterLevel(); 
 			float burn = target.getBurnLevel();
 
-			
-			if(constrainUpdate){
+			long t = System.currentTimeMillis();
+			if((t - lastUpdate) < 1000L){
+				// slow the needles if it has been less than 1 second since last invocation
 				steam = GUIHelper.maxDelta(steam, oldSteam, maxNeedleSpeed);
 				water = GUIHelper.maxDelta(water, oldWater, maxNeedleSpeed);
 				oldSteam = steam;
 				oldWater = water;
 			}
-			constrainUpdate = true;
+			lastUpdate = t;
 			
 			GUIHelper.drawNeedle(x+steamPivotX, y+steamPivotY, z, steam);
 			GUIHelper.drawNeedle(x+waterPivotX, y+waterPivotY, z, water);
-			GUIHelper.drawFlameProgress(x+80,y+58,burn,guiContainer);
+			GUIHelper.drawFlameProgress(x+80,y+58,1f-burn,guiContainer);
 			
 		}
 		

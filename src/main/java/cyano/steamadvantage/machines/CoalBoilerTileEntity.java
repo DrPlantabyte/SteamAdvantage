@@ -51,11 +51,14 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 				if( fuel > 0 && (!hasRedstoneSignal()) ){
 					burnTime = fuel;
 					totalBurnTime = fuel;
+					decrementFuel();
 				}
 				energyDecay();
 			}
 		}
 	}
+
+
 
 	private boolean hasRedstoneSignal() {
 		for(int i = 0; i < EnumFacing.values().length; i++){
@@ -75,6 +78,15 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	private int getFuelBurnTime() {
 		if(inventory[0] == null) return 0;
 		return TileEntityFurnace.getItemBurnTime(inventory[0]);
+	}
+	
+
+	private void decrementFuel() {
+		if(inventory[0].stackSize == 1 && inventory[0].getItem().getContainerItem(inventory[0]) != null){
+			inventory[0] = inventory[0].getItem().getContainerItem(inventory[0]);
+		} else {
+			this.decrStackSize(0, 1);
+		}
 	}
 
 
