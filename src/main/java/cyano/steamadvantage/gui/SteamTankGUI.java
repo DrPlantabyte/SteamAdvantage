@@ -1,18 +1,18 @@
 package cyano.steamadvantage.gui;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.simple.SimpleMachineGUI;
 import cyano.poweradvantage.math.Integer2D;
 import cyano.steamadvantage.SteamAdvantage;
 import cyano.steamadvantage.machines.CoalBoilerTileEntity;
+import cyano.steamadvantage.machines.SteamTankTileEntity;
 
-public class CoalBoilerGUI extends SimpleMachineGUI{
+public class SteamTankGUI extends SimpleMachineGUI{
 
-	public CoalBoilerGUI() {
+	public SteamTankGUI() {
 		super(
 				new ResourceLocation(SteamAdvantage.MODID+":textures/gui/container/coal_boiler.png"), 
-				new Integer2D[] {new Integer2D(80,80)}
+				new Integer2D[0]
 		);
 	}
 	
@@ -20,7 +20,6 @@ public class CoalBoilerGUI extends SimpleMachineGUI{
 	private static final float maxNeedleSpeed = 0.015625f;
 	
 	private float oldSteam = 0;
-	private float oldWater = 0;
 	
 
 	private long lastUpdate = 0;
@@ -47,32 +46,23 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 	public void drawGUIDecorations(Object srcEntity, GUIContainer guiContainer, int x, int y, float  z){
 		
 		if(srcEntity.getClass() == CoalBoilerTileEntity.class){
-			CoalBoilerTileEntity target = (CoalBoilerTileEntity)srcEntity;
+			SteamTankTileEntity target = (SteamTankTileEntity)srcEntity;
 
 			
-			float steamPivotX = 44f;
-			float steamPivotY = 40f;
-			
-			float waterPivotX = 132f;
-			float waterPivotY = 40f;
+			float steamPivotX = 88f;
+			float steamPivotY = 61f;
 			
 			float steam = target.getSteamLevel(); 
-			float water = target.getWaterLevel(); 
-			float burn = target.getBurnLevel();
 
 			long t = System.currentTimeMillis();
 			if((t - lastUpdate) < 1000L){
 				// slow the needles if it has been less than 1 second since last invocation
 				steam = GUIHelper.maxDelta(steam, oldSteam, maxNeedleSpeed);
-				water = GUIHelper.maxDelta(water, oldWater, maxNeedleSpeed);
 			}
 			oldSteam = steam;
-			oldWater = water;
 			lastUpdate = t;
 			
 			GUIHelper.drawNeedle(x+steamPivotX, y+steamPivotY, z, steam);
-			GUIHelper.drawNeedle(x+waterPivotX, y+waterPivotY, z, water);
-			GUIHelper.drawFlameProgress(x+80,y+58,1f-burn,guiContainer);
 			
 		}
 		

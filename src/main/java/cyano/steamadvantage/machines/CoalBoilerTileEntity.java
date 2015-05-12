@@ -276,7 +276,6 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	public PowerRequest getPowerRequest(ConduitType offer) {
 		if(Fluids.conduitTypeToFluid(offer) == FluidRegistry.WATER){
 			// TODO: accept lava as fuel
-			FMLLog.info("Tank holds "+getTank().getFluidAmount()+"/"+getTank().getCapacity()+" units of "+(getTank().getFluid() == null ? "null" : getTank().getFluid().getFluid()));// TODO: remove debug code
 			PowerRequest request = new FluidRequest(FluidRequest.MEDIUM_PRIORITY+1,
 					(getTank().getCapacity() - getTank().getFluidAmount()),
 					this);
