@@ -40,6 +40,8 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 
 	private boolean redstone = true;
 	
+	private int timeSinceSound = 0;
+	
 	@Override
 	public void tickUpdate(boolean isServerWorld) {
 		if(isServerWorld){
@@ -47,6 +49,17 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 			if(burnTime > 0){
 				burnTime--;
 				boilWater();
+				// play steam sounds occasionally
+				if(getWorld().rand.nextInt(100) == 0){
+					getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "random.fizz", 0.5f, 1f);
+				}
+				if(timeSinceSound > 200){
+					if(getTank().getFluidAmount() > 0){
+						getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "liquid.lava", 0.3f, 1f);
+					}
+					timeSinceSound = 0;
+				}
+				timeSinceSound++;
 			} else {
 				int fuel = getFuelBurnTime();
 				if( fuel > 0 && (!redstone) && this.getTank().getFluidAmount() > 0){

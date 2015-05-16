@@ -51,7 +51,7 @@ public class SteamTankTileEntity  extends cyano.poweradvantage.api.simple.TileEn
 			// disabled by redstone signal
 			return 0f;
 		} else {
-			return transmitPowerToConsumers(amount,type,priority);
+			return super.transmitPowerToConsumers(amount,type,priority);
 		}
 	}
 	
