@@ -32,6 +32,8 @@ public abstract class Blocks {
 		steam_pipe = addBlock(new SteamPipeBlock(),"steam_pipe");
 		steam_boiler_coal = (GUIBlock)addBlock(new CoalBoilerBlock(),"steam_boiler_coal");
 		steam_tank = (GUIBlock)addBlock(new SteamTankBlock(),"steam_tank");
+		steam_furnace = (GUIBlock)addBlock(new BlastFurnaceBlock(),"steam_furnace");
+		steam_crusher = (GUIBlock)addBlock(new RockCrusherBlock(),"steam_crusher");
 		
 		
 		initDone = true;

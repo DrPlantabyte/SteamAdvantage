@@ -19,12 +19,15 @@ public abstract class Items {
 	
 	public static final Map<String,Item> allItems = new HashMap<>();
 	
+	public static Item steam_governor;
+	
 	
 	private static boolean initDone = false;
 	public static void init(){
 		if(initDone) return;
 		Blocks.init();
 		
+		steam_governor = addItem("steam_governor",new Item(),"governor","governorBrass");
 		
 		initDone = true;
 	}

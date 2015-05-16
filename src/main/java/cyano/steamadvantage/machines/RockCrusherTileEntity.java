@@ -1,6 +1,7 @@
 package cyano.steamadvantage.machines;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import cyano.basemetals.registry.CrusherRecipeRegistry;
 import cyano.basemetals.registry.recipe.ICrusherRecipe;
@@ -50,7 +51,7 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 				}
 				
 				if(recipe != null){
-					ItemStack output = recipe.getOutput(); // implementations use ItemStack.copy() to give us a fresh ItemStack
+					ItemStack output = recipe.getOutput(); 
 					// check if there's a place to put the output item
 					int availableSlot = canAddToOutputInventory(output); // returns -1 if no slot is available
 					if(availableSlot >= 0){
@@ -71,12 +72,13 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 						if(progress >= TICKS_PER_ACTION){
 							// add product to output
 							if(inventory[availableSlot] == null){
-								inventory[availableSlot] = output;
+								inventory[availableSlot] = output.copy();
 							} else {
 								inventory[availableSlot].stackSize += output.stackSize;
 							}
+							if(--inventory[0].stackSize <= 0){inventory[0] = null;} // decrement the input slot
 							progress = 0;
-							getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "dig.gravel", 0.5f, 1f, true);
+							getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "dig.gravel", 0.5f, 1f);
 						}
 					} else if (progress > 0){
 						// cannot crush, undo progress
@@ -168,6 +170,33 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 			}
 		}
 		return -1;
+	}
+	
+	@Override
+	public void writeToNBT(NBTTagCompound tagRoot){
+		super.writeToNBT(tagRoot);
+		tagRoot.setShort("progress",(short)progress);
+	}
+	
+	@Override
+	public void readFromNBT(NBTTagCompound tagRoot){
+		super.readFromNBT(tagRoot);
+		if(tagRoot.hasKey("progress")){
+			progress = tagRoot.getShort("progress");
+		}
+	}
+
+
+
+	public int getComparatorOutput() {
+		int sum = 0;
+		for(int n = 1; n < inventory.length; n++){
+			if(inventory[n] != null){
+				sum += inventory[n].stackSize * 64 / inventory[n].getMaxStackSize();
+			}
+		}
+		if(sum == 0) return 0;
+		return Math.min(Math.max(15 * sum / (64 * (inventory.length - 1)),1),15);
 	}
 
 }

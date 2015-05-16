@@ -103,4 +103,18 @@ public abstract class GUIHelper {
         instance.draw();
     }
     */
+
+	public static void drawDownArrowProgress(int x, int y, float progress,
+			GUIContainer gc) {
+		if(progress <= 0) return;
+		final int arrowTexX = 184;
+		final int arrowTexY = 0;
+		final int width = 16;
+		final int height = 32;
+		int h = (int)(progress*height);
+		if(h == 0 ) h = 1;
+		if(h > 0){
+			gc.drawTexturedModalRect(x, y, arrowTexX, arrowTexY, width, h);
+		}
+	}
 }

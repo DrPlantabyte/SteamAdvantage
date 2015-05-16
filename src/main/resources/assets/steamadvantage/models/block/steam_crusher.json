@@ -1,7 +1,7 @@
 {
     "parent": "steamadvantage:block/steam_machine_base",
     "textures": {
-        "front": "steamadvantage:materials/bolted_iron",
+        "front": "steamadvantage:blocks/rock_crusher_front",
         "top": "steamadvantage:blocks/rock_crusher_top",
         "bottom": "steamadvantage:materials/bolted_iron",
         "back": "steamadvantage:materials/bolted_iron",
