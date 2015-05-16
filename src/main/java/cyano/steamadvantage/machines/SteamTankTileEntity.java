@@ -1,6 +1,7 @@
 package cyano.steamadvantage.machines;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLLog;
@@ -19,6 +20,8 @@ public class SteamTankTileEntity  extends cyano.poweradvantage.api.simple.TileEn
 		super(Power.steam_power, FluidContainerRegistry.BUCKET_VOLUME * 10, SteamTankTileEntity.class.getSimpleName());
 	}
 	
+	private boolean redstone = true;
+	
 
 	@Override
 	public void tickUpdate(boolean isServerWorld) {
@@ -33,10 +36,30 @@ public class SteamTankTileEntity  extends cyano.poweradvantage.api.simple.TileEn
 	@Override
 	public void powerUpdate(){
 		super.powerUpdate();
+		
+		redstone = hasRedstoneSignal();
+		
 		if(oldSteam != this.getEnergy()){
 			this.sync();
 			oldSteam = this.getEnergy();
 		}
+	}
+	
+	@Override
+	protected float transmitPowerToConsumers(float amount, ConduitType type, byte priority){
+		if(redstone){
+			// disabled by redstone signal
+			return 0f;
+		} else {
+			return transmitPowerToConsumers(amount,type,priority);
+		}
+	}
+	
+	private boolean hasRedstoneSignal() {
+		for(int i = 0; i < EnumFacing.values().length; i++){
+			if(getWorld().getRedstonePower(getPos(), EnumFacing.values()[i]) > 0) return true;
+		}
+		return false;
 	}
 	
 	

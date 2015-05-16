@@ -38,6 +38,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		inventory = new ItemStack[1];
 	}
 
+	private boolean redstone = true;
 	
 	@Override
 	public void tickUpdate(boolean isServerWorld) {
@@ -48,7 +49,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 				boilWater();
 			} else {
 				int fuel = getFuelBurnTime();
-				if( fuel > 0 && (!hasRedstoneSignal()) && this.getTank().getFluidAmount() > 0){
+				if( fuel > 0 && (!redstone) && this.getTank().getFluidAmount() > 0){
 					burnTime = fuel;
 					totalBurnTime = fuel;
 					decrementFuel();
@@ -120,6 +121,8 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 			oldWater = getTank().getFluidAmount();
 			updateFlag = true;
 		}
+		
+		redstone = hasRedstoneSignal();
 		
 		if(updateFlag){
 			super.sync();
