@@ -28,6 +28,17 @@ public class SteamTankTileEntity  extends cyano.poweradvantage.api.simple.TileEn
 		}
 	}
 	
+	private float oldSteam = 0;
+	
+	@Override
+	public void powerUpdate(){
+		super.powerUpdate();
+		if(oldSteam != this.getEnergy()){
+			this.sync();
+			oldSteam = this.getEnergy();
+		}
+	}
+	
 	
 	private void energyDecay() {
 		if(getEnergy() > 0){

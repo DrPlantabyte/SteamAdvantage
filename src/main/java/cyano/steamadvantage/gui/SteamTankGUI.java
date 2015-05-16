@@ -11,7 +11,7 @@ public class SteamTankGUI extends SimpleMachineGUI{
 
 	public SteamTankGUI() {
 		super(
-				new ResourceLocation(SteamAdvantage.MODID+":textures/gui/container/coal_boiler.png"), 
+				new ResourceLocation(SteamAdvantage.MODID+":textures/gui/container/steam_tank.png"), 
 				new Integer2D[0]
 		);
 	}
@@ -45,12 +45,12 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 	@Override
 	public void drawGUIDecorations(Object srcEntity, GUIContainer guiContainer, int x, int y, float  z){
 		
-		if(srcEntity.getClass() == CoalBoilerTileEntity.class){
+		if(srcEntity.getClass() == SteamTankTileEntity.class){
 			SteamTankTileEntity target = (SteamTankTileEntity)srcEntity;
 
 			
 			float steamPivotX = 88f;
-			float steamPivotY = 61f;
+			float steamPivotY = 60f;
 			
 			float steam = target.getSteamLevel(); 
 

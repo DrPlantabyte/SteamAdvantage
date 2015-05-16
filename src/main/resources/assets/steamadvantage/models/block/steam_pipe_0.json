@@ -1,0 +1,7 @@
+{
+    "parent": "poweradvantage:block/pipe2_0",
+    "textures": {
+        "texture": "steamadvantage:blocks/steam_pipe",
+        "particle": "poweradvantage:materials/brass"
+    }
+}

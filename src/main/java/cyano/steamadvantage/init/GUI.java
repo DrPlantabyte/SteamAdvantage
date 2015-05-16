@@ -2,7 +2,7 @@ package cyano.steamadvantage.init;
 
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
-import cyano.steamadvantage.gui.CoalBoilerGUI;
+import cyano.steamadvantage.gui.*;
 
 public class GUI {
 
@@ -12,8 +12,9 @@ public class GUI {
 		
 		Blocks.init();
 		Entities.init();
-		
+
 		Blocks.steam_boiler_coal.setGuiID(MachineGUIRegistry.addGUI(new CoalBoilerGUI()),PowerAdvantage.getInstance());
+		Blocks.steam_tank.setGuiID(MachineGUIRegistry.addGUI(new SteamTankGUI()),PowerAdvantage.getInstance());
 		
 		
 		initDone = true;

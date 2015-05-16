@@ -87,12 +87,11 @@ public class SteamAdvantage
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-    	
-    	Entities.init();
-    	GUI.init();
-    	TreasureChests.init();
-    	
-    	if(event.getSide() == Side.CLIENT){
+		Entities.init();
+		GUI.init();
+		TreasureChests.init();
+
+		if(event.getSide() == Side.CLIENT){
 			clientInit(event);
 		}
 		if(event.getSide() == Side.SERVER){

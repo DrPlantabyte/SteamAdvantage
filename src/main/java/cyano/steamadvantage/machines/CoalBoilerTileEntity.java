@@ -48,7 +48,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 				boilWater();
 			} else {
 				int fuel = getFuelBurnTime();
-				if( fuel > 0 && (!hasRedstoneSignal()) ){
+				if( fuel > 0 && (!hasRedstoneSignal()) && this.getTank().getFluidAmount() > 0){
 					burnTime = fuel;
 					totalBurnTime = fuel;
 					decrementFuel();
