@@ -15,6 +15,7 @@ public class TreasureChests {
 		Items.init();
 
 		addChestLoot(new ItemStack(Items.steam_governor,1),5f,1,4);
+		addChestLoot(new ItemStack(Blocks.steam_pipe,1),5f,4,8);
 		
 		initDone = true;
 	}
