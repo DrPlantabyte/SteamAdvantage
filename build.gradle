@@ -44,7 +44,7 @@ minecraft {
 dependencies {
     compile files(
         'lib/PowerAdvantage/PowerAdvantage-API-1.0.0.jar',
-        'lib/BaseMetals/basemetals-API-1.3.0.jar',
+        'lib/BaseMetals/BaseMetals-API-1.3.1.jar',
         'lib/NEI/CodeChickenCore-1.8-1.0.5.34-dev.jar',
         'lib/NEI/NotEnoughItems-1.8-1.0.5.84-dev.jar'
     )
