@@ -92,7 +92,6 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 			energyDecay();
 		}
 	}
-	// TODO: item handler input (to input slot) and output (from output slots)
 
 
 	private float oldSteam = 0;

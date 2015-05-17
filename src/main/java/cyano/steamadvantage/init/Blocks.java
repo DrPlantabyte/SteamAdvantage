@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 import cyano.poweradvantage.api.GUIBlock;
 import cyano.steamadvantage.SteamAdvantage;
 import cyano.steamadvantage.blocks.*;
@@ -30,6 +31,7 @@ public abstract class Blocks {
 		if(initDone) return;
 		
 		steam_pipe = addBlock(new SteamPipeBlock(),"steam_pipe");
+		OreDictionary.registerOre("conduitSteam", steam_pipe);
 		steam_boiler_coal = (GUIBlock)addBlock(new CoalBoilerBlock(),"steam_boiler_coal");
 		steam_tank = (GUIBlock)addBlock(new SteamTankBlock(),"steam_tank");
 		steam_furnace = (GUIBlock)addBlock(new BlastFurnaceBlock(),"steam_furnace");

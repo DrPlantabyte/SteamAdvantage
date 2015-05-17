@@ -1,2 +1,10 @@
-language_support_goals=english (en_US,en_EN,en_CA,en_GB, en_AU, en_PT), spanish (es_MX,es_ES), chinese (zh_CN), japanese (ja_JA), portugese (pt_BR), german (de_DE)
+language_support_goals=english (en_US,en_EN,en_CA,en_GB, en_AU, en_PT), spanish (es_MX,es_ES), chinese (zh_CN), japanese (ja_JA), portugese (pt_BR), german (de_DE), italian (it_IT), korean (ko_KR)
+
+item.steamadvantage.steam_governor.name=Steam Governor
+
+tile.steamadvantage.steam_pipe.name=Brass Steam Pipe
+tile.steamadvantage.steam_boiler_coal.name=Coal-Fired Steam Boiler
+tile.steamadvantage.steam_tank.name=Steam Boiler Tank
+tile.steamadvantage.steam_furnace.name=Steam-Powered Furnace
+tile.steamadvantage.steam_crusher.name=Steam-Powered Rock Crusher
 
