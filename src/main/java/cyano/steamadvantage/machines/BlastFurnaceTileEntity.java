@@ -17,6 +17,9 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 	public static final float STEAM_PER_TICK = 0.5f;
 
 	private final ItemStack[] inventory = new ItemStack[7]; // slot 0 is input, other slots are output
+	private static final int[] topSlots = {1,2,3};
+	private static final int[] sideSlots = {0};
+	private static final int[] bottomSlots = {4,5,6};
 	private final int[] dataSyncArray = new int[6];// 3 progresses, burn time, total burn time, temperature
 	
 	private final float[] progress = new float[3];
@@ -58,8 +61,8 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 				burnTime--;
 				e = 2.5f;
 			} else {
-				int fuel = getFuelBurnTime();
-				if( fuel > 0 && (!redstone)){
+				int fuel = getFuelBurnTime(inventory[0]);
+				if( fuel > 0 && (!redstone) && (canSmelt(1) || canSmelt(2) || canSmelt(3))){
 					burnTime = fuel;
 					totalBurnTime = fuel;
 					decrementFuel();
@@ -146,10 +149,15 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 			updateFlag = true;
 			oldTemp = temperature;
 		}
-		// tODO: update progresses
+		
+		for(int i = 0; i < 3; i++){
+			updateFlag = updateFlag || (oldProgress[i] != progress[i]);
+		}
+		System.arraycopy(progress, 0, oldProgress, 0, 3);
+		
+		
 		if(updateFlag ){
 			this.sync();
-			updateFlag = false;
 		}
 		redstone = hasRedstoneSignal();
 	}
@@ -168,9 +176,9 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 		}
 	}
 	
-	private int getFuelBurnTime() {
-		if(inventory[0] == null) return 0;
-		return TileEntityFurnace.getItemBurnTime(inventory[0]);
+	private static int getFuelBurnTime(ItemStack item) {
+		if(item == null) return 0;
+		return TileEntityFurnace.getItemBurnTime(item);
 	}
 	
 	private void decrementFuel() {
@@ -182,7 +190,7 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 	}
 	
 	private static float progressPerTickAtTemperature(float temperature){
-		return 0.00001f * temperature;
+		return 3.5E-6f * temperature;
 	}
 
 	private static float iterateTemperature(float prevTemp, float energyInput){
@@ -260,6 +268,48 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 		}
 		if(sum == 0) return 0;
 		return Math.min(Math.max(15 * sum / (64 * (inventory.length - 1)),1),15);
+	}
+	
+	
+	///// Item Handling (for hoppers) /////
+
+	@Override
+	public int[] getSlotsForFace(EnumFacing side) {
+		if(side == EnumFacing.UP){
+			return topSlots;
+		} else if(side == EnumFacing.DOWN){
+			return bottomSlots;
+		} else {
+			return sideSlots;
+		}
+	}
+	
+	@Override
+	public boolean canExtractItem(final int slot, final ItemStack targetItem, final EnumFacing side) {
+		return slot >= 4 && slot < this.getInventory().length;
+	}
+
+	@Override
+	public boolean canInsertItem(final int slot, final ItemStack srcItem, final EnumFacing side) {
+		return this.isItemValidForSlot(slot, srcItem);
+	}
+	
+	@Override
+	public boolean isItemValidForSlot(final int slot, final ItemStack item) {
+		switch(slot){
+		case 0:
+			return this.getFuelBurnTime(item) > 0;
+		case 1:
+		case 2:
+		case 3:
+			return true;
+		case 4:
+		case 5:
+		case 6:
+			return true;
+		default:
+			return false;
+		}
 	}
 
 

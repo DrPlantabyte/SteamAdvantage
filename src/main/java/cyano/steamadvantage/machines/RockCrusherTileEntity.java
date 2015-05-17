@@ -13,6 +13,9 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 	public static final int TICKS_PER_ACTION = 400;
 
 	private final ItemStack[] inventory = new ItemStack[6]; // slot 0 is input, other slots are output
+	private static final int[] topSlots = {0};
+	private static final int[] sideSlots = {0};
+	private static final int[] bottomSlots = {1,2,3,4,5};
 	private final int[] dataSyncArray = new int[2];
 	
 	
@@ -78,7 +81,7 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 							}
 							if(--inventory[0].stackSize <= 0){inventory[0] = null;} // decrement the input slot
 							progress = 0;
-							getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "dig.gravel", 0.5f, 1f);
+							getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "dig.gravel", 0.5f, 0.2f);
 						}
 					} else if (progress > 0){
 						// cannot crush, undo progress
@@ -197,6 +200,45 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 		}
 		if(sum == 0) return 0;
 		return Math.min(Math.max(15 * sum / (64 * (inventory.length - 1)),1),15);
+	}
+	
+///// Item Handling (for hoppers) /////
+
+	@Override
+	public int[] getSlotsForFace(EnumFacing side) {
+		if(side == EnumFacing.UP){
+			return topSlots;
+		} else if(side == EnumFacing.DOWN){
+			return bottomSlots;
+		} else {
+			return sideSlots;
+		}
+	}
+	
+	@Override
+	public boolean canExtractItem(final int slot, final ItemStack targetItem, final EnumFacing side) {
+		return slot > 0 && slot < this.getInventory().length;
+	}
+
+	@Override
+	public boolean canInsertItem(final int slot, final ItemStack srcItem, final EnumFacing side) {
+		return this.isItemValidForSlot(slot, srcItem);
+	}
+	
+	@Override
+	public boolean isItemValidForSlot(final int slot, final ItemStack item) {
+		switch(slot){
+		case 0:
+			return CrusherRecipeRegistry.getInstance().getRecipeForInputItem(item) != null;
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+			return true;
+		default:
+			return false;
+		}
 	}
 
 }

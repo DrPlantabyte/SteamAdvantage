@@ -67,9 +67,10 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 			oldTemp = temp;
 			
 			lastUpdate = t;
+
+			GUIHelper.drawFlameProgress(x+30, y+46, 1f - target.getBurnLevel(), guiContainer);
 			
 			GUIHelper.drawNeedle(x+tempPivotX, y+tempPivotY, z, temp);
-			GUIHelper.drawFlameProgress(x+30, y+46, 1f - target.getBurnLevel(), guiContainer);
 			for(int i = 0; i < 3; i++){
 				GUIHelper.drawDownArrowProgress(arrowX+18*i,arrowY,progress[i],guiContainer);
 			}
