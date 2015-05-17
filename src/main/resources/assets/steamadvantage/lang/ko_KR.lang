@@ -1,0 +1,9 @@
+language_support_goals=english (en_US,en_EN,en_CA,en_GB, en_AU, en_PT), spanish (es_MX,es_ES), chinese (zh_CN), japanese (ja_JA), portugese (pt_BR), german (de_DE), italian (it_IT), korean (ko_KR)
+
+item.steamadvantage.steam_governor.name=제어 밸브 증기
+
+tile.steamadvantage.steam_pipe.name=황동 증기 파이프
+tile.steamadvantage.steam_boiler_coal.name=증기 보일러
+tile.steamadvantage.steam_tank.name=스팀 탱크
+tile.steamadvantage.steam_furnace.name=증기 구동 전기로
+tile.steamadvantage.steam_crusher.name=증기 구동 록 크러셔

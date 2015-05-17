@@ -1,0 +1,9 @@
+language_support_goals=english (en_US,en_EN,en_CA,en_GB, en_AU, en_PT), spanish (es_MX,es_ES), chinese (zh_CN), japanese (ja_JA), portugese (pt_BR), german (de_DE), italian (it_IT), korean (ko_KR)
+
+item.steamadvantage.steam_governor.name=Válvula de Controle de Vapor
+
+tile.steamadvantage.steam_pipe.name=Latão Tubo de Vapor
+tile.steamadvantage.steam_boiler_coal.name=Caldeira a Vapor
+tile.steamadvantage.steam_tank.name=Tanque Vapor
+tile.steamadvantage.steam_furnace.name=Psto Vapor Furnace
+tile.steamadvantage.steam_crusher.name=Psto Vapor Rocha Crusher
