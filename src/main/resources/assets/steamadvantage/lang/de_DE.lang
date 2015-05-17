@@ -2,7 +2,7 @@ language_support_goals=english (en_US,en_EN,en_CA,en_GB, en_AU, en_PT), spanish 
 
 item.steamadvantage.steam_governor.name=Dampfkraft Steuerventil
 
-tile.steamadvantage.steam_pipe.name=Brass Steam Pipe
+tile.steamadvantage.steam_pipe.name=Dampfrohr
 tile.steamadvantage.steam_boiler_coal.name=Dampfkraft Kessel
 tile.steamadvantage.steam_tank.name=Dampftank
 tile.steamadvantage.steam_furnace.name=Dampfkraft Ofen
