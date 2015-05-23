@@ -26,7 +26,7 @@ import cyano.steamadvantage.init.Power;
  * @author DrCyano
  *
  */
-public class RockCrusherBlock extends cyano.poweradvantage.api.simple.BlockSimplePowerSource{
+public class RockCrusherBlock extends cyano.poweradvantage.api.simple.BlockSimplePowerConsumer {
 
 	
 	public RockCrusherBlock() {
