@@ -7,10 +7,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import cyano.steamadvantage.SteamAdvantage;
 import cyano.steamadvantage.blocks.DrillBitTileEntity;
 import cyano.steamadvantage.graphics.DrillBitRenderer;
-import cyano.steamadvantage.machines.BlastFurnaceTileEntity;
-import cyano.steamadvantage.machines.CoalBoilerTileEntity;
-import cyano.steamadvantage.machines.RockCrusherTileEntity;
-import cyano.steamadvantage.machines.SteamTankTileEntity;
+import cyano.steamadvantage.machines.*;
 
 public class Entities {
 
@@ -25,6 +22,7 @@ public class Entities {
 		GameRegistry.registerTileEntity(SteamTankTileEntity.class, SteamAdvantage.MODID+"."+"steam_tank");
 		GameRegistry.registerTileEntity(BlastFurnaceTileEntity.class, SteamAdvantage.MODID+"."+"steam_furnace");
 		GameRegistry.registerTileEntity(RockCrusherTileEntity.class, SteamAdvantage.MODID+"."+"steam_crusher");
+		GameRegistry.registerTileEntity(SteamDrillTileEntity.class, SteamAdvantage.MODID+"."+"steam_drill");
 		GameRegistry.registerTileEntity(DrillBitTileEntity.class, SteamAdvantage.MODID+"."+"drillbit");
 		
 		

@@ -4,8 +4,8 @@
         "front": "steamadvantage:blocks/rock_crusher_front",
         "top": "steamadvantage:blocks/rock_crusher_top",
         "bottom": "steamadvantage:materials/bolted_iron",
-        "back": "steamadvantage:materials/bolted_iron",
-        "side": "steamadvantage:materials/bolted_iron",
-        "metal": "steamadvantage:materials/bolted_iron"
+        "back": "steamadvantage:materials/iron",
+        "side": "steamadvantage:materials/iron",
+        "metal": "steamadvantage:materials/biron"
     }
 }

@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "facing=down":  { "model": "steamadvantage:steam_drill", "x": 90  },
+        "facing=up":    { "model": "steamadvantage:steam_drill", "x": 270 },
+        "facing=east": { "model": "steamadvantage:steam_drill", "y": 90 },
+        "facing=north": { "model": "steamadvantage:steam_drill" },
+        "facing=south": { "model": "steamadvantage:steam_drill", "y": 180 },
+        "facing=west": { "model": "steamadvantage:steam_drill", "y": 270 }
+    }
+}

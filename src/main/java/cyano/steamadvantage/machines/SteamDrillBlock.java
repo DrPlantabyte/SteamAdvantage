@@ -3,6 +3,7 @@ package cyano.steamadvantage.machines;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
@@ -140,7 +141,7 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
     public IBlockState onBlockPlaced(final World world, final BlockPos coord, final EnumFacing facing, 
     		final float f1, final float f2, final float f3, 
     		final int meta, final EntityLivingBase player) {
-        return this.getDefaultState().withProperty( FACING, player.getHorizontalFacing().getOpposite());
+        return this.getDefaultState().withProperty( FACING, facing.getOpposite());
     }
     
     /**
@@ -149,7 +150,7 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
     @Override
     public void onBlockPlacedBy(final World world, final BlockPos coord, final IBlockState bs, 
     		final EntityLivingBase placer, final ItemStack srcItemStack) {
-        world.setBlockState(coord, bs.withProperty((IProperty) FACING, (Comparable)placer.getHorizontalFacing().getOpposite()), 2);
+        world.setBlockState(coord, bs.withProperty((IProperty) FACING, (Comparable)BlockPistonBase.getFacingFromEntity(world, coord, placer).getOpposite()), 2);
         if (srcItemStack.hasDisplayName()) {
         	final TileEntity tileEntity = world.getTileEntity(coord);
         	if (tileEntity instanceof PoweredEntity){
