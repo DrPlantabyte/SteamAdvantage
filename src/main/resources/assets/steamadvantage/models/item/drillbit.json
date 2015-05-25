@@ -1,0 +1,28 @@
+{
+    "parent": "steamadvantage:block/drillbit",
+    "textures": {
+        "drill": "steamadvantage:entities/drill_bit"
+    },
+    "elements": [
+       
+        {   "from": [ 4, 0, 4 ],
+            "to": [ 12, 16, 12 ],
+            "faces": {
+                "down":  { "uv": [ 8, 0,16, 8 ], "texture": "#drill" },
+                "up":    { "uv": [ 8, 0,16, 8 ], "texture": "#drill" },
+                "north": { "uv": [ 0, 0, 8,16 ], "texture": "#drill" },
+                "south": { "uv": [ 0, 0, 8,16 ], "texture": "#drill" },
+                "west":  { "uv": [ 0, 0, 8,16 ], "texture": "#drill" },
+                "east":  { "uv": [ 0, 0, 8,16 ], "texture": "#drill" }
+            }
+        }
+    ],
+    "ambientocclusion": false,
+    "display": {
+        "thirdperson": {
+            "rotation": [ 0, 0, 90 ],
+            "translation": [ 0, 1.5, -2.75 ],
+            "scale": [ 0.5, 0.5, 0.5 ]
+        }
+    }
+}

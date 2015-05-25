@@ -25,6 +25,7 @@ public abstract class Blocks {
 	public static GUIBlock steam_furnace;
 	public static GUIBlock steam_tank;
 	public static Block steam_pipe;
+	public static Block drillbit;
 	
 	private static boolean initDone = false;
 	public static void init(){
@@ -36,7 +37,7 @@ public abstract class Blocks {
 		steam_tank = (GUIBlock)addBlock(new SteamTankBlock(),"steam_tank");
 		steam_furnace = (GUIBlock)addBlock(new BlastFurnaceBlock(),"steam_furnace");
 		steam_crusher = (GUIBlock)addBlock(new RockCrusherBlock(),"steam_crusher");
-		
+		drillbit = addBlock(new DrillBitBlock(),"drillbit");
 		
 		initDone = true;
 	}

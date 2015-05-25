@@ -1,5 +1,6 @@
 package cyano.steamadvantage.init;
 
+import net.minecraft.util.DamageSource;
 import cyano.poweradvantage.api.ConduitType;
 
 public abstract class Power {
@@ -8,4 +9,6 @@ public abstract class Power {
 
 	public static float ENERGY_LOST_PER_TICK = 0.0625f;
 	
+	
+	public static final DamageSource machine_damage = new DamageSource("steam_machine");
 }

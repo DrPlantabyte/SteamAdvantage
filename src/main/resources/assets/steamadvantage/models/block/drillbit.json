@@ -1,0 +1,19 @@
+{
+    "textures": {
+        "all": "poweradvantage:materials/steel",
+        "particle": "poweradvantage:materials/steel"
+    },
+    "elements": [
+        {   "from": [ 7,  1, 7 ],
+            "to":   [ 9, 15, 9 ],
+            "faces": {
+                "down":  { "texture": "#all" },
+                "up":    { "texture": "#all" },
+                "north": { "texture": "#all" },
+                "south": { "texture": "#all" },
+                "west":  { "texture": "#all" },
+                "east":  { "texture": "#all" }
+            }
+        }
+    ]
+}

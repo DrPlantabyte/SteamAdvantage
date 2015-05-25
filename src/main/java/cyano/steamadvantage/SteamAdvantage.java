@@ -10,13 +10,13 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-
+// TODO: translations
 /* TODO list
- * - Coal-Fired Steam Boiler
- * - Boiler Tank
- * - Steam Conduit
- * - Steam Powered Rock Crusher
- * - Steam Powered Blast Furnace (expanded furnace 2x2)
+ * + Coal-Fired Steam Boiler
+ * + Boiler Tank
+ * + Steam Conduit
+ * + Steam Powered Rock Crusher
+ * + Steam Powered Blast Furnace (expanded furnace 2x2)
  * --- push version 0.1 ---
  * - Steam Powered Drill
  * --- push version 1.0 ---
@@ -38,7 +38,7 @@ public class SteamAdvantage
     /** The display name for this mod */
     public static final String NAME = "Steam Advantage";
     /** The version of this mod, in the format major.minor.update */
-    public static final String VERSION = "1.0.0";
+    public static final String VERSION = "1.1.0";
     
     /**
      * Pre-initialization step. Used for initializing objects and reading the 
@@ -52,7 +52,6 @@ public class SteamAdvantage
     	config.load();
     	
     	// TODO: flames on furnaces for random tick updates
-    	// TODO: language translations
     	
     	
     	config.save();
@@ -103,6 +102,8 @@ public class SteamAdvantage
 		// client-only code
 		Items.registerItemRenders(event);
 		Blocks.registerItemRenders(event);
+		Entities.registerRenderers();
+		
 	}
 	@SideOnly(Side.SERVER)
 	private void serverInit(FMLInitializationEvent event){
