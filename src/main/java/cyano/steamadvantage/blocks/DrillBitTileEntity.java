@@ -1,16 +1,17 @@
 package cyano.steamadvantage.blocks;
 
-import cyano.steamadvantage.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
+import cyano.steamadvantage.init.Blocks;
 
 public class DrillBitTileEntity extends TileEntity implements IUpdatePlayerListBox{
 
-	public final static float ROTATION_PER_TICK = 360f / 20f; // in degrees
-	public final static float TWOPI = (float)(Math.PI * 2 - 0.001);
+	public final static float ROTATION_PER_TICK = 360f / 20f; // in degrees, 20 ticks per revolution
 	public float rotation = 0;
 	private EnumFacing direction = EnumFacing.DOWN;
 	
@@ -21,11 +22,17 @@ public class DrillBitTileEntity extends TileEntity implements IUpdatePlayerListB
 	@Override
 	public void update(){
 		if(getWorld().isRemote){
-			rotation += ROTATION_PER_TICK;
-			if(rotation >= 360) rotation = 0;
-			
+			rotation = ROTATION_PER_TICK * (getWorld().getTotalWorldTime() % 20);
 		}
 	}
+	public EnumFacing.Axis getDirection(){
+		return direction.getAxis();
+	}
+	
+	public void createDrillBitBlock(World w, BlockPos coord, EnumFacing dir){
+		// TODO
+	}
+	
 	/**
 	 * Destroys all drillbits connected to this one
 	 */
@@ -61,6 +68,21 @@ public class DrillBitTileEntity extends TileEntity implements IUpdatePlayerListB
 		}
 		if(getWorld().getBlockState(coord).getBlock() == Blocks.drillbit){
 			getWorld().setBlockToAir(coord);
+		}
+	}
+	
+	@Override
+	public void writeToNBT(NBTTagCompound root){
+		super.writeToNBT(root);
+		root.setByte("dir", (byte)direction.getIndex());
+	}
+	
+
+	@Override
+	public void readFromNBT(NBTTagCompound root){
+		super.readFromNBT(root);
+		if(root.hasKey("dir")){
+			this.direction = EnumFacing.getFront(root.getByte("dir"));
 		}
 	}
 }

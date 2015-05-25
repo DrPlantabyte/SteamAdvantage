@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
@@ -56,40 +57,46 @@ public class DrillBitRenderer extends TileEntitySpecialRenderer{
 		final float endV1 = 0.5f;
 		final float radius = 0.25f;
 
-		GlStateManager.translate(0.5f, 0, 0.5f);		
+		GlStateManager.translate(0.5f, 0.5f, 0.5f);		
+		if(e.getDirection() != EnumFacing.Axis.Y){
+			GlStateManager.rotate(90, 1.0f, 0.0f, 0.0f);
+			if(e.getDirection() != EnumFacing.Axis.Z){
+				GlStateManager.rotate(90, 0.0f, 0.0f, 1.0f);
+			}
+		}
 		GlStateManager.rotate(e.rotation + DrillBitTileEntity.ROTATION_PER_TICK * partialTick, 0.0f, 1.0f, 0.0f);
 
 		worldRenderer.startDrawingQuads();
 		worldRenderer.setNormal(0.0f, 1.0f, 0.0f);
-		worldRenderer.addVertexWithUV( radius, 1.0f, -radius, sideU0, sideV0);
-		worldRenderer.addVertexWithUV( radius, 0.0f, -radius, sideU0, sideV1);
-		worldRenderer.addVertexWithUV(-radius, 0.0f, -radius, sideU1, sideV1);
-		worldRenderer.addVertexWithUV(-radius, 1.0f, -radius, sideU1, sideV0);
+		worldRenderer.addVertexWithUV( radius, 0.5f, -radius, sideU0, sideV0);
+		worldRenderer.addVertexWithUV( radius,-0.5f, -radius, sideU0, sideV1);
+		worldRenderer.addVertexWithUV(-radius,-0.5f, -radius, sideU1, sideV1);
+		worldRenderer.addVertexWithUV(-radius, 0.5f, -radius, sideU1, sideV0);
 
-		worldRenderer.addVertexWithUV(-radius, 1.0f,  radius, sideU0, sideV0);
-		worldRenderer.addVertexWithUV(-radius, 0.0f,  radius, sideU0, sideV1);
-		worldRenderer.addVertexWithUV( radius, 0.0f,  radius, sideU1, sideV1);
-		worldRenderer.addVertexWithUV( radius, 1.0f,  radius, sideU1, sideV0);
+		worldRenderer.addVertexWithUV(-radius, 0.5f,  radius, sideU0, sideV0);
+		worldRenderer.addVertexWithUV(-radius,-0.5f,  radius, sideU0, sideV1);
+		worldRenderer.addVertexWithUV( radius,-0.5f,  radius, sideU1, sideV1);
+		worldRenderer.addVertexWithUV( radius, 0.5f,  radius, sideU1, sideV0);
 
-		worldRenderer.addVertexWithUV(-radius, 1.0f, -radius, sideU0, sideV0);
-		worldRenderer.addVertexWithUV(-radius, 0.0f, -radius, sideU0, sideV1);
-		worldRenderer.addVertexWithUV(-radius, 0.0f,  radius, sideU1, sideV1);
-		worldRenderer.addVertexWithUV(-radius, 1.0f,  radius, sideU1, sideV0);
+		worldRenderer.addVertexWithUV(-radius, 0.5f, -radius, sideU0, sideV0);
+		worldRenderer.addVertexWithUV(-radius,-0.5f, -radius, sideU0, sideV1);
+		worldRenderer.addVertexWithUV(-radius,-0.5f,  radius, sideU1, sideV1);
+		worldRenderer.addVertexWithUV(-radius, 0.5f,  radius, sideU1, sideV0);
 
-		worldRenderer.addVertexWithUV( radius, 1.0f,  radius, sideU0, sideV0);
-		worldRenderer.addVertexWithUV( radius, 0.0f,  radius, sideU0, sideV1);
-		worldRenderer.addVertexWithUV( radius, 0.0f, -radius, sideU1, sideV1);
-		worldRenderer.addVertexWithUV( radius, 1.0f, -radius, sideU1, sideV0);
+		worldRenderer.addVertexWithUV( radius, 0.5f,  radius, sideU0, sideV0);
+		worldRenderer.addVertexWithUV( radius,-0.5f,  radius, sideU0, sideV1);
+		worldRenderer.addVertexWithUV( radius,-0.5f, -radius, sideU1, sideV1);
+		worldRenderer.addVertexWithUV( radius, 0.5f, -radius, sideU1, sideV0);
 
-		worldRenderer.addVertexWithUV(-radius, 1.0f, -radius, endU0, endV0);
-		worldRenderer.addVertexWithUV(-radius, 1.0f,  radius, endU0, endV1);
-		worldRenderer.addVertexWithUV( radius, 1.0f,  radius, endU1, endV1);
-		worldRenderer.addVertexWithUV( radius, 1.0f, -radius, endU1, endV0);
+		worldRenderer.addVertexWithUV(-radius, 0.5f, -radius, endU0, endV0);
+		worldRenderer.addVertexWithUV(-radius, 0.5f,  radius, endU0, endV1);
+		worldRenderer.addVertexWithUV( radius, 0.5f,  radius, endU1, endV1);
+		worldRenderer.addVertexWithUV( radius, 0.5f, -radius, endU1, endV0);
 
-		worldRenderer.addVertexWithUV(-radius, 0.0f,  radius, endU0, endV0);
-		worldRenderer.addVertexWithUV(-radius, 0.0f, -radius, endU0, endV1);
-		worldRenderer.addVertexWithUV( radius, 0.0f, -radius, endU1, endV1);
-		worldRenderer.addVertexWithUV( radius, 0.0f,  radius, endU1, endV0);
+		worldRenderer.addVertexWithUV(-radius,-0.5f,  radius, endU0, endV0);
+		worldRenderer.addVertexWithUV(-radius,-0.5f, -radius, endU0, endV1);
+		worldRenderer.addVertexWithUV( radius,-0.5f, -radius, endU1, endV1);
+		worldRenderer.addVertexWithUV( radius,-0.5f,  radius, endU1, endV0);
 		
 		instance.draw();
 	}

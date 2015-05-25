@@ -4,8 +4,8 @@
         "particle": "poweradvantage:materials/steel"
     },
     "elements": [
-        {   "from": [ 7,  1, 7 ],
-            "to":   [ 9, 15, 9 ],
+        {   "from": [ 7, 7, 7 ],
+            "to":   [ 9, 9, 9 ],
             "faces": {
                 "down":  { "texture": "#all" },
                 "up":    { "texture": "#all" },
