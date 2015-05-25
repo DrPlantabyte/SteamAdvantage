@@ -17,17 +17,16 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLLog;
 import cyano.steamadvantage.init.Blocks;
 import cyano.steamadvantage.init.Power;
 
 public class DrillBitBlock extends Block implements ITileEntityProvider {
 
-	public static final PropertyDirection FACING = PropertyDirection.create("facing");
 	
 	public DrillBitBlock() {
 		super(Material.iron);
 		this.setHardness(5.0F).setResistance(2000.0F);
-		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.DOWN));
 	}
 
 	@Override
@@ -80,33 +79,30 @@ public class DrillBitBlock extends Block implements ITileEntityProvider {
 	
 	@Override
 	public void onBlockDestroyedByPlayer(World w, BlockPos coord, IBlockState state){
+		destroyNeighbors(w,coord,w.getBlockState(coord));
 		super.onBlockDestroyedByPlayer(w, coord, state);
-		destroyNeighbors(w,coord,state);
-	}
-	
-	private void destroyNeighbors(World w, BlockPos coord, IBlockState state) {
-		// destroy connected drill bits
-		if(state.getProperties().containsKey(FACING)){
-			EnumFacing dir = (EnumFacing)state.getValue(FACING);
-			EnumFacing dir2 = dir.getOpposite();
-			BlockPos p = coord.offset(dir);
-			while(w.getBlockState(p).getBlock() == Blocks.drillbit){
-				w.setBlockToAir(p);
-				p = p.offset(dir);
-			}
-			p = coord.offset(dir2);
-			while(w.getBlockState(p).getBlock() == Blocks.drillbit){
-				w.setBlockToAir(p);
-				p = p.offset(dir2);
-			}
-		}
+		w.removeTileEntity(coord);
 	}
 
 	@Override
 	public void onBlockDestroyedByExplosion(World w, BlockPos coord, Explosion boom){
 		destroyNeighbors(w,coord,w.getBlockState(coord));
 		super.onBlockDestroyedByExplosion(w, coord, boom);
+		w.removeTileEntity(coord);
 	}
+
 	
+	private void destroyNeighbors(World w, BlockPos coord, IBlockState state) {
+		if(w.isRemote) return;
+		// destroy connected drill bits
+		FMLLog.info("destroy neighbors");// TODO: remove debug code
+		for(int i = 0; i < 6; i++){
+			BlockPos pos = coord.offset(EnumFacing.getFront(i));
+			if(w.getTileEntity(pos) instanceof DrillBitTileEntity){
+				DrillBitTileEntity te = (DrillBitTileEntity)w.getTileEntity(pos);
+				te.destroyLine();
+			}
+		}
+	}
 	
 }

@@ -1,7 +1,7 @@
 {
-    "parent": "steamadvantage:block/drillbit",
     "textures": {
-        "drill": "steamadvantage:entities/drill_bit"
+        "drill": "steamadvantage:entity/drill_bit",
+        "particle": "poweradvantage:materials/steel"
     },
     "elements": [
        
