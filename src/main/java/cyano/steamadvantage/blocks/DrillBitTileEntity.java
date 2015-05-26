@@ -1,6 +1,9 @@
 package cyano.steamadvantage.blocks;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -74,6 +77,26 @@ public class DrillBitTileEntity extends TileEntity implements IUpdatePlayerListB
 		super.readFromNBT(root);
 		if(root.hasKey("dir")){
 			this.direction = EnumFacing.getFront(root.getByte("dir"));
+		}
+	}
+
+	/**
+	 * Turns the data field NBT into a network packet
+	 */
+	@Override 
+	public Packet getDescriptionPacket(){
+		NBTTagCompound nbtTag = new NBTTagCompound();
+		nbtTag.setByte("d",(byte)direction.getIndex());
+		return new S35PacketUpdateTileEntity(this.pos, 0, nbtTag);
+	}
+	/**
+	 * Receives the network packet made by <code>getDescriptionPacket()</code>
+	 */
+	@Override
+	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+		NBTTagCompound tag = packet.getNbtCompound();
+		if(tag.hasKey("d")){
+			this.direction = EnumFacing.getFront(tag.getByte("d"));
 		}
 	}
 }

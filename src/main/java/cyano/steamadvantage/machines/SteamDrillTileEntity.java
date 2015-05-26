@@ -194,7 +194,7 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 					if(getWorld().getBlockState(n).getBlock() != Blocks.drillbit){
 						if(getWorld().isAirBlock(n) || getWorld().getBlockState(n).getBlock().isReplaceable(getWorld(), n)){
 							// this block is not worth mining, replace it
-							getWorld().setBlockState(n, Blocks.drillbit.getDefaultState());
+							DrillBitTileEntity.createDrillBitBlock(getWorld(), n, f);
 							this.subtractEnergy(ENERGY_COST_DRILLBIT, Power.steam_power);
 							flagSync = true;
 							break;
