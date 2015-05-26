@@ -1,13 +1,16 @@
 package cyano.steamadvantage.init;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.steamadvantage.SteamAdvantage;
 import cyano.steamadvantage.blocks.DrillBitTileEntity;
-import cyano.steamadvantage.graphics.DrillBitRenderer;
-import cyano.steamadvantage.machines.*;
+import cyano.steamadvantage.machines.BlastFurnaceTileEntity;
+import cyano.steamadvantage.machines.CoalBoilerTileEntity;
+import cyano.steamadvantage.machines.RockCrusherTileEntity;
+import cyano.steamadvantage.machines.SteamDrillTileEntity;
+import cyano.steamadvantage.machines.SteamTankTileEntity;
 
 public class Entities {
 
@@ -29,8 +32,8 @@ public class Entities {
 		initDone = true;
 	}
 	
+	@SideOnly(Side.CLIENT)
 	public static void registerRenderers(){
-		RenderManager rm = Minecraft.getMinecraft().getRenderManager();
-		ClientRegistry.bindTileEntitySpecialRenderer(DrillBitTileEntity.class, new DrillBitRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(DrillBitTileEntity.class, new cyano.steamadvantage.graphics.DrillBitRenderer());
 	}
 }

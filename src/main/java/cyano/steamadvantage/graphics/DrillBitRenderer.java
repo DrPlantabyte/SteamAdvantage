@@ -9,10 +9,12 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.steamadvantage.SteamAdvantage;
 import cyano.steamadvantage.blocks.DrillBitTileEntity;
 
+@SideOnly(Side.CLIENT) // This is needed for classes that extend client-only classes
 public class DrillBitRenderer extends TileEntitySpecialRenderer{
 
 	
