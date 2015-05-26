@@ -31,7 +31,9 @@ public class DrillBitTileEntity extends TileEntity implements IUpdatePlayerListB
 	
 	public static void createDrillBitBlock(World w, BlockPos coord, EnumFacing dir){
 		w.setBlockState(coord, DrillBitBlock.getStateById(0));
-		((DrillBitTileEntity)w.getTileEntity(coord)).direction = dir;
+		DrillBitTileEntity te = new DrillBitTileEntity();
+		te.direction = dir;
+		w.setTileEntity(coord, te);
 	}
 	
 	/**

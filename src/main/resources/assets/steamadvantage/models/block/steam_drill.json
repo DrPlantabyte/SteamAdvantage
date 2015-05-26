@@ -4,7 +4,7 @@
         "side": "steamadvantage:materials/bolted_iron",
         "top": "steamadvantage:blocks/steam_drill_top",
         "bottom": "steamadvantage:blocks/steam_drill_bottom",
-        "foot": "poweradvantage:materials/dark_steel",
+        "foot": "poweradvantage:materials/steel_dark",
         "particle": "steamadvantage:materials/iron"
     },
     "elements": [
