@@ -5,5 +5,13 @@ item.steamadvantage.steam_governor.name=Válvula de Controle de Vapor
 tile.steamadvantage.steam_pipe.name=Latão Tubo de Vapor
 tile.steamadvantage.steam_boiler_coal.name=Caldeira a Vapor
 tile.steamadvantage.steam_tank.name=Tanque Vapor
-tile.steamadvantage.steam_furnace.name=Psto Vapor Furnace
-tile.steamadvantage.steam_crusher.name=Psto Vapor Rocha Crusher
+tile.steamadvantage.steam_furnace.name=Psto Vapor Forno
+tile.steamadvantage.steam_crusher.name=Psto Vapor Rocha Afiador
+
+
+tile.steamadvantage.drillbit.name=Broca
+tile.steamadvantage.steam_drill.name=Psto Vapor Broca
+item.steamadvantage.steam_drill_bit.name=Broca
+death.attack.steam_machine=%1$s was ground between the gears of a machine
+death.attack.steam_machine.player=%1$s was fed into the gears of a machine by %2$s
+

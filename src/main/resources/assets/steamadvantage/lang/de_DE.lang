@@ -8,3 +8,9 @@ tile.steamadvantage.steam_tank.name=Dampftank
 tile.steamadvantage.steam_furnace.name=Dampfkraft Ofen
 tile.steamadvantage.steam_crusher.name=Dampfkraft Steinbrecher
 
+
+tile.steamadvantage.drillbit.name=Bohrer
+tile.steamadvantage.steam_drill.name=Dampfkraft Bohrmaschine
+item.steamadvantage.steam_drill_bit.name=Bohrer
+death.attack.steam_machine=%1$s wurde zwischen die Zahnräder einer Maschine geschliffen
+death.attack.steam_machine.player=%1$s wurde zwischen die Zahnräder einer Maschine von %2$s geschliffen

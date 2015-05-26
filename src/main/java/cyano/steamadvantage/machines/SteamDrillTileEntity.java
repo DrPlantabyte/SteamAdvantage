@@ -40,7 +40,6 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	}
 
 	
-	// TODO: fix the detect redstone logic in all other machines!
 
 	private boolean redstone = true;
 	@Override

@@ -7,3 +7,10 @@ tile.steamadvantage.steam_boiler_coal.name=증기 보일러
 tile.steamadvantage.steam_tank.name=스팀 탱크
 tile.steamadvantage.steam_furnace.name=증기 구동 전기로
 tile.steamadvantage.steam_crusher.name=증기 구동 록 크러셔
+
+
+tile.steamadvantage.drillbit.name=드릴 비트
+tile.steamadvantage.steam_drill.name=증기 구동 드릴
+item.steamadvantage.steam_drill_bit.name=드릴 비트
+death.attack.steam_machine=%1$s 기계의 기어 사이 분쇄
+death.attack.steam_machine.player=%1$s %2$s 에 의해 기계의 기어 사이에 분쇄

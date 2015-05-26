@@ -10,23 +10,23 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-// TODO: translations
 /* TODO list
  * + Coal-Fired Steam Boiler
  * + Boiler Tank
  * + Steam Conduit
  * + Steam Powered Rock Crusher
  * + Steam Powered Blast Furnace (expanded furnace 2x2)
- * --- push version 0.1 ---
- * - Steam Powered Drill
  * --- push version 1.0 ---
- * - pressure cooker (fuel-less furnace that only cooks food)
+ * + Steam Powered Drill
+ * --- push version 1.1 ---
+ * - pressure cooker (steam-only furnace that only cooks food)
  * - Musket (slow-loading ranged weapon)
  * - Bullets (smelt lead nuggets into grape-shot, loading a gun consumes 1 grape-shot and 1 gunpowder)
- * - Steam Powered Lift (pushes up special lift blocks, like an extendable piston)
  * - Steam Powered Machine Shop (automatable crafter)
  * - Steam Powered Defense Cannon (manual aiming and requires redstone trigger)
- * --- push version 1.1 ---
+ * --- push version 1.2 ---
+ * - Steam Powered Lift (pushes up special lift blocks, like an extendable piston)
+ * --- push version 1.3 ---
  * - Oil-Burning Steam Boiler
  * - Bioreactor (slowly makes liquid fuel from organic matter)
  */
@@ -50,8 +50,6 @@ public class SteamAdvantage
     {
     	Configuration config = new Configuration(event.getSuggestedConfigurationFile());
     	config.load();
-    	
-    	// TODO: flames on furnaces for random tick updates
     	
     	
     	config.save();

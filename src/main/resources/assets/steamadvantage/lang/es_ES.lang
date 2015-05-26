@@ -7,3 +7,10 @@ tile.steamadvantage.steam_boiler_coal.name=Caldera de Vapor con Carbón
 tile.steamadvantage.steam_tank.name=Tanque de Vapor
 tile.steamadvantage.steam_furnace.name=Vapor del Horno Accionado
 tile.steamadvantage.steam_crusher.name=Vapor Trituradora de Piedra Accionado
+
+
+tile.steamadvantage.drillbit.name=Broca
+tile.steamadvantage.steam_drill.name=Vapor Taladro Accionado
+item.steamadvantage.steam_drill_bit.name=Broca
+death.attack.steam_machine=%1$s se molió entre los engranajes de una máquina
+death.attack.steam_machine.player=%1$s se molió entre los engranajes de una máquina de %2$s

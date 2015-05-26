@@ -8,3 +8,9 @@ tile.steamadvantage.steam_tank.name=Steam Boiler Tank
 tile.steamadvantage.steam_furnace.name=Steam-Powered Furnace
 tile.steamadvantage.steam_crusher.name=Steam-Powered Rock Crusher
 
+
+tile.steamadvantage.drillbit.name=Drill
+tile.steamadvantage.steam_drill.name=Steam-Powered Drill
+item.steamadvantage.steam_drill_bit.name=Drill Bit
+death.attack.steam_machine=%1$s was ground between the gears of a machine
+death.attack.steam_machine.player=%1$s was fed into the gears of a machine by %2$s

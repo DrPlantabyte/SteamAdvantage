@@ -7,3 +7,9 @@ tile.steamadvantage.steam_boiler_coal.name=Caldaia di Vapore
 tile.steamadvantage.steam_tank.name=Carro a Vapore
 tile.steamadvantage.steam_furnace.name=Forno a Vapore Alimentata
 tile.steamadvantage.steam_crusher.name=Polverizzatore Masso a Vapore Alimentata
+
+tile.steamadvantage.drillbit.name=Trapano
+tile.steamadvantage.steam_drill.name=Trapano a Vapore
+item.steamadvantage.steam_drill_bit.name=Trapano
+death.attack.steam_machine=%1$s è stato macinato tra gli ingranaggi di una macchina
+death.attack.steam_machine.player=%1$s è stato macinato tra gli ingranaggi di una macchina di %2$s

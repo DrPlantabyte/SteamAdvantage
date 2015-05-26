@@ -7,3 +7,10 @@ tile.steamadvantage.steam_boiler_coal.name=蒸気ボイラ
 tile.steamadvantage.steam_tank.name=スチームタンク
 tile.steamadvantage.steam_furnace.name=蒸気動力炉
 tile.steamadvantage.steam_crusher.name=スチームパワードロッククラッシャー
+
+
+tile.steamadvantage.drillbit.name=ドリルビット
+tile.steamadvantage.steam_drill.name=蒸気ドリル
+item.steamadvantage.steam_drill_bit.name=ドリルビット
+death.attack.steam_machine=%1$s 機械の歯車の間に粉砕しました
+death.attack.steam_machine.player=%1$s %2$s による機械の歯車の間に粉砕し、

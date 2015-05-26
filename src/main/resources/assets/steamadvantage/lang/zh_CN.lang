@@ -7,3 +7,10 @@ tile.steamadvantage.steam_boiler_coal.name=蒸汽鍋爐
 tile.steamadvantage.steam_tank.name=蒸汽坦克
 tile.steamadvantage.steam_furnace.name=蒸汽動力爐
 tile.steamadvantage.steam_crusher.name=蒸汽動力岩石破碎機
+
+
+tile.steamadvantage.drillbit.name=鑽頭
+tile.steamadvantage.steam_drill.name=蒸汽動鑽
+item.steamadvantage.steam_drill_bit.name=鑽頭
+death.attack.steam_machine=%1$s是一台機器的齒輪之間的地面
+death.attack.steam_machine.player=%1$s是一機多用%2$s齒輪之間的地面
