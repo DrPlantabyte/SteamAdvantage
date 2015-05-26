@@ -41,7 +41,6 @@ public class DrillBitTileEntity extends TileEntity implements IUpdatePlayerListB
 		DrillBitTileEntity te = new DrillBitTileEntity();
 		te.direction = dir;
 		w.setTileEntity(coord, te);
-		FMLLog.info("Created drill bit at "+coord+" facing "+dir);// TODO: remove debug code
 	}
 	
 	/**
@@ -50,14 +49,12 @@ public class DrillBitTileEntity extends TileEntity implements IUpdatePlayerListB
 	public void destroyLine(){
 		this.destroy(this.direction);
 		this.destroy(this.direction.getOpposite());
-		FMLLog.info("destroy line");// TODO: remove debug code
 		getWorld().setBlockToAir(getPos()); // redundant because this is being called on block destruction
 	}
 	/**
 	 * destroys upstream drillbit
 	 */
 	private void destroy(EnumFacing f){
-		FMLLog.info("destroy "+f);// TODO: remove debug code
 		BlockPos coord = this.getPos().offset(f);
 		while(getWorld().getBlockState(coord).getBlock() == Blocks.drillbit){
 			getWorld().setBlockToAir(coord);

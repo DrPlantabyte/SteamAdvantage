@@ -161,12 +161,9 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 		}
 		redstone = hasRedstoneSignal();
 	}
-	
+
 	private boolean hasRedstoneSignal() {
-		for(int i = 0; i < EnumFacing.values().length; i++){
-			if(getWorld().getRedstonePower(getPos(), EnumFacing.values()[i]) > 0) return true;
-		}
-		return false;
+		return getWorld().isBlockPowered(getPos());
 	}
 
 

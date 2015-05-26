@@ -124,12 +124,8 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 	}
 
 	private boolean hasRedstoneSignal() {
-		for(int i = 0; i < EnumFacing.values().length; i++){
-			if(getWorld().getRedstonePower(getPos(), EnumFacing.values()[i]) > 0) return true;
-		}
-		return false;
+		return getWorld().isBlockPowered(getPos());
 	}
-	
 	
 	public float getProgressLevel(){
 		return (float)progress / (float)TICKS_PER_ACTION;

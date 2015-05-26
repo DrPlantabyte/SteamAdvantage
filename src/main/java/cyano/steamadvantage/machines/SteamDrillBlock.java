@@ -79,7 +79,6 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	private void destroyNeighbors(World w, BlockPos coord, IBlockState state) {
 		if(w.isRemote) return;
 		// destroy connected drill bits
-		FMLLog.info("destroy neighbors");// TODO: remove debug code
 		for(int i = 0; i < 6; i++){
 			BlockPos pos = coord.offset(EnumFacing.getFront(i));
 			if(w.getTileEntity(pos) instanceof DrillBitTileEntity){

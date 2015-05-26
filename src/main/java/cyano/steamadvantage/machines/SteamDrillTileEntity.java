@@ -39,17 +39,12 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		super(Power.steam_power, 50, RockCrusherTileEntity.class.getName());
 	}
 
-	// TODO: place drillbits when running
-	// TODO: remove drill bits when not running
-	// TODO: replaced broken drillbits
-	// TODO: mining
 	
 	// TODO: fix the detect redstone logic in all other machines!
 
 	private boolean redstone = true;
 	@Override
 	public void tickUpdate(boolean isServerWorld) {
-		// TODO Auto-generated method stub
 		if(isServerWorld){
 			if(deferred){
 				targetBlock(targetBlockCoord);
@@ -65,7 +60,6 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 					if(getEnergy() > ENERGY_COST_PROGRESS_TICK && hasSpaceForItems(targetBlockItems) && canMine(targetBlockCoord)){
 						this.subtractEnergy(ENERGY_COST_PROGRESS_TICK, Power.steam_power);
 						progress++;
-						FMLLog.info("progress: "+progress+"/"+progressGoal);// TODO: remove debug code
 						if(progress >= progressGoal){
 							// Mined it!
 							getWorld().playSoundEffect(targetBlockCoord.getX()+0.5, targetBlockCoord.getY()+0.5, targetBlockCoord.getZ()+0.5, targetBlock.stepSound.getBreakSound(), 0.5f, 1f);
@@ -170,7 +164,6 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		
 		redstone = hasRedstoneSignal();
 		
-		FMLLog.info("redstone = "+redstone);// TODO: remove debug code
 		
 		EnumFacing f = getFacing();
 		BlockPos n = getPos().offset(f);
@@ -186,10 +179,8 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 			this.untargetBlock();
 		} else {
 			// drill baby drill!
-			FMLLog.info("target coord in "+targetBlockCoord);// TODO: remove debug code
 			if(targetBlockCoord == null ){
 				// find new block
-				FMLLog.info("looking for new block");// TODO: remove debug code
 				for(int i = 0; i < MAX_RANGE && n.getY() >= 0 && n.getY() <= 255; i++){
 					if(getWorld().getBlockState(n).getBlock() != Blocks.drillbit){
 						if(getWorld().isAirBlock(n) || getWorld().getBlockState(n).getBlock().isReplaceable(getWorld(), n)){
@@ -213,7 +204,6 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 				// do nothing
 			} else {
 				// currently drilling a block
-				FMLLog.info("checking current block target");// TODO: remove debug code
 				// block validation
 				if(getWorld().isAirBlock(targetBlockCoord) || getWorld().getBlockState(targetBlockCoord).getBlock() != targetBlock){
 					// Block changed! invalidate!
@@ -229,24 +219,20 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	}
 	
 	private void targetBlock (BlockPos n){
-		FMLLog.info("targeting "+n);// TODO: remove debug code
 		progress = 0;
 		targetBlockCoord = n;
 		progressGoal = this.getBlockStrength(n);
 		targetBlock = getWorld().getBlockState(n).getBlock();
 		targetBlockItems = targetBlock.getDrops(getWorld(), n, getWorld().getBlockState(n), 0);
 		deferred = false;
-		FMLLog.info("block target: "+targetBlock.getUnlocalizedName()+", hardness "+targetBlock.getBlockHardness(getWorld(), n));// TODO: remove debug code
 	}
 	
 	private void deferredTargetBlock (BlockPos n){
-		FMLLog.info("deferreed targeting "+n);// TODO: remove debug code
 		targetBlockCoord = n;
 		deferred = true;
 	}
 	
 	private void untargetBlock(){
-		FMLLog.info("untargeting "+targetBlockCoord);// TODO: remove debug code
 		progress = 0;
 		progressGoal = 0;
 		targetBlockCoord = null;
