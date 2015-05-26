@@ -3,10 +3,16 @@ package cyano.steamadvantage.machines;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.common.FMLLog;
 import cyano.steamadvantage.blocks.DrillBitTileEntity;
 import cyano.steamadvantage.init.Blocks;
 import cyano.steamadvantage.init.Power;
@@ -16,6 +22,7 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	public static final int MAX_RANGE = 64;
 	public static final float ENERGY_COST_DRILLBIT = 2.5f;
 	public static final float ENERGY_COST_PROGRESS_TICK = 1f;
+	public static float MINING_SPEED = 100.0f;
 	
 	private final ItemStack[] inventory = new ItemStack[5];
 	private final int[] dataSyncArray = new int[3];
@@ -24,6 +31,9 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	private BlockPos targetBlockCoord = null;
 	private Block targetBlock = null;
 	private List<ItemStack> targetBlockItems = null;
+
+	private final ItemPickaxe fauxPick = (ItemPickaxe)net.minecraft.init.Items.diamond_pickaxe;
+	private final ItemStack fauxPickStack = new ItemStack(fauxPick,1);
 			
 	public SteamDrillTileEntity() {
 		super(Power.steam_power, 50, RockCrusherTileEntity.class.getName());
@@ -33,6 +43,8 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	// TODO: remove drill bits when not running
 	// TODO: replaced broken drillbits
 	// TODO: mining
+	
+	// TODO: fix the detect redstone logic in all other machines!
 
 	private boolean redstone = true;
 	@Override
@@ -47,9 +59,10 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 			} else {
 				if(targetBlockCoord != null){
 					// mining time
-					if(getEnergy() > ENERGY_COST_PROGRESS_TICK && hasSpaceForItems(targetBlockItems)){
+					if(getEnergy() > ENERGY_COST_PROGRESS_TICK && hasSpaceForItems(targetBlockItems) && canMine(targetBlockCoord)){
 						this.subtractEnergy(ENERGY_COST_PROGRESS_TICK, Power.steam_power);
 						progress++;
+						FMLLog.info("progress: "+progress+"/"+progressGoal);// TODO: remove debug code
 						if(progress >= progressGoal){
 							// Mined it!
 							getWorld().setBlockToAir(targetBlockCoord);
@@ -139,58 +152,73 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		this.progress = dataSyncArray[1];
 		progressGoal = dataSyncArray[2];
 	}
-	
+	private float oldEnergy = 0;
+	private int oldProgress = 0;
 	@Override public void powerUpdate(){
 		super.powerUpdate();
+		boolean flagSync = progress != oldProgress || oldEnergy != getEnergy();
+		oldProgress = progress;
+		oldEnergy = getEnergy();
 		
 		redstone = hasRedstoneSignal();
+		
+		FMLLog.info("redstone = "+redstone);// TODO: remove debug code
 		
 		EnumFacing f = getFacing();
 		BlockPos n = getPos().offset(f);
 		
 		// manage drill bits and find next block
-		if(this.getEnergy() <= 0){
+		if(redstone || this.getEnergy() <= 0){
 			// no power, destroy drill
 			while(getWorld().getBlockState(n).getBlock() == cyano.steamadvantage.init.Blocks.drillbit){
 				getWorld().setBlockToAir(n);
 				n = n.offset(f);
+				flagSync = true;
 			}
 		} else {
-			if(redstone) return; // disabled by redstone
 			// drill baby drill!
+			FMLLog.info("target coord in "+targetBlockCoord);// TODO: remove debug code
 			if(targetBlockCoord == null ){
 				// find new block
-				for(int i = 0; i < MAX_RANGE; i++){
+				FMLLog.info("looking for new block");// TODO: remove debug code
+				for(int i = 0; i < MAX_RANGE && n.getY() >= 0 && n.getY() <= 255; i++){
 					if(getWorld().getBlockState(n).getBlock() != Blocks.drillbit){
 						if(getWorld().isAirBlock(n) || getWorld().getBlockState(n).getBlock().isReplaceable(getWorld(), n)){
 							// this block is not worth mining, replace it
 							DrillBitTileEntity.createDrillBitBlock(getWorld(), n, f);
 							this.subtractEnergy(ENERGY_COST_DRILLBIT, Power.steam_power);
-							return;
+							flagSync = true;
+							break;
 						} else {
 							// found a block!
 							targetBlock(n);
-							
-							return;
+							flagSync = true;
+							break;
 						}
 					}
 					n = n.offset(f);
 				}
 				// hit end of range
 				// do nothing
-				return;
 			} else {
 				// currently drilling a block
+				FMLLog.info("checking current block target");// TODO: remove debug code
 				// block validation
 				if(getWorld().isAirBlock(targetBlockCoord) || getWorld().getBlockState(targetBlockCoord).getBlock() != targetBlock){
 					// Block changed! invalidate!
 					untargetBlock();
+					flagSync = true;
 				}
 			}
+		}
+		
+		if(flagSync){
+			this.sync();
 		}
 	}
 	
 	private void targetBlock (BlockPos n){
+		FMLLog.info("targeting "+n);// TODO: remove debug code
 		progress = 0;
 		targetBlockCoord = n;
 		progressGoal = this.getBlockStrength(n);
@@ -199,6 +227,7 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	}
 	
 	private void untargetBlock(){
+		FMLLog.info("untargeting "+targetBlockCoord);// TODO: remove debug code
 		progress = 0;
 		progressGoal = 0;
 		targetBlockCoord = null;
@@ -217,17 +246,22 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	}
 	
 	private boolean hasRedstoneSignal() {
-		for(int i = 0; i < EnumFacing.values().length; i++){
-			if(getWorld().getRedstonePower(getPos(), EnumFacing.values()[i]) > 0) return true;
-		}
-		return false;
+		return getWorld().isBlockPowered(getPos());
+	}
+	
+	private boolean canMine(BlockPos coord){
+		return getWorld().getBlockState(coord).getBlock() != net.minecraft.init.Blocks.bedrock;
 	}
 	
 	private int getBlockStrength(BlockPos coord){
-		if(worldObj.isAirBlock(coord)){
+		if(getWorld().isAirBlock(coord)){
 			return 0;
 		}
-		return (int)(getWorld().getBlockState(getPos()).getBlock().getBlockHardness(getWorld(), coord) * 30);
+		IBlockState state = getWorld().getBlockState(coord);
+		ItemStack stack = fauxPickStack;
+		float f = stack.getItem().getDigSpeed(stack, state);
+
+		return (int)(MINING_SPEED / (f < 0 ? 0 : f));
 	}
 	
 

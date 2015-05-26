@@ -19,6 +19,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -30,6 +31,7 @@ import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.PoweredEntity;
 import cyano.poweradvantage.api.simple.TileEntitySimplePowerConsumer;
 import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
+import cyano.steamadvantage.blocks.DrillBitTileEntity;
 import cyano.steamadvantage.init.Power;
 
 public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
@@ -59,6 +61,7 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	@Override
 	public void onBlockDestroyedByPlayer(World w, BlockPos coord, IBlockState state){
 		super.onBlockDestroyedByPlayer(w, coord, state);
+		destroyNeighbors(w,coord,w.getBlockState(coord));
 		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimensionId(), coord, getType());
 	}
 	/**
@@ -67,7 +70,23 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	@Override
 	public void onBlockDestroyedByExplosion(World w, BlockPos coord, Explosion boom){
 		super.onBlockDestroyedByExplosion(w, coord, boom);
+		destroyNeighbors(w,coord,w.getBlockState(coord));
 		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimensionId(), coord, getType());
+	}
+	
+
+	
+	private void destroyNeighbors(World w, BlockPos coord, IBlockState state) {
+		if(w.isRemote) return;
+		// destroy connected drill bits
+		FMLLog.info("destroy neighbors");// TODO: remove debug code
+		for(int i = 0; i < 6; i++){
+			BlockPos pos = coord.offset(EnumFacing.getFront(i));
+			if(w.getTileEntity(pos) instanceof DrillBitTileEntity){
+				DrillBitTileEntity te = (DrillBitTileEntity)w.getTileEntity(pos);
+				te.destroyLine();
+			}
+		}
 	}
 	/**
 	 * Creates a TileEntity for this block when the block is placed into the 

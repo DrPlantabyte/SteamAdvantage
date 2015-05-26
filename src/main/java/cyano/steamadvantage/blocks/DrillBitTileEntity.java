@@ -30,47 +30,31 @@ public class DrillBitTileEntity extends TileEntity implements IUpdatePlayerListB
 	}
 	
 	public static void createDrillBitBlock(World w, BlockPos coord, EnumFacing dir){
-		w.setBlockState(coord, DrillBitBlock.getStateById(0));
+		w.setBlockState(coord, cyano.steamadvantage.init.Blocks.drillbit.getDefaultState());
 		DrillBitTileEntity te = new DrillBitTileEntity();
 		te.direction = dir;
 		w.setTileEntity(coord, te);
+		FMLLog.info("Created drill bit at "+coord+" facing "+dir);// TODO: remove debug code
 	}
 	
 	/**
 	 * Destroys all drillbits connected to this one
 	 */
 	public void destroyLine(){
-		this.destroyUp();
-		this.destroyDown();
+		this.destroy(this.direction);
+		this.destroy(this.direction.getOpposite());
 		FMLLog.info("destroy line");// TODO: remove debug code
 		getWorld().setBlockToAir(getPos()); // redundant because this is being called on block destruction
 	}
 	/**
 	 * destroys upstream drillbit
 	 */
-	private void destroyUp(){
-		FMLLog.info("destroy up");// TODO: remove debug code
-		BlockPos coord = this.getPos().offset(this.direction.getOpposite());
-		TileEntity n = getWorld().getTileEntity(coord);
-		if(n instanceof DrillBitTileEntity){
-			((DrillBitTileEntity)n).destroyUp();
-		}
-		if(getWorld().getBlockState(coord).getBlock() == Blocks.drillbit){
+	private void destroy(EnumFacing f){
+		FMLLog.info("destroy "+f);// TODO: remove debug code
+		BlockPos coord = this.getPos().offset(f);
+		while(getWorld().getBlockState(coord).getBlock() == Blocks.drillbit){
 			getWorld().setBlockToAir(coord);
-		}
-	}
-	/**
-	 * destroys downstream drillbit
-	 */
-	private void destroyDown(){
-		FMLLog.info("destroy down");// TODO: remove debug code
-		BlockPos coord = this.getPos().offset(this.direction);
-		TileEntity n = getWorld().getTileEntity(coord);
-		if(n instanceof DrillBitTileEntity){
-			((DrillBitTileEntity)n).destroyUp();
-		}
-		if(getWorld().getBlockState(coord).getBlock() == Blocks.drillbit){
-			getWorld().setBlockToAir(coord);
+			coord = coord.offset(f);
 		}
 	}
 	
