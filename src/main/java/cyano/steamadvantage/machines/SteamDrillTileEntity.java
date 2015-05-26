@@ -22,7 +22,7 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	public static final int MAX_RANGE = 64;
 	public static final float ENERGY_COST_DRILLBIT = 2.5f;
 	public static final float ENERGY_COST_PROGRESS_TICK = 1f;
-	public static float MINING_SPEED = 100.0f;
+	public static float MINING_TIME_FACTOR = 12.0f;
 	
 	private final ItemStack[] inventory = new ItemStack[5];
 	private final int[] dataSyncArray = new int[3];
@@ -32,9 +32,9 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	private Block targetBlock = null;
 	private List<ItemStack> targetBlockItems = null;
 
-	private final ItemPickaxe fauxPick = (ItemPickaxe)net.minecraft.init.Items.diamond_pickaxe;
-	private final ItemStack fauxPickStack = new ItemStack(fauxPick,1);
-			
+	
+	private boolean deferred = false;
+	
 	public SteamDrillTileEntity() {
 		super(Power.steam_power, 50, RockCrusherTileEntity.class.getName());
 	}
@@ -51,6 +51,9 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	public void tickUpdate(boolean isServerWorld) {
 		// TODO Auto-generated method stub
 		if(isServerWorld){
+			if(deferred){
+				targetBlock(targetBlockCoord);
+			}
 			// disabled by redstone
 			if(redstone){
 				if (progress > 0){
@@ -65,6 +68,8 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 						FMLLog.info("progress: "+progress+"/"+progressGoal);// TODO: remove debug code
 						if(progress >= progressGoal){
 							// Mined it!
+							getWorld().playSoundEffect(targetBlockCoord.getX()+0.5, targetBlockCoord.getY()+0.5, targetBlockCoord.getZ()+0.5, targetBlock.stepSound.getBreakSound(), 0.5f, 1f);
+							getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "random.fizz", 0.5f, 1f);
 							getWorld().setBlockToAir(targetBlockCoord);
 							for(ItemStack item : targetBlockItems){
 								addItem(item);
@@ -155,6 +160,9 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	private float oldEnergy = 0;
 	private int oldProgress = 0;
 	@Override public void powerUpdate(){
+		if(deferred){
+			targetBlock(targetBlockCoord);
+		}
 		super.powerUpdate();
 		boolean flagSync = progress != oldProgress || oldEnergy != getEnergy();
 		oldProgress = progress;
@@ -175,6 +183,7 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 				n = n.offset(f);
 				flagSync = true;
 			}
+			this.untargetBlock();
 		} else {
 			// drill baby drill!
 			FMLLog.info("target coord in "+targetBlockCoord);// TODO: remove debug code
@@ -185,13 +194,15 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 					if(getWorld().getBlockState(n).getBlock() != Blocks.drillbit){
 						if(getWorld().isAirBlock(n) || getWorld().getBlockState(n).getBlock().isReplaceable(getWorld(), n)){
 							// this block is not worth mining, replace it
-							DrillBitTileEntity.createDrillBitBlock(getWorld(), n, f);
+							getWorld().setBlockState(n, Blocks.drillbit.getDefaultState());
 							this.subtractEnergy(ENERGY_COST_DRILLBIT, Power.steam_power);
 							flagSync = true;
 							break;
 						} else {
 							// found a block!
-							targetBlock(n);
+							if(canMine(n)){
+								targetBlock(n);
+							}
 							flagSync = true;
 							break;
 						}
@@ -224,6 +235,14 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		progressGoal = this.getBlockStrength(n);
 		targetBlock = getWorld().getBlockState(n).getBlock();
 		targetBlockItems = targetBlock.getDrops(getWorld(), n, getWorld().getBlockState(n), 0);
+		deferred = false;
+		FMLLog.info("block target: "+targetBlock.getUnlocalizedName()+", hardness "+targetBlock.getBlockHardness(getWorld(), n));// TODO: remove debug code
+	}
+	
+	private void deferredTargetBlock (BlockPos n){
+		FMLLog.info("deferreed targeting "+n);// TODO: remove debug code
+		targetBlockCoord = n;
+		deferred = true;
 	}
 	
 	private void untargetBlock(){
@@ -257,11 +276,8 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		if(getWorld().isAirBlock(coord)){
 			return 0;
 		}
-		IBlockState state = getWorld().getBlockState(coord);
-		ItemStack stack = fauxPickStack;
-		float f = stack.getItem().getDigSpeed(stack, state);
-
-		return (int)(MINING_SPEED / (f < 0 ? 0 : f));
+		Block block = getWorld().getBlockState(coord).getBlock();
+		return (int)(Math.max(MINING_TIME_FACTOR * block.getBlockHardness(getWorld(), coord),0.5f * MINING_TIME_FACTOR));
 	}
 	
 
@@ -286,7 +302,12 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 			int x = tagRoot.getInteger("targetX");
 			int y = tagRoot.getInteger("targetY");
 			int z = tagRoot.getInteger("targetZ");
-			this.targetBlock(new BlockPos(x,y,z));
+			// Note: world object for tile entities is set AFTER loading them from NBT
+			if(getWorld() == null){
+				this.deferredTargetBlock(new BlockPos(x,y,z));
+			} else {
+				this.targetBlock(new BlockPos(x,y,z));
+			}
 		}
 	}
 

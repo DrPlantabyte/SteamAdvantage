@@ -25,6 +25,10 @@ public class DrillBitTileEntity extends TileEntity implements IUpdatePlayerListB
 			rotation = ROTATION_PER_TICK * (getWorld().getTotalWorldTime() % 20);
 		}
 	}
+	public void setDirection(EnumFacing dir){
+		this.direction = dir;
+	}
+	
 	public EnumFacing.Axis getDirection(){
 		return direction.getAxis();
 	}
