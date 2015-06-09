@@ -34,30 +34,34 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 		dependencies = "required-after:poweradvantage;required-after:basemetals")
 public class SteamAdvantage
 {/** The identifier for this mod */
-    public static final String MODID = "steamadvantage";
-    /** The display name for this mod */
-    public static final String NAME = "Steam Advantage";
-    /** The version of this mod, in the format major.minor.update */
-    public static final String VERSION = "1.1.1";
-    
-    /**
-     * Pre-initialization step. Used for initializing objects and reading the 
-     * config file
-     * @param event FML event object
-     */
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
-    	Configuration config = new Configuration(event.getSuggestedConfigurationFile());
-    	config.load();
-    	
-    	
-    	config.save();
-    	
-    	Blocks.init();
-    	Items.init();
-		    	
-    	if(event.getSide() == Side.CLIENT){
+	public static final String MODID = "steamadvantage";
+	/** The display name for this mod */
+	public static final String NAME = "Steam Advantage";
+	/** The version of this mod, in the format major.minor.update */
+	public static final String VERSION = "1.2.0";
+
+	public static float MUSKET_DAMAGE = 20;
+
+	/**
+	 * Pre-initialization step. Used for initializing objects and reading the 
+	 * config file
+	 * @param event FML event object
+	 */
+	@EventHandler
+	public void preInit(FMLPreInitializationEvent event)
+	{
+		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
+		config.load();
+
+		MUSKET_DAMAGE = config.getFloat("musket_damage", "options", MUSKET_DAMAGE, 0, 100, 
+				"This is the amount of damage dealt by a shot from a blackpowder musket");
+
+		config.save();
+
+		Blocks.init();
+		Items.init();
+
+		if(event.getSide() == Side.CLIENT){
 			clientPreInit(event);
 		}
 		if(event.getSide() == Side.SERVER){
@@ -74,14 +78,14 @@ public class SteamAdvantage
 		// client-only code
 	}
 	/**
-     * Initialization step. Used for adding renderers and most content to the 
-     * game
-     * @param event FML event object
-     */
-    @EventHandler
-    public void init(FMLInitializationEvent event)
-    {
-    	Recipes.init();
+	 * Initialization step. Used for adding renderers and most content to the 
+	 * game
+	 * @param event FML event object
+	 */
+	@EventHandler
+	public void init(FMLInitializationEvent event)
+	{
+		Recipes.init();
 		Entities.init();
 		GUI.init();
 		TreasureChests.init();
@@ -107,17 +111,17 @@ public class SteamAdvantage
 	private void serverInit(FMLInitializationEvent event){
 		// client-only code
 	}
-	
+
 	/**
-     * Post-initialization step. Used for cross-mod options
-     * @param event FML event object
-     */
-    @EventHandler
-    public void postInit(FMLPostInitializationEvent event)
-    {
-    	
-    }
-	
+	 * Post-initialization step. Used for cross-mod options
+	 * @param event FML event object
+	 */
+	@EventHandler
+	public void postInit(FMLPostInitializationEvent event)
+	{
+
+	}
+
 
 	@SideOnly(Side.CLIENT)
 	private void clientPostInit(FMLPostInitializationEvent event){

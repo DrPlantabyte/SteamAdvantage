@@ -21,6 +21,9 @@ public abstract class Items {
 
 	public static Item steam_governor;
 	public static Item steam_drill_bit;
+	public static Item blackpowder_cartridge;
+	public static Item blackpowder_musket_unloaded;
+	public static Item blackpowder_musket_loaded;
 	
 	
 	private static boolean initDone = false;

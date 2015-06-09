@@ -14,3 +14,7 @@ tile.steamadvantage.steam_drill.name=Steam-Powered Drill
 item.steamadvantage.steam_drill_bit.name=Drill Bit
 death.attack.steam_machine=%1$s was ground between the gears of a machine
 death.attack.steam_machine.player=%1$s was fed into the gears of a machine by %2$s
+
+
+death.attack.musket=%1$s got shot
+death.attack.musket.player=%2$s shot %1$s dead
