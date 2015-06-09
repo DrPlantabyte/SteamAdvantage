@@ -13,6 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import cyano.steamadvantage.SteamAdvantage;
+import cyano.steamadvantage.items.MusketItem;
 
 public abstract class Items {
 
@@ -33,6 +34,7 @@ public abstract class Items {
 		steam_governor = addItem("steam_governor",new Item(),"governor","governorBrass");
 		steam_drill_bit = addItem("steam_drill_bit",new Item());
 		blackpowder_cartridge = addItem("blackpowder_cartridge",new Item(),"ammoBlackpowder");
+		blackpowder_musket = addItem("musket",new MusketItem(),"gun");
 		
 		initDone = true;
 	}

@@ -56,7 +56,7 @@ public class SteamAdvantage
 
 		MUSKET_DAMAGE = config.getFloat("musket_damage", "options", MUSKET_DAMAGE, 0, 100, 
 				"This is the amount of damage dealt by a shot from a blackpowder musket");
-		MUSKET_RELOAD = config.getInt("musket_damage", "options", MUSKET_RELOAD, 20, 15*20, 
+		MUSKET_RELOAD = config.getInt("musket_reload_time", "options", MUSKET_RELOAD, 20, 15*20, 
 				"This is the amount of time (in game update ticks) that it takes to reload a musket.\n"+
 				"Note that 20 ticks is 1 second of real time");
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -11,21 +12,24 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.StatCollector;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.oredict.OreDictionary;
 
 import com.google.common.collect.Multimap;
 
 import cyano.steamadvantage.SteamAdvantage;
+import cyano.steamadvantage.init.Power;
 
 public class MusketItem extends net.minecraft.item.Item{
 	
 	public static final String NBT_DATA_KEY_LOADED = "loaded";
-
-	private static final int maxBowUseTime = 72000;
-	private static final int minAimTime = 8;
+	public static final double MAX_RANGE = 64;
+	
 	
 	public MusketItem(){
 		super();
@@ -46,21 +50,23 @@ public class MusketItem extends net.minecraft.item.Item{
 	
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack){
-		if(isLoaded(stack)){
-			return EnumAction.BOW;
+		if(isNotLoaded(stack)){
+			return EnumAction.BLOCK;
 		} else {
-			return EnumAction.EAT;
+			return EnumAction.NONE;
 		}
 	}
 	
 	@Override
 	public ItemStack onItemRightClick(ItemStack srcItemStack, World world, EntityPlayer playerEntity){
 		if(isLoaded(srcItemStack)){
-			// use like a bow
-			playerEntity.setItemInUse(srcItemStack, maxBowUseTime);
+			// use normal item
+			FMLLog.info("pulled the trigger"); // TODO: remove debug code
+			fire(srcItemStack,playerEntity,world);
 		} else if(hasAmmo(playerEntity,srcItemStack)){
 			// reload time
 			playerEntity.setItemInUse(srcItemStack, getReloadTime());
+			FMLLog.info("using like something else"); // TODO: remove debug code
 		}
 		return srcItemStack;
 	}
@@ -72,45 +78,58 @@ public class MusketItem extends net.minecraft.item.Item{
 	@Override
 	public ItemStack onItemUseFinish (ItemStack srcItemStack, World world, EntityPlayer playerEntity)
 	{ // 
+		FMLLog.info("item use finish"); // TODO: remove debug code
 		if(!isLoaded(srcItemStack) && hasAmmo(playerEntity,srcItemStack)){
+			FMLLog.info("doing reload"); // TODO: remove debug code
 			decrementAmmo(playerEntity);
 			playSound("random.click",world,playerEntity);
-			playerEntity.stopUsingItem();
-			load(srcItemStack);
-		} else if(isLoaded(srcItemStack)){
-			fire(srcItemStack,playerEntity,world);
+			startLoad(srcItemStack);
 		}
-		
 		return srcItemStack;
 	}
 	
-	private void fire(ItemStack srcItemStack, EntityPlayer playerEntity,
+	@Override
+	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityPlayer playerIn, int timeLeft) {
+		FMLLog.info("player stopped using"); // TODO: remove debug code
+		if(isAlmostLoaded(stack)){
+			finishLoad(stack);
+		}
+	}
+	
+	protected void fire(ItemStack srcItemStack, EntityPlayer playerEntity,
 			World world) {
-		NBTTagCompound data = srcItemStack.getTagCompound();
-		if(data != null){
-			data.setBoolean(NBT_DATA_KEY_LOADED, false);
+		unload(srcItemStack);
+		if(world.isRemote){
+			playerEntity.setAngles(playerEntity.rotationYaw, Math.min(90f,playerEntity.rotationPitch+15));
+			return;
 		}
-		// TODO shoot bullet
-		if(world.isRemote)playerEntity.setAngles(playerEntity.rotationYaw, Math.min(90f,playerEntity.rotationPitch+15));
+		Vec3 start = new Vec3(playerEntity.posX, playerEntity.posY+playerEntity.getEyeHeight(),playerEntity.posZ);
+		Vec3 lookVector = playerEntity.getLookVec();
+		Vec3 end = start.addVector(MAX_RANGE * lookVector.xCoord, MAX_RANGE * lookVector.yCoord, MAX_RANGE * lookVector.zCoord);
+		MovingObjectPosition rayTrace = world.rayTraceBlocks(start, end,true,true,false);
+		if(rayTrace.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY && rayTrace.entityHit instanceof EntityLivingBase){
+			EntityLivingBase e = (EntityLivingBase)rayTrace.entityHit;
+			e.attackEntityFrom(Power.musket_damage, getShotDamage());
+			FMLLog.info("hit a "+e.getClass()); // TODO: remove debug code
+		} else if(rayTrace.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK){
+			world.playSoundEffect(rayTrace.hitVec.xCoord, rayTrace.hitVec.yCoord, rayTrace.hitVec.zCoord, 
+					"dig.snow", 0.5f, 1f);
+			FMLLog.info("hit block at "+rayTrace.getBlockPos()); // TODO: remove debug code
+		}
+		if(rayTrace.typeOfHit != MovingObjectPosition.MovingObjectType.MISS && rayTrace.hitVec != null){
+			world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, 
+					rayTrace.hitVec.xCoord, rayTrace.hitVec.yCoord, rayTrace.hitVec.zCoord,
+					0, 0, 0);
+		}
 		playSound("fire.ignite",world,playerEntity);
+		FMLLog.info("ka-pow!"); // TODO: remove debug code
 		playSound("ambient.weather.thunder",world,playerEntity);
+		world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, playerEntity.posX, playerEntity.posY+1.2, playerEntity.posZ,
+				0, 0, 0);
 	}
 
 
-	/**
-	 * Called when the player stops using an Item (stops holding the right mouse button).
-	 *  
-	 * @param timeLeft The amount of ticks left before the using would have been complete
-	 */
-	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityPlayer playerIn, int timeLeft)
-	{
-		int timeUsed = this.getMaxItemUseDuration(stack) - timeLeft;
-		if(isLoaded(stack)){
-			if(timeUsed > minAimTime){
-				fire(stack,playerIn,worldIn);
-			}
-		}
-	}
+	
 	
 	@Override
 	public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker)
@@ -127,15 +146,58 @@ public class MusketItem extends net.minecraft.item.Item{
 		}
 	}
 	
-	public static void load(ItemStack musket){
-		NBTTagCompound data = new NBTTagCompound();
-		data.setBoolean(NBT_DATA_KEY_LOADED, true);
+	public static void startLoad(ItemStack musket){
+		NBTTagCompound data;
+		if(musket.hasTagCompound()){
+			data = musket.getTagCompound();
+		} else {
+			data = new NBTTagCompound();
+		}
+		data.setByte(NBT_DATA_KEY_LOADED, (byte)2);
+		musket.setTagCompound(data);
+		FMLLog.info("gun partially loaded"); // TODO: remove debug code
+	}
+	
+	public static void finishLoad(ItemStack musket){
+		NBTTagCompound data;
+		if(musket.hasTagCompound()){
+			data = musket.getTagCompound();
+		} else {
+			data = new NBTTagCompound();
+		}
+		data.setByte(NBT_DATA_KEY_LOADED, (byte)1);
+		musket.setTagCompound(data);
+		FMLLog.info("gun fully loaded"); // TODO: remove debug code
+	}
+	
+	public static void unload(ItemStack musket){
+		NBTTagCompound data;
+		if(musket.hasTagCompound()){
+			data = musket.getTagCompound();
+		} else {
+			data = new NBTTagCompound();
+		}
+		data.setByte(NBT_DATA_KEY_LOADED, (byte)0);
+		musket.setTagCompound(data);
+		FMLLog.info("gun unloaded"); // TODO: remove debug code
 	}
 	
 	public static boolean isLoaded(ItemStack musket){
 		NBTTagCompound data = musket.getTagCompound();
 		if(data == null) return false;
-		return data.hasKey(NBT_DATA_KEY_LOADED) && data.getBoolean(NBT_DATA_KEY_LOADED);
+		return data.hasKey(NBT_DATA_KEY_LOADED) && data.getByte(NBT_DATA_KEY_LOADED) == 1;
+	}
+	
+	public static boolean isNotLoaded(ItemStack musket){
+		NBTTagCompound data = musket.getTagCompound();
+		if(data == null) return false;
+		return data.hasKey(NBT_DATA_KEY_LOADED) && data.getByte(NBT_DATA_KEY_LOADED) == 0;
+	}
+	
+	public static boolean isAlmostLoaded(ItemStack musket){
+		NBTTagCompound data = musket.getTagCompound();
+		if(data == null) return false;
+		return data.hasKey(NBT_DATA_KEY_LOADED) && data.getByte(NBT_DATA_KEY_LOADED) == 2;
 	}
 
 
@@ -157,6 +219,7 @@ public class MusketItem extends net.minecraft.item.Item{
 	
 
 	public static void decrementAmmo(EntityPlayer playerEntity) {
+		FMLLog.info("subtracting ammo"); // TODO: remove debug code
 		if (playerEntity.capabilities.isCreativeMode) return;
 		List<ItemStack> ammoItems = OreDictionary.getOres("ammoBlackpowder");
 		for(int i = 0; i < playerEntity.inventory.mainInventory.length; i++){
