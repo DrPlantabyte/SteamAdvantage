@@ -41,6 +41,7 @@ public class SteamAdvantage
 	public static final String VERSION = "1.2.0";
 
 	public static float MUSKET_DAMAGE = 20;
+	public static int MUSKET_RELOAD = 20*5;
 
 	/**
 	 * Pre-initialization step. Used for initializing objects and reading the 
@@ -55,6 +56,9 @@ public class SteamAdvantage
 
 		MUSKET_DAMAGE = config.getFloat("musket_damage", "options", MUSKET_DAMAGE, 0, 100, 
 				"This is the amount of damage dealt by a shot from a blackpowder musket");
+		MUSKET_RELOAD = config.getInt("musket_damage", "options", MUSKET_RELOAD, 20, 15*20, 
+				"This is the amount of time (in game update ticks) that it takes to reload a musket.\n"+
+				"Note that 20 ticks is 1 second of real time");
 
 		config.save();
 

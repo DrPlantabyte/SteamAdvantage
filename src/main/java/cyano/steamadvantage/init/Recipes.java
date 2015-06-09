@@ -51,6 +51,9 @@ public class Recipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(Blocks.steam_tank,"xgx","xpx","xxx",'x',"plateCopper",'p',"conduitSteam",'g',"governor"));
 		
 		
+		GameRegistry.addRecipe(new ShapedOreRecipe(Items.blackpowder_cartridge,"L","g","p",'L',"nuggetLead",'g',net.minecraft.init.Items.gunpowder,'p',net.minecraft.init.Items.paper));
+		
+		
 		initDone = true;
 	}
 

@@ -22,8 +22,7 @@ public abstract class Items {
 	public static Item steam_governor;
 	public static Item steam_drill_bit;
 	public static Item blackpowder_cartridge;
-	public static Item blackpowder_musket_unloaded;
-	public static Item blackpowder_musket_loaded;
+	public static Item blackpowder_musket;
 	
 	
 	private static boolean initDone = false;
@@ -33,6 +32,7 @@ public abstract class Items {
 
 		steam_governor = addItem("steam_governor",new Item(),"governor","governorBrass");
 		steam_drill_bit = addItem("steam_drill_bit",new Item());
+		blackpowder_cartridge = addItem("blackpowder_cartridge",new Item(),"ammoBlackpowder");
 		
 		initDone = true;
 	}
