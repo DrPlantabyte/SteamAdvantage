@@ -20,8 +20,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * + Steam Powered Drill
  * --- push version 1.1 ---
  * - pressure cooker (steam-only furnace that only cooks food)
- * - Musket (slow-loading ranged weapon)
- * - Bullets (smelt lead nuggets into grape-shot, loading a gun consumes 1 grape-shot and 1 gunpowder)
+ * + Musket (slow-loading ranged weapon)
+ * + Bullets (smelt lead nuggets into grape-shot, loading a gun consumes 1 grape-shot and 1 gunpowder)
  * - Steam Powered Machine Shop (automatable crafter)
  * - Steam Powered Defense Cannon (manual aiming and requires redstone trigger)
  * --- push version 1.2 ---

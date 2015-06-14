@@ -25,6 +25,8 @@ public abstract class Blocks {
 	public static GUIBlock steam_furnace;
 	public static GUIBlock steam_tank;
 	public static GUIBlock steam_drill;
+	public static GUIBlock steam_elevator;
+	public static GUIBlock steam_elevator_platform;
 	public static Block steam_pipe;
 	public static Block drillbit;
 	
