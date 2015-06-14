@@ -64,7 +64,6 @@ public class MusketItem extends net.minecraft.item.Item{
 	
 	@Override
 	public ItemStack onItemRightClick(ItemStack srcItemStack, World world, EntityPlayer playerEntity){
-		FMLLog.info("onItemRightClick, using for "+ this.getMaxItemUseDuration(srcItemStack)+" ticks"); // TODO: remove debug code
 		playerEntity.setItemInUse(srcItemStack, this.getMaxItemUseDuration(srcItemStack));
 		return srcItemStack;
 	}
@@ -83,9 +82,7 @@ public class MusketItem extends net.minecraft.item.Item{
 	@Override
 	public ItemStack onItemUseFinish (ItemStack srcItemStack, World world, EntityPlayer playerEntity)
 	{ // 
-		FMLLog.info("onItemUseFinish"); // TODO: remove debug code
 		if(isNotLoaded(srcItemStack) && hasAmmo(playerEntity,srcItemStack)){
-			FMLLog.info("doing reload"); // TODO: remove debug code
 			decrementAmmo(playerEntity);
 			startLoad(srcItemStack);
 			playSound("random.click",world,playerEntity);
@@ -95,7 +92,6 @@ public class MusketItem extends net.minecraft.item.Item{
 	
 	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityPlayer playerIn, int timeLeft) {
-		FMLLog.info("onPlayerStoppedUsing"); // TODO: remove debug code
 		if(isAlmostLoaded(stack)){
 			finishLoad(stack);
 		} else if(isLoaded(stack)){
@@ -105,7 +101,6 @@ public class MusketItem extends net.minecraft.item.Item{
 	
 	protected void fire(ItemStack srcItemStack, EntityPlayer playerEntity,
 			World world) {
-		FMLLog.info("FIRE!!!"); // TODO: remove debug code
 		unload(srcItemStack);
 		Vec3 lookVector = playerEntity.getLookVec();
 		spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, world,
@@ -115,7 +110,6 @@ public class MusketItem extends net.minecraft.item.Item{
 			return;
 		}
 		playSound("fire.ignite",world,playerEntity);
-		FMLLog.info("ka-pow!"); // TODO: remove debug code
 		world.playSoundEffect(playerEntity.posX,playerEntity.posY,playerEntity.posZ,"fireworks.blast",2F,0.5F);
 		
 		Vec3 start = new Vec3(playerEntity.posX, playerEntity.posY+playerEntity.getEyeHeight(),playerEntity.posZ);
@@ -123,20 +117,16 @@ public class MusketItem extends net.minecraft.item.Item{
 		MovingObjectPosition rayTrace = rayTraceBlocksAndEntities(world,MAX_RANGE,playerEntity);
 		if(rayTrace == null){
 			// no collisions
-			FMLLog.info("no collision detected");
 			return;
 		}
-		FMLLog.info("ray traced. typeOfHit = "+rayTrace.typeOfHit+", hitVec = "+rayTrace.hitVec+", getBlockPos() = "+rayTrace.getBlockPos()+", rayTrace.entityHit = "+rayTrace.entityHit); // TODO: remove debug code
 		if(rayTrace.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY && rayTrace.entityHit != null){
 			Entity e = rayTrace.entityHit;
 			e.attackEntityFrom(Power.musket_damage, getShotDamage());
-			FMLLog.info("hit a "+e.getClass()); // TODO: remove debug code
 		} else if(rayTrace.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK){
 			world.playSoundEffect(rayTrace.hitVec.xCoord, rayTrace.hitVec.yCoord, rayTrace.hitVec.zCoord, 
 					"dig.snow", 1f, 1f);
 			BlockPos coord = rayTrace.getBlockPos();
 			if(coord.getY()>= 0 && coord.getY() <= 255 && !world.isAirBlock(coord)){
-				FMLLog.info("hit block of "+world.getBlockState(coord).getBlock().getUnlocalizedName()); // TODO: remove debug code
 				Material blockMat = world.getBlockState(coord).getBlock().getMaterial();
 				if(blockMat == net.minecraft.block.material.Material.glass
 						|| blockMat == net.minecraft.block.material.Material.leaves
@@ -152,7 +142,6 @@ public class MusketItem extends net.minecraft.item.Item{
 					}
 				}
 			}
-			FMLLog.info("hit block at "+coord); // TODO: remove debug code
 		}
 		if(rayTrace.typeOfHit != MovingObjectPosition.MovingObjectType.MISS && rayTrace.hitVec != null){
 			spawnParticle(EnumParticleTypes.SMOKE_LARGE, world,
@@ -194,7 +183,6 @@ public class MusketItem extends net.minecraft.item.Item{
 		}
 		data.setByte(NBT_DATA_KEY_LOADED, (byte)2);
 		musket.setTagCompound(data);
-		FMLLog.info("gun partially loaded"); // TODO: remove debug code
 	}
 	
 	public static void finishLoad(ItemStack musket){
@@ -206,7 +194,6 @@ public class MusketItem extends net.minecraft.item.Item{
 		}
 		data.setByte(NBT_DATA_KEY_LOADED, (byte)1);
 		musket.setTagCompound(data);
-		FMLLog.info("gun fully loaded"); // TODO: remove debug code
 	}
 	
 	public static void unload(ItemStack musket){
@@ -218,7 +205,6 @@ public class MusketItem extends net.minecraft.item.Item{
 		}
 		data.setByte(NBT_DATA_KEY_LOADED, (byte)0);
 		musket.setTagCompound(data);
-		FMLLog.info("gun unloaded"); // TODO: remove debug code
 	}
 	
 	public static boolean isLoaded(ItemStack musket){
@@ -258,7 +244,6 @@ public class MusketItem extends net.minecraft.item.Item{
 	
 
 	public static void decrementAmmo(EntityPlayer playerEntity) {
-		FMLLog.info("subtracting ammo"); // TODO: remove debug code
 		if (playerEntity.capabilities.isCreativeMode) return;
 		List<ItemStack> ammoItems = OreDictionary.getOres("ammoBlackpowder");
 		for(int i = 0; i < playerEntity.inventory.mainInventory.length; i++){
@@ -291,25 +276,19 @@ public class MusketItem extends net.minecraft.item.Item{
 			if(distSqr < rangeSqr){
 				// e is within range
 				AxisAlignedBB box = e.getEntityBoundingBox();
-				FMLLog.info("Entity "+e.getName()+" box: "+box); // TODO: remove debug code
 				if(rayIntersectsBoundingBox(rayOrigin,rayDirection, box)){
 					// e is in cross-hairs
-					FMLLog.info("Entity "+e.getName()+" was in the line of fire at a distance of "+(float)Math.sqrt(distSqr)); // TODO: remove debug code
 					if(distSqr < closestDistSqr){
 						// e is closest entity in line of fire
 						closestDistSqr = distSqr;
 						closestEntity = e;
-						FMLLog.info("Targeted "+e.getName()); // TODO: remove debug code
 					}
 				}
 			}
 		}
-		FMLLog.info("Shot entity "+closestEntity); // TODO: remove debug code
 		if(closestEntity == null) {
-			FMLLog.info("Block trace"); // TODO: remove debug code
 			return w.rayTraceBlocks(rayOrigin, rayOrigin.add(mul(rayDirection, maxRange)), true, false, false);
 		} else {
-			FMLLog.info("Entity trace"); // TODO: remove debug code
 			Vec3 pos = new Vec3(closestEntity.posX, closestEntity.posY+closestEntity.getEyeHeight(), closestEntity.posZ);
 			MovingObjectPosition entityCollision = new MovingObjectPosition(closestEntity, pos);
 			return entityCollision;
@@ -330,7 +309,6 @@ public class MusketItem extends net.minecraft.item.Item{
 		double tmin = max(max(min(t1, t2), min(t3, t4)), min(t5, t6));
 		double tmax = min(min(max(t1, t2), max(t3, t4)), max(t5, t6));
 
-		FMLLog.info("tmin="+tmin+"; tmax="+tmax); // TODO: remove debug code
 		// if tmax < 0, ray (line) is intersecting AABB, but whole AABB is behing us
 		if (tmax < 0)
 		{
@@ -344,83 +322,9 @@ public class MusketItem extends net.minecraft.item.Item{
 		}
 
 		return true;
-//		Vec3 lowerCorner = new Vec3(box.minX, box.minY, box.minZ);
-//		Vec3 upperCorner = new Vec3(box.maxX, box.maxY, box.maxZ);
-//		Vec3 V0, V1, V2, V3, V4, V5, V6, V7;
-//		V0 = lowerCorner;
-//		V1 = new Vec3(upperCorner.xCoord, lowerCorner.yCoord, lowerCorner.zCoord);
-//		V2 = new Vec3(upperCorner.xCoord, lowerCorner.yCoord, upperCorner.zCoord);
-//		V3 = new Vec3(lowerCorner.xCoord, lowerCorner.yCoord, upperCorner.zCoord);
-//		V4 = new Vec3(lowerCorner.xCoord, upperCorner.yCoord, lowerCorner.zCoord);
-//		V5 = new Vec3(upperCorner.xCoord, upperCorner.yCoord, lowerCorner.zCoord);
-//		V6 = new Vec3(lowerCorner.xCoord, upperCorner.yCoord, upperCorner.zCoord);
-//		V7 = upperCorner;
-//		return rayIntersectsRectangle(rayOrigin, rayDirection, V0, V1, V2, V3)
-//				|| rayIntersectsRectangle(rayOrigin, rayDirection, V0, V3, V6, V4)
-//				|| rayIntersectsRectangle(rayOrigin, rayDirection, V0, V1, V5, V4)
-//				|| rayIntersectsRectangle(rayOrigin, rayDirection, V1, V2, V7, V5)
-//				|| rayIntersectsRectangle(rayOrigin, rayDirection, V2, V3, V6, V7)
-//				|| rayIntersectsRectangle(rayOrigin, rayDirection, V4, V5, V6, V7);
-	}
-	public static boolean rayIntersectsRectangle(Vec3 rayOrigin, Vec3 rayDirection, Vec3 V0, Vec3 V1, Vec3 V2, Vec3 V3){
-		return rayIntersectsTriangle(rayOrigin,rayDirection,V0,V1,V2) || rayIntersectsTriangle(rayOrigin,rayDirection,V2,V3,V0); 
-	}
-	public static boolean rayIntersectsTriangle(Vec3 rayOrigin, Vec3 rayDirection, Vec3 V0, Vec3 V1, Vec3 V2){
-		// Algorithm from http://geomalgorithms.com/a06-_intersect-2.html#intersect3D_RayTriangle%28%29
-		Vec3    u, v, n;              // triangle vectors
-		Vec3    dir, w0, w;           // ray vectors
-		double     r, a, b;              // params to calc ray-plane intersect
-
-		// get triangle edge vectors and plane normal
-		u = V1.subtract(V0);
-		v = V2.subtract(V0);
-		n = u.crossProduct(v);              // cross product
-		if (n.xCoord == 0 && n.yCoord == 0 && n.zCoord == 0)             // triangle is degenerate
-			return false;                  // do not deal with this case
-
-		dir = rayDirection;              // ray direction vector
-		w0 = rayOrigin.subtract(V0);
-		a = -dot(n,w0);
-		b = dot(n,dir);
-		if (Math.abs(b) < Float.MIN_VALUE) {     // ray is  parallel to triangle plane
-			if (a == 0)                 // ray lies in triangle plane
-				return true;
-			else return false;              // ray disjoint from plane
-		}
-
-		// get intersect point of ray with triangle plane
-		r = a / b;
-		if (r < 0.0)                    // ray goes away from triangle
-			return false;                   // => no intersect
-		// for a segment, also test if (r > 1.0) => no intersect
-
-		Vec3 I = rayOrigin.add(mul(dir,r));            // intersect point of ray and plane
-
-		// is I inside T?
-		double    uu, uv, vv, wu, wv, D;
-		uu = dot(u,u);
-		uv = dot(u,v);
-		vv = dot(v,v);
-		w = I.subtract(V0);
-		wu = dot(w,u);
-		wv = dot(w,v);
-		D = uv * uv - uu * vv;
-
-		// get and test parametric coords
-		double s, t;
-		s = (uv * wv - vv * wu) / D;
-		if (s < 0.0 || s > 1.0)         // I is outside T
-			return true;
-		t = (uv * wu - uu * wv) / D;
-		if (t < 0.0 || (s + t) > 1.0)  // I is outside T
-			return true;
-
-		return true;                       // I is in T
 	}
 	
-	private static double dot(Vec3 a, Vec3 b){
-		return a.dotProduct(b);
-	}
+	
 	private static Vec3 mul(Vec3 a, double b){
 		return new Vec3(a.xCoord * b, a.yCoord * b, a.zCoord * b);
 	}
