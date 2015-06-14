@@ -64,11 +64,18 @@ public class MusketItem extends net.minecraft.item.Item{
 	
 	@Override
 	public ItemStack onItemRightClick(ItemStack srcItemStack, World world, EntityPlayer playerEntity){
-		FMLLog.info("onItemRightClick"); // TODO: remove debug code
+		FMLLog.info("onItemRightClick, using for "+ this.getMaxItemUseDuration(srcItemStack)+" ticks"); // TODO: remove debug code
 		playerEntity.setItemInUse(srcItemStack, this.getMaxItemUseDuration(srcItemStack));
 		return srcItemStack;
 	}
 	
+	@Override
+	public void onUsingTick(ItemStack stack, EntityPlayer player, int count){
+		if(player.worldObj.isRemote && count % 11 == 3 && isNotLoaded(stack)){
+			// indicator to player that the gun is loading
+			player.playSound("step.wood", 0.5f, 1.0f);
+		}
+	}
 	/**
 	 * This method is invoked after the item has been used for an amount of time equal to the duration 
 	 * provided to the EntityPlayer.setItemInUse(stack, duration).
@@ -120,8 +127,8 @@ public class MusketItem extends net.minecraft.item.Item{
 			return;
 		}
 		FMLLog.info("ray traced. typeOfHit = "+rayTrace.typeOfHit+", hitVec = "+rayTrace.hitVec+", getBlockPos() = "+rayTrace.getBlockPos()+", rayTrace.entityHit = "+rayTrace.entityHit); // TODO: remove debug code
-		if(rayTrace.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY && rayTrace.entityHit instanceof EntityLivingBase){
-			EntityLivingBase e = (EntityLivingBase)rayTrace.entityHit;
+		if(rayTrace.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY && rayTrace.entityHit != null){
+			Entity e = rayTrace.entityHit;
 			e.attackEntityFrom(Power.musket_damage, getShotDamage());
 			FMLLog.info("hit a "+e.getClass()); // TODO: remove debug code
 		} else if(rayTrace.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK){
@@ -283,53 +290,80 @@ public class MusketItem extends net.minecraft.item.Item{
 			double distSqr = e.getDistanceSq(source.posX, source.posY, source.posZ);
 			if(distSqr < rangeSqr){
 				// e is within range
-				if(rayIntersectsBoundingBox(rayOrigin,rayDirection, e.getBoundingBox())){
+				AxisAlignedBB box = e.getEntityBoundingBox();
+				FMLLog.info("Entity "+e.getName()+" box: "+box); // TODO: remove debug code
+				if(rayIntersectsBoundingBox(rayOrigin,rayDirection, box)){
 					// e is in cross-hairs
+					FMLLog.info("Entity "+e.getName()+" was in the line of fire at a distance of "+(float)Math.sqrt(distSqr)); // TODO: remove debug code
 					if(distSqr < closestDistSqr){
 						// e is closest entity in line of fire
 						closestDistSqr = distSqr;
 						closestEntity = e;
+						FMLLog.info("Targeted "+e.getName()); // TODO: remove debug code
 					}
 				}
 			}
 		}
+		FMLLog.info("Shot entity "+closestEntity); // TODO: remove debug code
 		if(closestEntity == null) {
+			FMLLog.info("Block trace"); // TODO: remove debug code
 			return w.rayTraceBlocks(rayOrigin, rayOrigin.add(mul(rayDirection, maxRange)), true, false, false);
 		} else {
+			FMLLog.info("Entity trace"); // TODO: remove debug code
 			Vec3 pos = new Vec3(closestEntity.posX, closestEntity.posY+closestEntity.getEyeHeight(), closestEntity.posZ);
-			MovingObjectPosition blockCollision = w.rayTraceBlocks(rayOrigin, pos, true, false, false);
-			if(blockCollision == null){
-				// entity is hit
-				return new MovingObjectPosition(MovingObjectPosition.MovingObjectType.ENTITY, pos, 
-						source.getHorizontalFacing().getOpposite(), closestEntity.getPosition());
-			} else {
-				// intervening block is hit
-				return blockCollision;
-			}
+			MovingObjectPosition entityCollision = new MovingObjectPosition(closestEntity, pos);
+			return entityCollision;
 		}
 	}
 
 	public static boolean rayIntersectsBoundingBox(Vec3 rayOrigin, Vec3 rayDirection, AxisAlignedBB box){
-		Vec3 lowerCorner = new Vec3(box.minX, box.minY, box.minZ);
-		Vec3 upperCorner = new Vec3(box.maxX, box.maxY, box.maxZ);
-		Vec3 V0, V1, V2, V3, V4, V5, V6, V7;
-		V0 = lowerCorner;
-		V1 = new Vec3(upperCorner.xCoord, lowerCorner.yCoord, lowerCorner.zCoord);
-		V2 = new Vec3(upperCorner.xCoord, lowerCorner.yCoord, upperCorner.zCoord);
-		V3 = new Vec3(lowerCorner.xCoord, lowerCorner.yCoord, upperCorner.zCoord);
-		V4 = new Vec3(lowerCorner.xCoord, upperCorner.yCoord, lowerCorner.zCoord);
-		V5 = new Vec3(upperCorner.xCoord, upperCorner.yCoord, lowerCorner.zCoord);
-		V6 = new Vec3(lowerCorner.xCoord, upperCorner.yCoord, upperCorner.zCoord);
-		V7 = upperCorner;
-		return rayIntersectsRectangle(rayOrigin, rayDirection, V0, V1, V2, V3)
-				|| rayIntersectsRectangle(rayOrigin, rayDirection, V0, V3, V6, V4)
-				|| rayIntersectsRectangle(rayOrigin, rayDirection, V0, V1, V5, V4)
-				|| rayIntersectsRectangle(rayOrigin, rayDirection, V1, V2, V7, V5)
-				|| rayIntersectsRectangle(rayOrigin, rayDirection, V2, V3, V6, V7)
-				|| rayIntersectsRectangle(rayOrigin, rayDirection, V4, V5, V6, V7);
+		if(box == null) return false;
+		// algorithm from http://gamedev.stackexchange.com/questions/18436/most-efficient-aabb-vs-ray-collision-algorithms
+		Vec3 inverse = new Vec3(1.0 / rayDirection.xCoord, 1.0 / rayDirection.yCoord, 1.0 / rayDirection.zCoord);
+		double t1 = (box.minX - rayOrigin.xCoord)*inverse.xCoord;
+		double t2 = (box.maxX- rayOrigin.xCoord)*inverse.xCoord;
+		double t3 = (box.minY - rayOrigin.yCoord)*inverse.yCoord;
+		double t4 = (box.maxY - rayOrigin.yCoord)*inverse.yCoord;
+		double t5 = (box.minZ - rayOrigin.zCoord)*inverse.zCoord;
+		double t6 = (box.maxZ - rayOrigin.zCoord)*inverse.zCoord;
+
+		double tmin = max(max(min(t1, t2), min(t3, t4)), min(t5, t6));
+		double tmax = min(min(max(t1, t2), max(t3, t4)), max(t5, t6));
+
+		FMLLog.info("tmin="+tmin+"; tmax="+tmax); // TODO: remove debug code
+		// if tmax < 0, ray (line) is intersecting AABB, but whole AABB is behing us
+		if (tmax < 0)
+		{
+			return false;
+		}
+
+		// if tmin > tmax, ray doesn't intersect AABB
+		if (tmin > tmax)
+		{
+			return false;
+		}
+
+		return true;
+//		Vec3 lowerCorner = new Vec3(box.minX, box.minY, box.minZ);
+//		Vec3 upperCorner = new Vec3(box.maxX, box.maxY, box.maxZ);
+//		Vec3 V0, V1, V2, V3, V4, V5, V6, V7;
+//		V0 = lowerCorner;
+//		V1 = new Vec3(upperCorner.xCoord, lowerCorner.yCoord, lowerCorner.zCoord);
+//		V2 = new Vec3(upperCorner.xCoord, lowerCorner.yCoord, upperCorner.zCoord);
+//		V3 = new Vec3(lowerCorner.xCoord, lowerCorner.yCoord, upperCorner.zCoord);
+//		V4 = new Vec3(lowerCorner.xCoord, upperCorner.yCoord, lowerCorner.zCoord);
+//		V5 = new Vec3(upperCorner.xCoord, upperCorner.yCoord, lowerCorner.zCoord);
+//		V6 = new Vec3(lowerCorner.xCoord, upperCorner.yCoord, upperCorner.zCoord);
+//		V7 = upperCorner;
+//		return rayIntersectsRectangle(rayOrigin, rayDirection, V0, V1, V2, V3)
+//				|| rayIntersectsRectangle(rayOrigin, rayDirection, V0, V3, V6, V4)
+//				|| rayIntersectsRectangle(rayOrigin, rayDirection, V0, V1, V5, V4)
+//				|| rayIntersectsRectangle(rayOrigin, rayDirection, V1, V2, V7, V5)
+//				|| rayIntersectsRectangle(rayOrigin, rayDirection, V2, V3, V6, V7)
+//				|| rayIntersectsRectangle(rayOrigin, rayDirection, V4, V5, V6, V7);
 	}
 	public static boolean rayIntersectsRectangle(Vec3 rayOrigin, Vec3 rayDirection, Vec3 V0, Vec3 V1, Vec3 V2, Vec3 V3){
-		return rayIntersectsTriangle(rayOrigin,rayDirection,V0,V1,V2) || rayIntersectsTriangle(rayOrigin,rayDirection,V1,V2,V3); 
+		return rayIntersectsTriangle(rayOrigin,rayDirection,V0,V1,V2) || rayIntersectsTriangle(rayOrigin,rayDirection,V2,V3,V0); 
 	}
 	public static boolean rayIntersectsTriangle(Vec3 rayOrigin, Vec3 rayDirection, Vec3 V0, Vec3 V1, Vec3 V2){
 		// Algorithm from http://geomalgorithms.com/a06-_intersect-2.html#intersect3D_RayTriangle%28%29
@@ -389,6 +423,12 @@ public class MusketItem extends net.minecraft.item.Item{
 	}
 	private static Vec3 mul(Vec3 a, double b){
 		return new Vec3(a.xCoord * b, a.yCoord * b, a.zCoord * b);
+	}
+	private static double max(double a, double b){
+		return Math.max(a, b);
+	}
+	private static double min(double a, double b){
+		return Math.min(a, b);
 	}
 	
 	@Override
