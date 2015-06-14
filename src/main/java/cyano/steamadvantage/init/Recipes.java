@@ -9,6 +9,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import cyano.basemetals.registry.CrusherRecipeRegistry;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.RecipeMode;
+import cyano.steamadvantage.SteamAdvantage;
 
 public class Recipes {
 
@@ -26,6 +27,8 @@ public class Recipes {
 		
 		if(recipeMode == RecipeMode.TECH_PROGRESSION){
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.steam_governor,1)," t ","srs","btb",'t',"sprocket",'s',"barsSteel",'r',"barsBrass",'b',"ingotBrass"));
+			if(SteamAdvantage.MUSKET_ENABLE)GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.blackpowder_musket,1),"fss","w  ",'f',net.minecraft.init.Items.flint_and_steel,'s',"ingotSteel",'w',"plankWood"));
+			if(SteamAdvantage.MUSKET_ENABLE)GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.blackpowder_musket,1),"ssf","  w",'f',net.minecraft.init.Items.flint_and_steel,'s',"ingotSteel",'w',"plankWood"));
 		} else if(recipeMode == RecipeMode.APOCALYPTIC){
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.steam_governor,1)," t ","srs","btb",'t',"sprocket",'s',"stick",'r',"barsBrass",'b',"ingotBrass"));
 			CrusherRecipeRegistry.addNewCrusherRecipe(Items.steam_governor, new ItemStack(cyano.poweradvantage.init.Items.sprocket,2));
@@ -38,6 +41,8 @@ public class Recipes {
 		} else {
 			// normal
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.steam_governor,1)," t ","srs","btb",'t',"nuggetIron",'s',"stick",'r',"stick",'b',"ingotBrass"));
+			if(SteamAdvantage.MUSKET_ENABLE)GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.blackpowder_musket,1),"fss","w  ",'f',net.minecraft.init.Items.flint_and_steel,'s',"ingotSteel",'w',"plankWood"));
+			if(SteamAdvantage.MUSKET_ENABLE)GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.blackpowder_musket,1),"ssf","  w",'f',net.minecraft.init.Items.flint_and_steel,'s',"ingotSteel",'w',"plankWood"));
 			GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_drill,net.minecraft.init.Items.diamond_pickaxe));
 		}
 

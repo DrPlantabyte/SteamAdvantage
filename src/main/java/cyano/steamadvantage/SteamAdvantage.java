@@ -42,6 +42,7 @@ public class SteamAdvantage
 
 	public static float MUSKET_DAMAGE = 20;
 	public static int MUSKET_RELOAD = 20*5;
+	public static boolean MUSKET_ENABLE = true;
 
 	/**
 	 * Pre-initialization step. Used for initializing objects and reading the 
@@ -59,6 +60,8 @@ public class SteamAdvantage
 		MUSKET_RELOAD = config.getInt("musket_reload_time", "options", MUSKET_RELOAD, 20, 15*20, 
 				"This is the amount of time (in game update ticks) that it takes to reload a musket.\n"+
 				"Note that 20 ticks is 1 second of real time");
+		MUSKET_ENABLE = config.getBoolean("musket_allowed", "options", MUSKET_ENABLE, 
+				"If true, then the musket gun will be craftable.");
 
 		config.save();
 

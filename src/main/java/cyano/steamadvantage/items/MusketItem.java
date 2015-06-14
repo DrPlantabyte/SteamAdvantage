@@ -70,9 +70,9 @@ public class MusketItem extends net.minecraft.item.Item{
 	
 	@Override
 	public void onUsingTick(ItemStack stack, EntityPlayer player, int count){
-		if(player.worldObj.isRemote && count % 11 == 3 && isNotLoaded(stack)){
+		if(player.worldObj.isRemote && count % 7 == 3 && isNotLoaded(stack)){
 			// indicator to player that the gun is loading
-			player.playSound("step.wood", 0.5f, 1.0f);
+			player.playSound("dig.stone", 0.5f, 1.0f);
 		}
 	}
 	/**
@@ -102,6 +102,9 @@ public class MusketItem extends net.minecraft.item.Item{
 	protected void fire(ItemStack srcItemStack, EntityPlayer playerEntity,
 			World world) {
 		unload(srcItemStack);
+		if(!playerEntity.capabilities.isCreativeMode){
+			srcItemStack.damageItem(1, playerEntity);
+		}
 		Vec3 lookVector = playerEntity.getLookVec();
 		spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, world,
 				playerEntity.posX+lookVector.xCoord, playerEntity.posY+playerEntity.getEyeHeight()+lookVector.yCoord, playerEntity.posZ + lookVector.zCoord);
@@ -333,6 +336,19 @@ public class MusketItem extends net.minecraft.item.Item{
 	}
 	private static double min(double a, double b){
 		return Math.min(a, b);
+	}
+	
+	/**
+	 * Return whether this item is repairable in an anvil.
+	 */
+	@Override public boolean getIsRepairable(ItemStack srcItemStack, ItemStack rawMaterial)
+	{
+		// repair with steel ingots
+		List<ItemStack> repairItems = OreDictionary.getOres("ingotSteel"); 
+		for(int i = 0; i < repairItems.size(); i++){
+			if(OreDictionary.itemMatches(repairItems.get(i),rawMaterial,false)) return true;
+		}
+		return false;
 	}
 	
 	@Override
