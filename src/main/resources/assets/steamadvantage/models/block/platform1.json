@@ -1,0 +1,20 @@
+{
+    "textures": {
+        "shaft": "poweradvantage:materials/steel",
+        "platform": "steamadvantage:blocks/platform_top",
+        "particle": "poweradvantage:materials/steel"
+    },
+    "elements": [
+        {   "from": [ 0, 0, 0 ],
+            "to":   [ 16, 4, 16 ],
+            "faces": {
+                "down":  { "uv": [ 0, 0,16,16 ], "texture": "#platform" },
+                "up":    { "uv": [ 0, 0,16,16 ], "texture": "#platform" },
+                "north": { "uv": [ 0, 0,16, 4 ], "texture": "#platform" },
+                "south": { "uv": [ 0, 0,16, 4 ], "texture": "#platform" },
+                "west":  { "uv": [ 0, 0,16, 4 ], "texture": "#platform" },
+                "east":  { "uv": [ 0, 0,16, 4 ], "texture": "#platform" }
+            }
+        }
+    ]
+}
