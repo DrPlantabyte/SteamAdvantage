@@ -1,0 +1,9 @@
+{
+    "variants": {
+        "height=0": { "model": "steamadvantage:platform_shaft" },
+        "height=1": { "model": "steamadvantage:platform1" },
+        "height=2": { "model": "steamadvantage:platform2" },
+        "height=3": { "model": "steamadvantage:platform3" },
+        "height=4": { "model": "steamadvantage:platform4" }
+    }
+}

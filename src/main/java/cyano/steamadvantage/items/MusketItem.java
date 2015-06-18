@@ -32,6 +32,8 @@ import cyano.steamadvantage.init.Power;
 
 public class MusketItem extends net.minecraft.item.Item{
 	
+	// TODO: enchantments
+	
 	public static final String NBT_DATA_KEY_LOADED = "loaded";
 	public static final double MAX_RANGE = 64;
 	private static final int maxUseTime = 7200;

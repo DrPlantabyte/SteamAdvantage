@@ -7,6 +7,8 @@ tile.steamadvantage.steam_boiler_coal.name=Coal-Fired Steam Boiler
 tile.steamadvantage.steam_tank.name=Steam Boiler Tank
 tile.steamadvantage.steam_furnace.name=Steam-Powered Furnace
 tile.steamadvantage.steam_crusher.name=Steam-Powered Rock Crusher
+tile.steamadvantage.steam_elevator.name=Steam-Powered Elevator
+tile.steamadvantage.platform.name=Steam Elevator Platform
 
 
 tile.steamadvantage.drillbit.name=Drill

@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=east": { "model": "steamadvantage:steam_elevator", "y": 90},
+        "facing=north": { "model": "steamadvantage:steam_elevator" },
+        "facing=south": { "model": "steamadvantage:steam_elevator", "y": 180},
+        "facing=west": { "model": "steamadvantage:steam_elevator", "y": 270}
+    }
+}

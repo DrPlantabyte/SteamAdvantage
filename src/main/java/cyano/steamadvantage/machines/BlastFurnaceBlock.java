@@ -8,8 +8,6 @@ import cyano.steamadvantage.init.Power;
 
 
 /**
- * The coal boiler is a bit more complicated because it consumes fluids (water) and produces steam, 
- * making it a multi-type powered block.
  * @author DrCyano
  *
  */

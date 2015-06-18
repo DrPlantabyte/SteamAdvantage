@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -26,7 +27,8 @@ public abstract class Blocks {
 	public static GUIBlock steam_tank;
 	public static GUIBlock steam_drill;
 	public static GUIBlock steam_elevator;
-	public static GUIBlock steam_elevator_platform;
+	public static Block steam_elevator_platform;
+	public static IBlockState[] steam_elevator_platforms;
 	public static Block steam_pipe;
 	public static Block drillbit;
 	
@@ -42,6 +44,12 @@ public abstract class Blocks {
 		steam_crusher = (GUIBlock)addBlock(new RockCrusherBlock(),"steam_crusher");
 		steam_drill = (GUIBlock)addBlock(new SteamDrillBlock(),"steam_drill");
 		drillbit = addBlock(new DrillBitBlock(),"drillbit");
+		steam_elevator_platform = addBlock(new PlatformBlock(),"platform");
+		steam_elevator_platforms = new IBlockState[5];
+		for(int i = 0; i < steam_elevator_platforms.length; i++){
+			steam_elevator_platforms[i] = steam_elevator_platform.getStateFromMeta(i);
+		}
+		steam_elevator = (GUIBlock)addBlock(new SteamElevatorBlock(),"steam_elevator");
 		
 		initDone = true;
 	}

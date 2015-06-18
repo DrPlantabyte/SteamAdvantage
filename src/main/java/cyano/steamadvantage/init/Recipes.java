@@ -37,6 +37,7 @@ public class Recipes {
 			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.steam_furnace, new ItemStack(Items.steam_governor,2));
 			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.steam_boiler_coal, new ItemStack(Items.steam_governor,2));
 			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.steam_drill, new ItemStack(Items.steam_governor,2));
+			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.steam_elevator, new ItemStack(Items.steam_governor,3));
 			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.steam_tank, new ItemStack(Items.steam_governor,1));
 		} else {
 			// normal
@@ -53,8 +54,8 @@ public class Recipes {
 		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_furnace,net.minecraft.init.Blocks.furnace));
 		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_boiler_coal,"conduitSteam"));
 		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_drill,Items.steam_drill_bit));
+		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_elevator,net.minecraft.init.Blocks.piston,"sprocket"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(Blocks.steam_tank,"xgx","xpx","xxx",'x',"plateCopper",'p',"conduitSteam",'g',"governor"));
-		
 		
 		GameRegistry.addRecipe(new ShapedOreRecipe(Items.blackpowder_cartridge,"L","g","p",'L',"nuggetLead",'g',net.minecraft.init.Items.gunpowder,'p',net.minecraft.init.Items.paper));
 		

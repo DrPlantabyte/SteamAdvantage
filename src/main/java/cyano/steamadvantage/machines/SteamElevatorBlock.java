@@ -24,16 +24,16 @@ import cyano.steamadvantage.init.Power;
  * @author DrCyano
  *
  */
-public class RockCrusherBlock extends cyano.poweradvantage.api.simple.BlockSimplePowerConsumer {
+public class SteamElevatorBlock extends cyano.poweradvantage.api.simple.BlockSimplePowerConsumer {
 
 	
-	public RockCrusherBlock() {
+	public SteamElevatorBlock() {
 		super(Material.piston, 0.75f, Power.steam_power);
 	}
 
 	@Override
 	public PoweredEntity createNewTileEntity(World world, int metaDataValue) {
-		return new RockCrusherTileEntity();
+		return new SteamElevatorTileEntity();
 	}
 
 	@Override
@@ -43,8 +43,8 @@ public class RockCrusherBlock extends cyano.poweradvantage.api.simple.BlockSimpl
 
 	@Override
 	public int getComparatorInputOverride(World world, BlockPos coord) {
-		if(world.getTileEntity(coord) instanceof RockCrusherTileEntity){
-			return ((RockCrusherTileEntity)world.getTileEntity(coord)).getComparatorOutput();
+		if(world.getTileEntity(coord) instanceof SteamElevatorTileEntity){
+			return ((SteamElevatorTileEntity)world.getTileEntity(coord)).getComparatorOutput();
 		}
 		return 0;
 	}
