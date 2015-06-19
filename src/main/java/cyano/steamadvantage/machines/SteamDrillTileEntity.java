@@ -3,16 +3,14 @@ package cyano.steamadvantage.machines;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.item.ItemPickaxe;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.Potion;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.common.FMLLog;
+import cyano.poweradvantage.util.InventoryWrapper;
 import cyano.steamadvantage.blocks.DrillBitTileEntity;
 import cyano.steamadvantage.init.Blocks;
 import cyano.steamadvantage.init.Power;
@@ -215,8 +213,15 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		if(flagSync){
 			this.sync();
 		}
+		
+
+		// push inventory to adjacent chest
+		BlockPos adj = getPos().offset(f.getOpposite());
+		if(!redstone && !getWorld().isAirBlock(adj)){
+			inventoryTransfer(adj,f);
+		}
 	}
-	
+
 	private void targetBlock (BlockPos n){
 		progress = 0;
 		targetBlockCoord = n;
@@ -265,6 +270,44 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		return (int)(Math.max(MINING_TIME_FACTOR * block.getBlockHardness(getWorld(), coord),0.5f * MINING_TIME_FACTOR));
 	}
 	
+	
+
+	private void inventoryTransfer(BlockPos adj, EnumFacing otherFace) {
+		TileEntity te = getWorld().getTileEntity(adj);
+		if(te instanceof IInventory ){
+			ISidedInventory inv = InventoryWrapper.wrap((IInventory)te);
+			int[] accessibleSlots = inv.getSlotsForFace(otherFace);
+			if(accessibleSlots.length == 0) return;
+			for(int mySlot = 0; mySlot < this.inventory.length; mySlot++){
+				if(this.inventory[mySlot] == null) continue;
+				for(int i = 0; i < accessibleSlots.length; i++){
+					int theirSlot = accessibleSlots[i];
+					ItemStack theirItem = inv.getStackInSlot(theirSlot);
+					if(inv.canInsertItem(theirSlot, inventory[mySlot], otherFace)){
+						if(theirItem == null){
+							inv.setInventorySlotContents(theirSlot, inventory[mySlot]);
+							inventory[mySlot] = null;
+							return;
+						} else if(ItemStack.areItemsEqual(theirItem, inventory[mySlot]) 
+								&& ItemStack.areItemStackTagsEqual(theirItem, inventory[mySlot])
+								&& theirItem.stackSize < theirItem.getMaxStackSize()){
+							if(theirItem.stackSize + inventory[mySlot].stackSize <= theirItem.getMaxStackSize()){
+								theirItem.stackSize += inventory[mySlot].stackSize;
+								inventory[mySlot] = null;
+								return;
+							} else {
+								int delta = theirItem.getMaxStackSize() - theirItem.stackSize;
+								theirItem.stackSize += delta;
+								inventory[mySlot].stackSize -= delta;
+								return;
+							}
+						}
+					}
+				}
+			}
+			
+		}
+	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound tagRoot){
