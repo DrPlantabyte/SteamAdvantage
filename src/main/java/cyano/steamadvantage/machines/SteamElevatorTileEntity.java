@@ -3,11 +3,11 @@ package cyano.steamadvantage.machines;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.fml.common.FMLLog;
 import cyano.steamadvantage.init.Blocks;
 import cyano.steamadvantage.init.Power;
 
@@ -80,7 +80,7 @@ public class SteamElevatorTileEntity extends cyano.poweradvantage.api.simple.Til
 						getPos().getX()+1, topPos.getY(), getPos().getZ()+1));
 
 		for(Entity e : passengers){
-			e.setLocationAndAngles(e.posX,topPos.getY()+smallAmount, e.posZ, e.rotationYaw, e.rotationPitch);
+			e.setPositionAndUpdate(e.posX,topPos.getY()+smallAmount, e.posZ);
 			e.fallDistance = 0;
 		}
 		return true;
@@ -107,7 +107,7 @@ public class SteamElevatorTileEntity extends cyano.poweradvantage.api.simple.Til
 				new AxisAlignedBB(p.getX(),p.getY(),p.getZ(), p.getX()+1, p.getY()+2, p.getZ()+1));
 		
 		for(Entity e : passengers){
-			e.setLocationAndAngles(e.posX, destination.getY()+smallAmount,e.posZ, e.rotationYaw, e.rotationPitch);
+			e.setPositionAndUpdate(e.posX, destination.getY()+smallAmount,e.posZ);
 			e.fallDistance = 0;
 		}
 		return true;
