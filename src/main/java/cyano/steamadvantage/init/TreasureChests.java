@@ -17,6 +17,7 @@ public class TreasureChests {
 		addChestLoot(new ItemStack(Items.steam_governor,1),5f,1,4);
 		addChestLoot(new ItemStack(Blocks.steam_pipe,1),2.5f,4,8);
 		addChestLoot(new ItemStack(Items.blackpowder_musket,1),2f,1,2);
+		addChestLoot(new ItemStack(Items.blackpowder_cartridge,1),5f,5,10);
 		
 		initDone = true;
 	}
