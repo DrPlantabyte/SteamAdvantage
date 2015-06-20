@@ -15,3 +15,20 @@ item.steamadvantage.steam_drill_bit.name=Broca
 death.attack.steam_machine=%1$s was ground between the gears of a machine
 death.attack.steam_machine.player=%1$s was fed into the gears of a machine by %2$s
 
+
+
+tile.steamadvantage.steam_elevator.name=Vapor Elevador Alimentado
+tile.steamadvantage.platform.name=Vapor Elevador Plataforma
+death.attack.musket=%1$s foi baleado
+death.attack.musket.player=%2$s tiro %1$s mortos
+item.steamadvantage.blackpowder_cartridge.name=Pólvora Cartridge
+item.steamadvantage.musket.name=Mosquete
+tooltip.musket.damage=Plano lida %x danos
+tooltip.musket.ammo=Requer %x para recarregar
+tooltip.musket.loaded=Carregado
+tooltip.musket.unloaded=Não loaded
+enchantment.powderless=Infinito Munições
+enchantment.rapid_reload=Rapidamente Reload
+enchantment.high_explosive=Bomba
+enchantment.recoil=Recuo
+

@@ -13,3 +13,20 @@ tile.steamadvantage.steam_drill.name=Trapano a Vapore
 item.steamadvantage.steam_drill_bit.name=Trapano
 death.attack.steam_machine=%1$s è stato macinato tra gli ingranaggi di una macchina
 death.attack.steam_machine.player=%1$s è stato macinato tra gli ingranaggi di una macchina di %2$s
+
+
+tile.steamadvantage.steam_elevator.name=Ascensore a Vapore
+tile.steamadvantage.platform.name=Ascensore a Vapore Piattaforma
+death.attack.musket=%1$s hanno sparato
+death.attack.musket.player=%2$s colpo %1$s morti
+item.steamadvantage.blackpowder_cartridge.name=Cartuccia Polvere da Sparo
+item.steamadvantage.musket.name=Moschetto
+tooltip.musket.damage=Girato occupa %x danni
+tooltip.musket.ammo=Richiede %x per ricaricare
+tooltip.musket.loaded=Caricato
+tooltip.musket.unloaded=Non caricato
+enchantment.powderless=Munizioni Infinite
+enchantment.rapid_reload=Rapidamente Reload
+enchantment.high_explosive=Bomba
+enchantment.recoil=Rinculo
+

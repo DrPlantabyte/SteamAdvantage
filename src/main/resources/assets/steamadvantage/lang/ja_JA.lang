@@ -14,3 +14,20 @@ tile.steamadvantage.steam_drill.name=蒸気ドリル
 item.steamadvantage.steam_drill_bit.name=ドリルビット
 death.attack.steam_machine=%1$s 機械の歯車の間に粉砕しました
 death.attack.steam_machine.player=%1$s %2$s による機械の歯車の間に粉砕し、
+
+
+tile.steamadvantage.steam_elevator.name=スチームパワードエレベーター
+tile.steamadvantage.platform.name=エレベータープラットフォームスチーム
+death.attack.musket=%1$sは撃たれました
+death.attack.musket.player=%2$sのショット%1$sの死
+item.steamadvantage.blackpowder_cartridge.name=火薬カートリッジ
+item.steamadvantage.musket.name=マスケット銃
+tooltip.musket.damage=ショットは、%x点のダメージを与えます
+tooltip.musket.ammo=リロードするには、%xを必要とし
+tooltip.musket.loaded=ロードされました
+tooltip.musket.unloaded=ロードされていません
+enchantment.powderless=無限の弾薬
+enchantment.rapid_reload=素早くリロード
+enchantment.high_explosive=爆弾
+enchantment.recoil=リコイル
+

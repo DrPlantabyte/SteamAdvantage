@@ -14,3 +14,21 @@ tile.steamadvantage.steam_drill.name=Vapor Taladro Accionado
 item.steamadvantage.steam_drill_bit.name=Broca
 death.attack.steam_machine=%1$s se molió entre los engranajes de una máquina
 death.attack.steam_machine.player=%1$s se molió entre los engranajes de una máquina de %2$s
+
+
+
+tile.steamadvantage.steam_elevator.name=Ascensor a Vapor
+tile.steamadvantage.platform.name=Vapor Plataforma Ascensor
+death.attack.musket=%1$s recibió un disparo
+death.attack.musket.player=%2$s tiro %1$s muertos
+item.steamadvantage.blackpowder_cartridge.name=Cartucho de Pólvora
+item.steamadvantage.musket.name=Mosquete
+tooltip.musket.damage=Disparo trata %x daños
+tooltip.musket.ammo=Requiere %x para recargar
+tooltip.musket.loaded=Cargado
+tooltip.musket.unloaded=No cargado
+enchantment.powderless=Munición Infinita
+enchantment.rapid_reload=Rápidamente Actualizar
+enchantment.high_explosive=Bomba
+enchantment.recoil=Retroceso
+

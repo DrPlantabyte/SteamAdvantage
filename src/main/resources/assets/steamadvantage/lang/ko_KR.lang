@@ -14,3 +14,21 @@ tile.steamadvantage.steam_drill.name=증기 구동 드릴
 item.steamadvantage.steam_drill_bit.name=드릴 비트
 death.attack.steam_machine=%1$s 기계의 기어 사이 분쇄
 death.attack.steam_machine.player=%1$s %2$s 에 의해 기계의 기어 사이에 분쇄
+
+
+tile.steamadvantage.steam_elevator.name=증기 구동 엘리베이터
+tile.steamadvantage.platform.name=엘리베이터 플랫폼 스팀
+death.attack.musket=%1$s는 총에 맞았
+death.attack.musket.player=%2$s 샷% %1$s죽은
+item.steamadvantage.blackpowder_cartridge.name=화약 카트리지
+item.steamadvantage.musket.name=구식 보병 총
+tooltip.musket.damage=총 의 %x의 피해를
+tooltip.musket.ammo=다시로드 %x를 필요
+tooltip.musket.loaded=로드
+tooltip.musket.unloaded=로드되지
+enchantment.powderless=무한 탄약
+enchantment.rapid_reload=신속하게 다시로드
+enchantment.high_explosive=폭탄
+enchantment.recoil=뒷걸음질
+
+
