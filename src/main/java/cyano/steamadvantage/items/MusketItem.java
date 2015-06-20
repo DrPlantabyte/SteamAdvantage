@@ -10,11 +10,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.S12PacketEntityVelocity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumParticleTypes;
@@ -22,17 +23,16 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.StatCollector;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.oredict.OreDictionary;
 
 import com.google.common.collect.Multimap;
 
 import cyano.steamadvantage.SteamAdvantage;
+import cyano.steamadvantage.init.Enchantments;
 import cyano.steamadvantage.init.Power;
 
 public class MusketItem extends net.minecraft.item.Item{
 	
-	// TODO: enchantments
 	
 	public static final String NBT_DATA_KEY_LOADED = "loaded";
 	public static final double MAX_RANGE = 64;
@@ -56,6 +56,11 @@ public class MusketItem extends net.minecraft.item.Item{
 	}
 	
 	@Override
+	public int getItemEnchantability(){
+		return 1;
+	}
+	
+	@Override
 	public EnumAction getItemUseAction(ItemStack stack){
 		if(isLoaded(stack)){
 			return EnumAction.BOW;
@@ -66,6 +71,14 @@ public class MusketItem extends net.minecraft.item.Item{
 	
 	@Override
 	public ItemStack onItemRightClick(ItemStack srcItemStack, World world, EntityPlayer playerEntity){
+		if(isNotLoaded(srcItemStack) && EnchantmentHelper.getEnchantmentLevel(Enchantments.rapid_reload.effectId, srcItemStack) > 0){
+			// instant reload
+			decrementAmmo(playerEntity,srcItemStack);
+			startLoad(srcItemStack);
+			playSound("random.click",world,playerEntity);
+			finishLoad(srcItemStack);
+			return srcItemStack;
+		}
 		playerEntity.setItemInUse(srcItemStack, this.getMaxItemUseDuration(srcItemStack));
 		return srcItemStack;
 	}
@@ -85,7 +98,7 @@ public class MusketItem extends net.minecraft.item.Item{
 	public ItemStack onItemUseFinish (ItemStack srcItemStack, World world, EntityPlayer playerEntity)
 	{ // 
 		if(isNotLoaded(srcItemStack) && hasAmmo(playerEntity,srcItemStack)){
-			decrementAmmo(playerEntity);
+			decrementAmmo(playerEntity,srcItemStack);
 			startLoad(srcItemStack);
 			playSound("random.click",world,playerEntity);
 		}
@@ -124,9 +137,15 @@ public class MusketItem extends net.minecraft.item.Item{
 			// no collisions
 			return;
 		}
+		final float explodeFactor = 0.75f;
 		if(rayTrace.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY && rayTrace.entityHit != null){
 			Entity e = rayTrace.entityHit;
 			e.attackEntityFrom(Power.musket_damage, getShotDamage());
+			if(EnchantmentHelper.getEnchantmentLevel(Enchantments.high_explosive.effectId, srcItemStack) > 0){
+				world.createExplosion(playerEntity, e.posX, e.posY+0.5, e.posZ, 
+						explodeFactor * EnchantmentHelper.getEnchantmentLevel(Enchantments.high_explosive.effectId, srcItemStack), 
+						true);
+			}
 		} else if(rayTrace.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK){
 			world.playSoundEffect(rayTrace.hitVec.xCoord, rayTrace.hitVec.yCoord, rayTrace.hitVec.zCoord, 
 					"dig.snow", 1f, 1f);
@@ -147,12 +166,31 @@ public class MusketItem extends net.minecraft.item.Item{
 					}
 				}
 			}
+			if(EnchantmentHelper.getEnchantmentLevel(Enchantments.high_explosive.effectId, srcItemStack) > 0){
+				world.createExplosion(playerEntity, rayTrace.hitVec.xCoord, rayTrace.hitVec.yCoord, rayTrace.hitVec.zCoord, 
+						explodeFactor * EnchantmentHelper.getEnchantmentLevel(Enchantments.high_explosive.effectId, srcItemStack), 
+						true);
+			}
 		}
 		if(rayTrace.typeOfHit != MovingObjectPosition.MovingObjectType.MISS && rayTrace.hitVec != null){
 			spawnParticle(EnumParticleTypes.SMOKE_LARGE, world,
 					rayTrace.hitVec.xCoord, rayTrace.hitVec.yCoord, rayTrace.hitVec.zCoord);
 			spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, world,
 					rayTrace.hitVec.xCoord, rayTrace.hitVec.yCoord, rayTrace.hitVec.zCoord);
+		}
+		
+		// recoil enchantment kicks you back
+		int recoil = EnchantmentHelper.getEnchantmentLevel(Enchantments.recoil.effectId, srcItemStack);
+		if(recoil > 0){
+			double c = -0.3;
+			double lateral = 2.0;
+			playerEntity.addVelocity(c * recoil * lookVector.xCoord * lateral, 
+					c * recoil * lookVector.yCoord, 
+					c * recoil * lookVector.zCoord * lateral);
+			if(!world.isRemote){
+				// send update packet from server
+				((EntityPlayerMP) playerEntity).playerNetServerHandler.sendPacket(new S12PacketEntityVelocity(playerEntity));
+			}
 		}
 	}
 
@@ -220,7 +258,7 @@ public class MusketItem extends net.minecraft.item.Item{
 	
 	public static boolean isNotLoaded(ItemStack musket){
 		NBTTagCompound data = musket.getTagCompound();
-		if(data == null) return true;
+		if(data == null || !data.hasKey(NBT_DATA_KEY_LOADED)) return true;
 		return data.hasKey(NBT_DATA_KEY_LOADED) && data.getByte(NBT_DATA_KEY_LOADED) == 0;
 	}
 	
@@ -234,7 +272,8 @@ public class MusketItem extends net.minecraft.item.Item{
 	
 	public static boolean hasAmmo(EntityPlayer playerEntity, ItemStack musket) {
 		if(playerEntity.capabilities.isCreativeMode 
-				|| EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, musket) > 0) return true;;
+				|| EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, musket) > 0
+				|| EnchantmentHelper.getEnchantmentLevel(Enchantments.powderless.effectId, musket) > 0) return true;
 		List<ItemStack> ammoItems = OreDictionary.getOres("ammoBlackpowder");
 		for(int i = 0; i < playerEntity.inventory.mainInventory.length; i++){
 			if(playerEntity.inventory.mainInventory[i] == null) continue;
@@ -248,8 +287,10 @@ public class MusketItem extends net.minecraft.item.Item{
 	}
 	
 
-	public static void decrementAmmo(EntityPlayer playerEntity) {
-		if (playerEntity.capabilities.isCreativeMode) return;
+	public static void decrementAmmo(EntityPlayer playerEntity, ItemStack musket) {
+		if(playerEntity.capabilities.isCreativeMode 
+				|| EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, musket) > 0
+				|| EnchantmentHelper.getEnchantmentLevel(Enchantments.powderless.effectId, musket) > 0) return ;
 		List<ItemStack> ammoItems = OreDictionary.getOres("ammoBlackpowder");
 		for(int i = 0; i < playerEntity.inventory.mainInventory.length; i++){
 			if(playerEntity.inventory.mainInventory[i] == null) continue;

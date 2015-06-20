@@ -96,6 +96,7 @@ public class SteamAdvantage
 		Entities.init();
 		GUI.init();
 		TreasureChests.init();
+		Enchantments.init();
 
 		if(event.getSide() == Side.CLIENT){
 			clientInit(event);

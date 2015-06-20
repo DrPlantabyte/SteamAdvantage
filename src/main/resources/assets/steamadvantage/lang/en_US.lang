@@ -26,3 +26,7 @@ tooltip.musket.damage=Shot deals %x damage
 tooltip.musket.ammo=Requires %x to reload
 tooltip.musket.loaded=Loaded
 tooltip.musket.unloaded=Not loaded
+enchantment.powderless=Powderless
+enchantment.rapid_reload=Quick Reload
+enchantment.high_explosive=High-Explosive
+enchantment.recoil=Recoil
