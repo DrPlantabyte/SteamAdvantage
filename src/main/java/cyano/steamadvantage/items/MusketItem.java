@@ -407,6 +407,7 @@ public class MusketItem extends net.minecraft.item.Item{
 	}
 
 	/** Sets melee attack damage */
+	@Override
 	public Multimap getItemAttributeModifiers()
 	{
 		Multimap multimap = super.getItemAttributeModifiers();
