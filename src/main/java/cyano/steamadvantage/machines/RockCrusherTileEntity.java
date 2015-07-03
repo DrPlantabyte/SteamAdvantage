@@ -13,9 +13,7 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 	public static final int TICKS_PER_ACTION = 400;
 
 	private final ItemStack[] inventory = new ItemStack[6]; // slot 0 is input, other slots are output
-	private static final int[] topSlots = {0};
-	private static final int[] sideSlots = {0};
-	private static final int[] bottomSlots = {1,2,3,4,5};
+	private final int[] allSlots;
 	private final int[] dataSyncArray = new int[2];
 	
 	
@@ -23,6 +21,10 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 	
 	public RockCrusherTileEntity() {
 		super(Power.steam_power, 200, RockCrusherTileEntity.class.getName());
+		allSlots = new int[inventory.length];
+		for(int i = 0; i < allSlots.length; i++){
+			allSlots[i] = i;
+		}
 	}
 
 	private boolean redstone = true;
@@ -201,13 +203,7 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 
 	@Override
 	public int[] getSlotsForFace(EnumFacing side) {
-		if(side == EnumFacing.UP){
-			return topSlots;
-		} else if(side == EnumFacing.DOWN){
-			return bottomSlots;
-		} else {
-			return sideSlots;
-		}
+		return allSlots;
 	}
 	
 	@Override

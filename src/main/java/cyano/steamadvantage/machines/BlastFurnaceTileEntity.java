@@ -17,9 +17,7 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 	public static final float STEAM_PER_TICK = 0.5f;
 
 	private final ItemStack[] inventory = new ItemStack[7]; // slot 0 is input, other slots are output
-	private static final int[] topSlots = {1,2,3};
-	private static final int[] sideSlots = {0};
-	private static final int[] bottomSlots = {4,5,6};
+	private final int[] allSlots;
 	private final int[] dataSyncArray = new int[6];// 3 progresses, burn time, total burn time, temperature
 	
 	private final float[] progress = new float[3];
@@ -34,6 +32,10 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 	
 	public BlastFurnaceTileEntity() {
 		super(Power.steam_power, 200, RockCrusherTileEntity.class.getName());
+		allSlots = new int[inventory.length];
+		for(int i = 0; i < allSlots.length; i++){
+			allSlots[i] = i;
+		}
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -272,13 +274,7 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 
 	@Override
 	public int[] getSlotsForFace(EnumFacing side) {
-		if(side == EnumFacing.UP){
-			return topSlots;
-		} else if(side == EnumFacing.DOWN){
-			return bottomSlots;
-		} else {
-			return sideSlots;
-		}
+		return allSlots;
 	}
 	
 	@Override
