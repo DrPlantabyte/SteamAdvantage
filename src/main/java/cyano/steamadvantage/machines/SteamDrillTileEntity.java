@@ -2,6 +2,8 @@ package cyano.steamadvantage.machines;
 
 import java.util.List;
 
+import javax.naming.directory.DirContext;
+
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -10,6 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.util.InventoryWrapper;
 import cyano.steamadvantage.blocks.DrillBitTileEntity;
 import cyano.steamadvantage.init.Blocks;
@@ -29,6 +32,7 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	private BlockPos targetBlockCoord = null;
 	private Block targetBlock = null;
 	private List<ItemStack> targetBlockItems = null;
+	private EnumFacing oldDir = null;
 
 	
 	private boolean deferred = false;
@@ -38,7 +42,6 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	}
 
 	
-
 	private boolean redstone = true;
 	@Override
 	public void tickUpdate(boolean isServerWorld) {
@@ -46,6 +49,17 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 			if(deferred){
 				targetBlock(targetBlockCoord);
 			}
+			EnumFacing face = this.getFacing();
+			if(oldDir == null){
+				// oldDir becomes null on rotation and new TileEntity creation
+				// destroy drillbits in all directions but the current one
+				oldDir = face;
+				for(EnumFacing d : EnumFacing.values()){
+					if(d == face) continue;
+					destroyDrillBit(d);
+				}
+			}
+			
 			// disabled by redstone
 			if(redstone){
 				if (progress > 0){
@@ -168,11 +182,8 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		// manage drill bits and find next block
 		if(redstone || this.getEnergy() <= 0){
 			// no power, destroy drill
-			while(getWorld().getBlockState(n).getBlock() == cyano.steamadvantage.init.Blocks.drillbit){
-				getWorld().setBlockToAir(n);
-				n = n.offset(f);
-				flagSync = true;
-			}
+			destroyDrillBit(f);
+			flagSync = true;
 			this.untargetBlock();
 		} else {
 			// drill baby drill!
@@ -219,6 +230,14 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		BlockPos adj = getPos().offset(f.getOpposite());
 		if(!redstone && !getWorld().isAirBlock(adj)){
 			inventoryTransfer(adj,f);
+		}
+	}
+
+	private void destroyDrillBit(EnumFacing f) {
+		BlockPos n = getPos().offset(f);
+		while(getWorld().getBlockState(n).getBlock() == cyano.steamadvantage.init.Blocks.drillbit){
+			getWorld().setBlockToAir(n);
+			n = n.offset(f);
 		}
 	}
 
