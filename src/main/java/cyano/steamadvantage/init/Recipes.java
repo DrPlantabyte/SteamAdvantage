@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 import cyano.basemetals.registry.CrusherRecipeRegistry;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.RecipeMode;
@@ -58,6 +59,8 @@ public class Recipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(Blocks.steam_tank,"xgx","xpx","xxx",'x',"plateCopper",'p',"conduitSteam",'g',"governor"));
 		
 		GameRegistry.addRecipe(new ShapedOreRecipe(Items.blackpowder_cartridge,"L","g","p",'L',"nuggetLead",'g',net.minecraft.init.Items.gunpowder,'p',net.minecraft.init.Items.paper));
+		
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(Blocks.steam_track),Blocks.steam_pipe, cyano.poweradvantage.init.Blocks.steel_frame));
 		
 		
 		initDone = true;

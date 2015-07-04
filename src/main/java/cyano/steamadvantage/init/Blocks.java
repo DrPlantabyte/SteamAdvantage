@@ -31,6 +31,7 @@ public abstract class Blocks {
 	public static IBlockState[] steam_elevator_platforms;
 	public static Block steam_pipe;
 	public static Block drillbit;
+	public static Block steam_track;
 	
 	private static boolean initDone = false;
 	public static void init(){
@@ -38,6 +39,7 @@ public abstract class Blocks {
 		
 		steam_pipe = addBlock(new SteamPipeBlock(),"steam_pipe");
 		OreDictionary.registerOre("conduitSteam", steam_pipe);
+		steam_track = addBlock(new SteamTrackBlock(),"steam_track");
 		steam_boiler_coal = (GUIBlock)addBlock(new CoalBoilerBlock(),"steam_boiler_coal");
 		steam_tank = (GUIBlock)addBlock(new SteamTankBlock(),"steam_tank");
 		steam_furnace = (GUIBlock)addBlock(new BlastFurnaceBlock(),"steam_furnace");

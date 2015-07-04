@@ -39,14 +39,14 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	/**
 	 * Blockstate property
 	 */
-    public static final PropertyDirection FACING = PropertyDirection.create("facing");
-    
+	public static final PropertyDirection FACING = PropertyDirection.create("facing");
+
 	public SteamDrillBlock(){
 		super(Material.piston);
 		this.type = Power.steam_power;
-    	super.setHardness(0.75f);
+		super.setHardness(0.75f);
 	}
-	 
+
 	/**
 	 * Override of default block behavior
 	 */
@@ -73,9 +73,9 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 		destroyNeighbors(w,coord,w.getBlockState(coord));
 		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimensionId(), coord, getType());
 	}
-	
 
-	
+
+
 	private void destroyNeighbors(World w, BlockPos coord, IBlockState state) {
 		if(w.isRemote) return;
 		// destroy connected drill bits
@@ -94,10 +94,10 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	 * <b>TileEntitySimplePowerConsumer</b>.
 	 */
 	@Override
-    public PoweredEntity createNewTileEntity(final World world, final int metaDataValue){
+	public PoweredEntity createNewTileEntity(final World world, final int metaDataValue){
 		return new SteamDrillTileEntity();
 	}
-	
+
 	/**
 	 * Used to decides whether or not a conduit should connect to this block 
 	 * based on its energy type.
@@ -127,7 +127,7 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	public boolean canAcceptType(ConduitType type){
 		return ConduitType.areSameType(getType(), type);
 	}
-	
+
 	/**
 	 * Determines whether this block/entity should receive energy 
 	 * @return true if this block/entity should receive energy
@@ -147,184 +147,183 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	 * Override of default block behavior
 	 */
 	@Override
-    public Item getItemDropped(final IBlockState state, final Random prng, final int i3) {
-        return Item.getItemFromBlock(this);
-    }
-   
+	public Item getItemDropped(final IBlockState state, final Random prng, final int i3) {
+		return Item.getItemFromBlock(this);
+	}
+
 
 	/**
 	 * Creates the blockstate of this block when it is placed in the world
 	 */
-    @Override
-    public IBlockState onBlockPlaced(final World world, final BlockPos coord, final EnumFacing facing, 
-    		final float f1, final float f2, final float f3, 
-    		final int meta, final EntityLivingBase player) {
-        return this.getDefaultState().withProperty( FACING, facing.getOpposite());
-    }
-    
-    /**
+	@Override
+	public IBlockState onBlockPlaced(final World world, final BlockPos coord, final EnumFacing facing, 
+			final float f1, final float f2, final float f3, 
+			final int meta, final EntityLivingBase player) {
+		return this.getDefaultState().withProperty( FACING, facing.getOpposite());
+	}
+
+	/**
 	 * Creates the blockstate of this block when it is placed in the world
 	 */
-    @Override
-    public void onBlockPlacedBy(final World world, final BlockPos coord, final IBlockState bs, 
-    		final EntityLivingBase placer, final ItemStack srcItemStack) {
-        world.setBlockState(coord, bs.withProperty((IProperty) FACING, (Comparable)BlockPistonBase.getFacingFromEntity(world, coord, placer).getOpposite()), 2);
-        if (srcItemStack.hasDisplayName()) {
-        	final TileEntity tileEntity = world.getTileEntity(coord);
-        	if (tileEntity instanceof PoweredEntity){
-        		((PoweredEntity)tileEntity).setCustomInventoryName(srcItemStack.getDisplayName());
-        	}
-        }
-    }
-    
-    
-    
-    
-    
-    /**
-     * Destroys the TileEntity associated with this block when this block 
-     * breaks.
-     */
-    @Override
-    public void breakBlock(final World world, final BlockPos coord, final IBlockState bs) {
-        final TileEntity tileEntity = world.getTileEntity(coord);
-        if (tileEntity instanceof TileEntitySimplePowerConsumer) {
-            InventoryHelper.dropInventoryItems(world, coord, (IInventory)tileEntity);
-            world.updateComparatorOutputLevel(coord, this);
-        }
-        super.breakBlock(world, coord, bs);
-    }
-    
-    /**
-     * Sets the default blockstate
-     * @param w World instance
-     * @param coord Block coordinate
-     * @param state Block state
-     */
-    protected void setDefaultFacing(final World w, final BlockPos coord, final IBlockState state) {
-        if (w.isRemote) {
-            return;
-        }
-        final Block block = w.getBlockState(coord.north()).getBlock();
-        final Block block2 = w.getBlockState(coord.south()).getBlock();
-        final Block block3 = w.getBlockState(coord.west()).getBlock();
-        final Block block4 = w.getBlockState(coord.east()).getBlock();
-        EnumFacing enumFacing = (EnumFacing)state.getValue(FACING);
-        if (enumFacing == EnumFacing.NORTH && block.isFullBlock() && !block2.isFullBlock()) {
-            enumFacing = EnumFacing.SOUTH;
-        }
-        else if (enumFacing == EnumFacing.SOUTH && block2.isFullBlock() && !block.isFullBlock()) {
-            enumFacing = EnumFacing.NORTH;
-        }
-        else if (enumFacing == EnumFacing.WEST && block3.isFullBlock() && !block4.isFullBlock()) {
-            enumFacing = EnumFacing.EAST;
-        }
-        else if (enumFacing == EnumFacing.EAST && block4.isFullBlock() && !block3.isFullBlock()) {
-            enumFacing = EnumFacing.WEST;
-        }
-        w.setBlockState(coord, state.withProperty((IProperty) FACING, (Comparable)enumFacing), 2);
-    }
-    /**
-     * This method tells Minecraft whether this block has a signal that can be 
-     * measured by a redstone comparator.
-     * <br><br>
-     * You are encouraged to integrate redstone control into your machines. 
-     * This means outputin a redstone signal with the 
-     * <code>getComparatorInputOverride(...)</code> method and (in your 
-     * TileEntity class) reading the redstone input with the 
-     * <code>World.isBlockPowered(...)</code> method.<br><br>
-     * Typically, machines output a redstone value proportional to the amount of 
-     * stuff in their inventory and are disabled when they receive a redstone 
-     * signal.
-     * @return true if this block can be measured by a redstone comparator, 
-     * false otherwise
-     */
-    @Override
-    public boolean hasComparatorInputOverride(){
-    	return true;
-    }
-    
-    /**
-     * This method gets the output for a redstone comparator placed against this 
-     * block.
-     * <br><br>
-     * You are encouraged to integrate redstone control into your machines. 
-     * This means outputin a redstone signal with the 
-     * <code>getComparatorInputOverride(...)</code> method and (in your 
-     * TileEntity class) reading the redstone input with the 
-     * <code>World.isBlockPowered(...)</code> method.<br><br>
-     * Typically, machines output a redstone value proportional to the amount of 
-     * stuff in their inventory and are disabled when they receive a redstone 
-     * signal.
-     * @param world World object
-     * @param coord Coordinates of this block
-     * @return a number from 0 to 15
-     */
-    @Override
-    public int getComparatorInputOverride(final World world, final BlockPos coord){
-    	TileEntity te = world.getTileEntity(coord);
-    	if(te instanceof SteamDrillTileEntity){
-    		return ((SteamDrillTileEntity)te).getComparatorOutput();
-    	} else {
-    		return 0;
-    	}
-    }
-    
-    /**
-     * Override of default block behavior
-     */
-    @Override
-    public int getRenderType() {
-        return 3;
-    }
-    
-    /**
-     * Converts metadata into blockstate
-     */
-    @Override
-    public IBlockState getStateFromMeta(final int metaValue) {
-        EnumFacing enumFacing = EnumFacing.getFront(metaValue);
-        if (enumFacing.getAxis() == EnumFacing.Axis.Y) {
-            enumFacing = EnumFacing.NORTH;
-        }
-        return this.getDefaultState().withProperty( FACING, enumFacing);
-    }
-    
-    /**
-     * Converts blockstate into metadata
-     */
-    @Override
-    public int getMetaFromState(final IBlockState bs) {
-        return ((EnumFacing)bs.getValue( FACING)).getIndex();
-    }
-    
-    /**
-     * Creates a blockstate
-     */
-    @Override
-    protected BlockState createBlockState() {
-        return new BlockState(this, new IProperty[] {  FACING });
-    }
-    
-    ///// CLIENT-SIDE CODE /////
+	@Override
+	public void onBlockPlacedBy(final World world, final BlockPos coord, final IBlockState bs, 
+			final EntityLivingBase placer, final ItemStack srcItemStack) {
+		if (srcItemStack.hasDisplayName()) {
+			final TileEntity tileEntity = world.getTileEntity(coord);
+			if (tileEntity instanceof PoweredEntity){
+				((PoweredEntity)tileEntity).setCustomInventoryName(srcItemStack.getDisplayName());
+			}
+		}
+	}
 
-    /**
-     * (Client-only) Gets the blockstate used for GUI and such.
-     */
-    @SideOnly(Side.CLIENT)
-    @Override
-    public IBlockState getStateForEntityRender(final IBlockState bs) {
-        return this.getDefaultState().withProperty( FACING, EnumFacing.SOUTH);
-    }
-    
-    /**
-     * (Client-only) Override of default block behavior
-     */
-    @SideOnly(Side.CLIENT)
-    @Override
-    public Item getItem(final World world, final BlockPos coord) {
-        return Item.getItemFromBlock(this);
-    }
-    
+
+
+
+
+	/**
+	 * Destroys the TileEntity associated with this block when this block 
+	 * breaks.
+	 */
+	@Override
+	public void breakBlock(final World world, final BlockPos coord, final IBlockState bs) {
+		final TileEntity tileEntity = world.getTileEntity(coord);
+		if (tileEntity instanceof TileEntitySimplePowerConsumer) {
+			InventoryHelper.dropInventoryItems(world, coord, (IInventory)tileEntity);
+			world.updateComparatorOutputLevel(coord, this);
+		}
+		super.breakBlock(world, coord, bs);
+	}
+
+	/**
+	 * Sets the default blockstate
+	 * @param w World instance
+	 * @param coord Block coordinate
+	 * @param state Block state
+	 */
+	protected void setDefaultFacing(final World w, final BlockPos coord, final IBlockState state) {
+		if (w.isRemote) {
+			return;
+		}
+		final Block block = w.getBlockState(coord.north()).getBlock();
+		final Block block2 = w.getBlockState(coord.south()).getBlock();
+		final Block block3 = w.getBlockState(coord.west()).getBlock();
+		final Block block4 = w.getBlockState(coord.east()).getBlock();
+		EnumFacing enumFacing = (EnumFacing)state.getValue(FACING);
+		if (enumFacing == EnumFacing.NORTH && block.isFullBlock() && !block2.isFullBlock()) {
+			enumFacing = EnumFacing.SOUTH;
+		}
+		else if (enumFacing == EnumFacing.SOUTH && block2.isFullBlock() && !block.isFullBlock()) {
+			enumFacing = EnumFacing.NORTH;
+		}
+		else if (enumFacing == EnumFacing.WEST && block3.isFullBlock() && !block4.isFullBlock()) {
+			enumFacing = EnumFacing.EAST;
+		}
+		else if (enumFacing == EnumFacing.EAST && block4.isFullBlock() && !block3.isFullBlock()) {
+			enumFacing = EnumFacing.WEST;
+		}
+		w.setBlockState(coord, state.withProperty((IProperty) FACING, (Comparable)enumFacing), 2);
+	}
+	/**
+	 * This method tells Minecraft whether this block has a signal that can be 
+	 * measured by a redstone comparator.
+	 * <br><br>
+	 * You are encouraged to integrate redstone control into your machines. 
+	 * This means outputin a redstone signal with the 
+	 * <code>getComparatorInputOverride(...)</code> method and (in your 
+	 * TileEntity class) reading the redstone input with the 
+	 * <code>World.isBlockPowered(...)</code> method.<br><br>
+	 * Typically, machines output a redstone value proportional to the amount of 
+	 * stuff in their inventory and are disabled when they receive a redstone 
+	 * signal.
+	 * @return true if this block can be measured by a redstone comparator, 
+	 * false otherwise
+	 */
+	@Override
+	public boolean hasComparatorInputOverride(){
+		return true;
+	}
+
+	/**
+	 * This method gets the output for a redstone comparator placed against this 
+	 * block.
+	 * <br><br>
+	 * You are encouraged to integrate redstone control into your machines. 
+	 * This means outputin a redstone signal with the 
+	 * <code>getComparatorInputOverride(...)</code> method and (in your 
+	 * TileEntity class) reading the redstone input with the 
+	 * <code>World.isBlockPowered(...)</code> method.<br><br>
+	 * Typically, machines output a redstone value proportional to the amount of 
+	 * stuff in their inventory and are disabled when they receive a redstone 
+	 * signal.
+	 * @param world World object
+	 * @param coord Coordinates of this block
+	 * @return a number from 0 to 15
+	 */
+	@Override
+	public int getComparatorInputOverride(final World world, final BlockPos coord){
+		TileEntity te = world.getTileEntity(coord);
+		if(te instanceof SteamDrillTileEntity){
+			return ((SteamDrillTileEntity)te).getComparatorOutput();
+		} else {
+			return 0;
+		}
+	}
+
+	/**
+	 * Override of default block behavior
+	 */
+	@Override
+	public int getRenderType() {
+		return 3;
+	}
+
+	/**
+	 * Converts metadata into blockstate
+	 */
+	@Override
+	public IBlockState getStateFromMeta(final int metaValue) {
+		EnumFacing enumFacing = EnumFacing.getFront(metaValue);
+		if (enumFacing.getAxis() == EnumFacing.Axis.Y) {
+			enumFacing = EnumFacing.NORTH;
+		}
+		return this.getDefaultState().withProperty( FACING, enumFacing);
+	}
+
+	/**
+	 * Converts blockstate into metadata
+	 */
+	@Override
+	public int getMetaFromState(final IBlockState bs) {
+		return ((EnumFacing)bs.getValue( FACING)).getIndex();
+	}
+
+	/**
+	 * Creates a blockstate
+	 */
+	@Override
+	protected BlockState createBlockState() {
+		return new BlockState(this, new IProperty[] {  FACING });
+	}
+
+	///// CLIENT-SIDE CODE /////
+
+	/**
+	 * (Client-only) Gets the blockstate used for GUI and such.
+	 */
+	@SideOnly(Side.CLIENT)
+	@Override
+	public IBlockState getStateForEntityRender(final IBlockState bs) {
+		return this.getDefaultState().withProperty( FACING, EnumFacing.SOUTH);
+	}
+
+	/**
+	 * (Client-only) Override of default block behavior
+	 */
+	@SideOnly(Side.CLIENT)
+	@Override
+	public Item getItem(final World world, final BlockPos coord) {
+		return Item.getItemFromBlock(this);
+	}
+
 
 }

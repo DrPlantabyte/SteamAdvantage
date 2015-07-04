@@ -142,9 +142,16 @@ public class MusketItem extends net.minecraft.item.Item{
 			Entity e = rayTrace.entityHit;
 			e.attackEntityFrom(Power.musket_damage, getShotDamage());
 			if(EnchantmentHelper.getEnchantmentLevel(Enchantments.high_explosive.effectId, srcItemStack) > 0){
+				int lvl = EnchantmentHelper.getEnchantmentLevel(Enchantments.high_explosive.effectId, srcItemStack);
 				world.createExplosion(playerEntity, e.posX, e.posY+0.5, e.posZ, 
-						explodeFactor * EnchantmentHelper.getEnchantmentLevel(Enchantments.high_explosive.effectId, srcItemStack), 
+						explodeFactor * lvl, 
 						true);
+				AxisAlignedBB fireArea = new AxisAlignedBB(e.posX-lvl, e.posY-lvl, e.posZ-lvl,
+						e.posX+lvl, e.posY+lvl, e.posZ+lvl);
+				List<EntityLivingBase> collateralDamage = world.getEntitiesWithinAABB(EntityLivingBase.class, fireArea);
+				for(EntityLivingBase victim : collateralDamage){
+					victim.setFire(lvl);
+				}
 			}
 		} else if(rayTrace.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK){
 			world.playSoundEffect(rayTrace.hitVec.xCoord, rayTrace.hitVec.yCoord, rayTrace.hitVec.zCoord, 
@@ -167,9 +174,16 @@ public class MusketItem extends net.minecraft.item.Item{
 				}
 			}
 			if(EnchantmentHelper.getEnchantmentLevel(Enchantments.high_explosive.effectId, srcItemStack) > 0){
+				int lvl = EnchantmentHelper.getEnchantmentLevel(Enchantments.high_explosive.effectId, srcItemStack);
 				world.createExplosion(playerEntity, rayTrace.hitVec.xCoord, rayTrace.hitVec.yCoord, rayTrace.hitVec.zCoord, 
-						explodeFactor * EnchantmentHelper.getEnchantmentLevel(Enchantments.high_explosive.effectId, srcItemStack), 
+						explodeFactor * lvl, 
 						true);
+				AxisAlignedBB fireArea = new AxisAlignedBB(rayTrace.hitVec.xCoord-lvl, rayTrace.hitVec.yCoord-lvl, rayTrace.hitVec.zCoord-lvl,
+						rayTrace.hitVec.xCoord+lvl, rayTrace.hitVec.yCoord+lvl, rayTrace.hitVec.zCoord+lvl);
+				List<EntityLivingBase> collateralDamage = world.getEntitiesWithinAABB(EntityLivingBase.class, fireArea);
+				for(EntityLivingBase victim : collateralDamage){
+					victim.setFire(lvl);
+				}
 			}
 		}
 		if(rayTrace.typeOfHit != MovingObjectPosition.MovingObjectType.MISS && rayTrace.hitVec != null){

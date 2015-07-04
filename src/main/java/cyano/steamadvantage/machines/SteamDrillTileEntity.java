@@ -1,8 +1,7 @@
 package cyano.steamadvantage.machines;
 
+import java.util.Arrays;
 import java.util.List;
-
-import javax.naming.directory.DirContext;
 
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
@@ -12,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.util.InventoryWrapper;
 import cyano.steamadvantage.blocks.DrillBitTileEntity;
@@ -22,6 +22,7 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	
 	public static final int MAX_RANGE = 64;
 	public static final float ENERGY_COST_DRILLBIT = 2.5f;
+	public static final float ENERGY_COST_MOVE = 10f;
 	public static final float ENERGY_COST_PROGRESS_TICK = 1f;
 	public static float MINING_TIME_FACTOR = 12.0f;
 	
@@ -139,6 +140,44 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		return in;
 	}
 
+	private EnumFacing trackDirection(){
+		for(EnumFacing dir : EnumFacing.values()){
+			if(getWorld().getBlockState(getPos().offset(dir)).getBlock() == Blocks.steam_track){
+				return dir;
+			}
+		}
+		return null;
+	}
+	
+	private boolean followTrack(){
+		if(this.getEnergy() < ENERGY_COST_MOVE) return false;
+		EnumFacing trackDir = trackDirection();
+		if(trackDir == null) return false;
+		
+		// clone this block into neighboring block
+		this.untargetBlock();
+		World w = getWorld();
+		BlockPos nextPos = getPos().offset(trackDir);
+		w.setBlockState(nextPos, w.getBlockState(getPos()), 2);
+		SteamDrillTileEntity te = (SteamDrillTileEntity)w.getTileEntity(nextPos);
+		NBTTagCompound dataTransfer = new NBTTagCompound();
+		this.writeToNBT(dataTransfer);
+		te.readFromNBT(dataTransfer);
+		te.setPos(nextPos);
+		te.validate();
+		te.markDirty();
+		Arrays.fill(this.getInventory(), null);
+		
+		// replace this block with steam pipe
+		destroyDrillBit(this.getFacing());
+		w.setBlockState(getPos().offset(getFacing()), cyano.poweradvantage.init.Blocks.steel_frame.getDefaultState());
+		w.setBlockState(getPos(), Blocks.steam_pipe.getDefaultState(), 2);
+		
+		
+		this.subtractEnergy(ENERGY_COST_MOVE, getType());
+		return true;
+	}
+	
 	@Override
 	protected ItemStack[] getInventory() {
 		return inventory;
@@ -189,7 +228,12 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 			// drill baby drill!
 			if(targetBlockCoord == null ){
 				// find new block
-				for(int i = 0; i < MAX_RANGE && n.getY() >= 0 && n.getY() <= 255; i++){
+				boolean hitEnd = false;
+				for(int i = 0; i <= MAX_RANGE ; i++){
+					if(i == MAX_RANGE){
+						hitEnd = true;
+						break;
+					}
 					if(getWorld().getBlockState(n).getBlock() != Blocks.drillbit){
 						if(getWorld().isAirBlock(n) || getWorld().getBlockState(n).getBlock().isReplaceable(getWorld(), n)){
 							// this block is not worth mining, replace it
@@ -201,15 +245,28 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 							// found a block!
 							if(canMine(n)){
 								targetBlock(n);
+							} else {
+								hitEnd = true;
 							}
 							flagSync = true;
 							break;
 						}
 					}
 					n = n.offset(f);
+					if(n.getY() == 0 || n.getY() == 255){
+						hitEnd = true;
+						break;
+					}
 				}
-				// hit end of range
-				// do nothing
+				// if hit end of range, move along track
+				if(hitEnd){
+					boolean moved = followTrack();
+					if(moved){
+						cyano.poweradvantage.conduitnetwork.ConduitRegistry.getInstance()
+								.conduitBlockRemovedEvent(getWorld(), getWorld().provider.getDimensionId(), getPos(), getType());
+						return;
+					}
+				}
 			} else {
 				// currently drilling a block
 				// block validation
@@ -278,7 +335,8 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	}
 	
 	private boolean canMine(BlockPos coord){
-		return getWorld().getBlockState(coord).getBlock() != net.minecraft.init.Blocks.bedrock;
+		Block b = getWorld().getBlockState(coord).getBlock();
+		return !(b == net.minecraft.init.Blocks.bedrock || b == net.minecraft.init.Blocks.barrier);
 	}
 	
 	private int getBlockStrength(BlockPos coord){
@@ -304,22 +362,20 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 					ItemStack theirItem = inv.getStackInSlot(theirSlot);
 					if(inv.canInsertItem(theirSlot, inventory[mySlot], otherFace)){
 						if(theirItem == null){
-							inv.setInventorySlotContents(theirSlot, inventory[mySlot]);
-							inventory[mySlot] = null;
+							ItemStack newItem = inventory[mySlot].copy();
+							newItem.stackSize = 1;
+							inv.setInventorySlotContents(theirSlot, newItem);
+							inventory[mySlot].stackSize--;
+							if(inventory[mySlot].stackSize <= 0) inventory[mySlot] = null;
 							return;
 						} else if(ItemStack.areItemsEqual(theirItem, inventory[mySlot]) 
 								&& ItemStack.areItemStackTagsEqual(theirItem, inventory[mySlot])
-								&& theirItem.stackSize < theirItem.getMaxStackSize()){
-							if(theirItem.stackSize + inventory[mySlot].stackSize <= theirItem.getMaxStackSize()){
-								theirItem.stackSize += inventory[mySlot].stackSize;
-								inventory[mySlot] = null;
-								return;
-							} else {
-								int delta = theirItem.getMaxStackSize() - theirItem.stackSize;
-								theirItem.stackSize += delta;
-								inventory[mySlot].stackSize -= delta;
-								return;
-							}
+								&& theirItem.stackSize < theirItem.getMaxStackSize()
+								&& theirItem.stackSize < inv.getInventoryStackLimit()){
+							theirItem.stackSize++;
+							inventory[mySlot].stackSize--;
+							if(inventory[mySlot].stackSize <= 0) inventory[mySlot] = null;
+							return;
 						}
 					}
 				}
