@@ -227,6 +227,11 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		}
     }
 	
+	public int getComparatorOutput() {
+		if(inventory[0] == null) return 0;
+		return Math.min(Math.max(15 * inventory[0].stackSize * inventory[0].getMaxStackSize() / inventory[0].getMaxStackSize(),1),15);
+	}
+	
 	///// Overrides to make this a multi-type block /////
 	@Override
 	public boolean isPowerSink(){

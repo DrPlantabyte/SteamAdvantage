@@ -428,7 +428,7 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	
 	public int getComparatorOutput() {
 		int sum = 0;
-		for(int n = 1; n < inventory.length; n++){
+		for(int n = 0; n < inventory.length; n++){
 			if(inventory[n] != null){
 				sum += inventory[n].stackSize * 64 / inventory[n].getMaxStackSize();
 			}

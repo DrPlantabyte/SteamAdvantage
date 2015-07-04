@@ -46,7 +46,7 @@ public class CoalBoilerBlock extends cyano.poweradvantage.api.simple.BlockSimple
 	@Override
 	public int getComparatorInputOverride(World world, BlockPos coord) {
 		if(world.getTileEntity(coord) instanceof CoalBoilerTileEntity){
-			return (int)(15 * ((CoalBoilerTileEntity)world.getTileEntity(coord)).getSteamLevel());
+			return ((CoalBoilerTileEntity)world.getTileEntity(coord)).getComparatorOutput();
 		}
 		return 0;
 	}

@@ -260,13 +260,13 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 
 	public int getComparatorOutput() {
 		int sum = 0;
-		for(int n = 1; n < inventory.length; n++){
+		for(int n = 0; n < 3; n++){
 			if(inventory[n] != null){
 				sum += inventory[n].stackSize * 64 / inventory[n].getMaxStackSize();
 			}
 		}
 		if(sum == 0) return 0;
-		return Math.min(Math.max(15 * sum / (64 * (inventory.length - 1)),1),15);
+		return Math.min(Math.max(15 * sum / (64 * 3),1),15);
 	}
 	
 	
