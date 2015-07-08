@@ -9,8 +9,8 @@ import cyano.steamadvantage.init.Power;
 
 public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerConsumer{
 
-	public static final float STEAM_PER_PROGRESS_TICK = 0.5f;
-	public static final int TICKS_PER_ACTION = 400;
+	public static final float STEAM_PER_PROGRESS_TICK = 1.5f;
+	public static final int TICKS_PER_ACTION = 125;
 
 	private final ItemStack[] inventory = new ItemStack[6]; // slot 0 is input, other slots are output
 	private final int[] allSlots;
