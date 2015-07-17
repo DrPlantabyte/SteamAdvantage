@@ -29,6 +29,12 @@ public class Enchantments {
 	}
 	
 	private static int getNextEnchantmentID(){
-		return Enchantment.enchantmentsBookList.length;
+		for(int i = 0; i < 255; i++){
+			if(Enchantment.getEnchantmentById(i) == null){
+				return i;
+			}
+		}
+		FMLLog.severe("Failed to find free enchantment ID!");
+		return 255;
 	}
 }
