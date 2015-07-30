@@ -207,7 +207,7 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 
 	@Override
 	public boolean canInsertItem(final int slot, final ItemStack srcItem, final EnumFacing side) {
-		return this.isItemValidForSlot(slot, srcItem);
+		return this.isItemValidForSlot(slot, srcItem) && slot <= 0;
 	}
 	
 	@Override
