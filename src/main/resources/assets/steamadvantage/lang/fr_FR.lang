@@ -1,0 +1,33 @@
+language_support_goals=english (en_US,en_EN,en_CA,en_GB, en_AU, en_PT), french (fr_FR,fr_CA), spanish (es_MX,es_ES), chinese (zh_CN), japanese (ja_JA), portugese (pt_BR), german (de_DE), italian (it_IT), korean (ko_KR)
+
+item.steamadvantage.steam_governor.name=Régulateur de vapeur
+
+tile.steamadvantage.steam_pipe.name=Tuyau de vapeur en laiton
+tile.steamadvantage.steam_boiler_coal.name=Chaudière à vapeur bois-charbon
+tile.steamadvantage.steam_tank.name=Réservoir de chaudière à vapeur
+tile.steamadvantage.steam_furnace.name=Four alimenté à la vapeur
+tile.steamadvantage.steam_crusher.name=Broyeur de roches alimenté à la vapeur
+
+
+tile.steamadvantage.drillbit.name=Foret
+tile.steamadvantage.steam_drill.name=Foret alimenté à la vapeur
+item.steamadvantage.steam_drill_bit.name=Morceau de foret
+death.attack.steam_machine=%1$s a été écrasé dans les engrenages d'une machine
+death.attack.steam_machine.player=%1$s a été poussé dans les engrenages d'une machine par %2$s
+
+
+tile.steamadvantage.steam_elevator.name=Ascenseur alimenté à la vapeur
+tile.steamadvantage.platform.name=Plate-forme ascenceur à vapeur
+death.attack.musket=%1$s got shot
+death.attack.musket.player=%2$s shot %1$s dead
+item.steamadvantage.blackpowder_cartridge.name=Cartouche de poudre noire
+item.steamadvantage.musket.name=Mousquet à poudre noire
+tooltip.musket.damage=Le tir provoque %x dégats
+tooltip.musket.ammo=Demande %x pour recharger
+tooltip.musket.loaded=Chargé
+tooltip.musket.unloaded=Non chargé
+enchantment.powderless=Sans poudre
+enchantment.rapid_reload=Rechargement rapide
+enchantment.high_explosive=High-Explosif
+enchantment.recoil=Recul
+tile.steamadvantage.steam_track.name=Trace de vapeur
