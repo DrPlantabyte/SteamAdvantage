@@ -31,7 +31,7 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 	private boolean redstone = true;
 	
 	public BlastFurnaceTileEntity() {
-		super(Power.steam_power, 200, RockCrusherTileEntity.class.getName());
+		super(Power.steam_power, 200, BlastFurnaceTileEntity.class.getName());
 		allSlots = new int[inventory.length];
 		for(int i = 0; i < allSlots.length; i++){
 			allSlots[i] = i;

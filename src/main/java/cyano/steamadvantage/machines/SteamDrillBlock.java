@@ -52,7 +52,7 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	 */
 	@Override
 	public void onBlockAdded(final World world, final BlockPos coord, final IBlockState state) {
-		this.setDefaultFacing(world, coord, state);
+		super.onBlockAdded(world, coord, state);
 		ConduitRegistry.getInstance().conduitBlockPlacedEvent(world, world.provider.getDimensionId(), coord, getType());
 	}
 	/**
@@ -194,35 +194,7 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 		super.breakBlock(world, coord, bs);
 	}
 
-	/**
-	 * Sets the default blockstate
-	 * @param w World instance
-	 * @param coord Block coordinate
-	 * @param state Block state
-	 */
-	protected void setDefaultFacing(final World w, final BlockPos coord, final IBlockState state) {
-		if (w.isRemote) {
-			return;
-		}
-		final Block block = w.getBlockState(coord.north()).getBlock();
-		final Block block2 = w.getBlockState(coord.south()).getBlock();
-		final Block block3 = w.getBlockState(coord.west()).getBlock();
-		final Block block4 = w.getBlockState(coord.east()).getBlock();
-		EnumFacing enumFacing = (EnumFacing)state.getValue(FACING);
-		if (enumFacing == EnumFacing.NORTH && block.isFullBlock() && !block2.isFullBlock()) {
-			enumFacing = EnumFacing.SOUTH;
-		}
-		else if (enumFacing == EnumFacing.SOUTH && block2.isFullBlock() && !block.isFullBlock()) {
-			enumFacing = EnumFacing.NORTH;
-		}
-		else if (enumFacing == EnumFacing.WEST && block3.isFullBlock() && !block4.isFullBlock()) {
-			enumFacing = EnumFacing.EAST;
-		}
-		else if (enumFacing == EnumFacing.EAST && block4.isFullBlock() && !block3.isFullBlock()) {
-			enumFacing = EnumFacing.WEST;
-		}
-		w.setBlockState(coord, state.withProperty((IProperty) FACING, (Comparable)enumFacing), 2);
-	}
+	
 	/**
 	 * This method tells Minecraft whether this block has a signal that can be 
 	 * measured by a redstone comparator.
@@ -282,10 +254,7 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	 */
 	@Override
 	public IBlockState getStateFromMeta(final int metaValue) {
-		EnumFacing enumFacing = EnumFacing.getFront(metaValue);
-		if (enumFacing.getAxis() == EnumFacing.Axis.Y) {
-			enumFacing = EnumFacing.NORTH;
-		}
+		EnumFacing enumFacing = EnumFacing.values()[metaValue % EnumFacing.values().length];
 		return this.getDefaultState().withProperty( FACING, enumFacing);
 	}
 
