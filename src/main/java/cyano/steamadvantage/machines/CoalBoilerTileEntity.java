@@ -405,4 +405,9 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	}
 
 	///// end of IFluidHandler methods /////
+	
+	@Override
+	public boolean isItemValidForSlot(final int slot, final ItemStack item) {
+		return super.isItemValidForSlot(slot, item) && TileEntityFurnace.getItemBurnTime(item) > 0;
+	}
 }

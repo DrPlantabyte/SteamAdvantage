@@ -73,7 +73,7 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 				energyDecay();
 			}
 			// steam bonus
-			if(this.getEnergy() > STEAM_PER_TICK && burnTime > 0){
+			if(this.getEnergy() > STEAM_PER_TICK && burnTime > 0 && (!redstone)){
 				e = 15;
 				this.subtractEnergy(STEAM_PER_TICK, getType());
 			}
@@ -295,7 +295,7 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 		case 1:
 		case 2:
 		case 3:
-			return true;
+			return FurnaceRecipes.instance().getSmeltingResult(item) != null;
 		case 4:
 		case 5:
 		case 6:
