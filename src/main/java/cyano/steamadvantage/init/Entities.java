@@ -6,12 +6,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.steamadvantage.SteamAdvantage;
 import cyano.steamadvantage.blocks.DrillBitTileEntity;
-import cyano.steamadvantage.machines.BlastFurnaceTileEntity;
-import cyano.steamadvantage.machines.CoalBoilerTileEntity;
-import cyano.steamadvantage.machines.RockCrusherTileEntity;
-import cyano.steamadvantage.machines.SteamDrillTileEntity;
-import cyano.steamadvantage.machines.SteamElevatorTileEntity;
-import cyano.steamadvantage.machines.SteamTankTileEntity;
+import cyano.steamadvantage.machines.*;
 
 public class Entities {
 
@@ -23,6 +18,8 @@ public class Entities {
 		
 
 		GameRegistry.registerTileEntity(CoalBoilerTileEntity.class, SteamAdvantage.MODID+"."+"steam_boiler_coal");
+		GameRegistry.registerTileEntity(ElectricBoilerTileEntity.class, SteamAdvantage.MODID+"."+"steam_boiler_electric");
+		GameRegistry.registerTileEntity(GeothermalBoilerTileEntity.class, SteamAdvantage.MODID+"."+"steam_boiler_geothermal");
 		GameRegistry.registerTileEntity(SteamTankTileEntity.class, SteamAdvantage.MODID+"."+"steam_tank");
 		GameRegistry.registerTileEntity(BlastFurnaceTileEntity.class, SteamAdvantage.MODID+"."+"steam_furnace");
 		GameRegistry.registerTileEntity(RockCrusherTileEntity.class, SteamAdvantage.MODID+"."+"steam_crusher");

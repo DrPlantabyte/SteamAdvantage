@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=east": { "model": "steamadvantage:steam_boiler_electric", "y": 90 },
+        "facing=north": { "model": "steamadvantage:steam_boiler_electric" },
+        "facing=south": { "model": "steamadvantage:steam_boiler_electric", "y": 180 },
+        "facing=west": { "model": "steamadvantage:steam_boiler_electric", "y": 270 }
+    }
+}

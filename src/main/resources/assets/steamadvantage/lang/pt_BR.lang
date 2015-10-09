@@ -33,3 +33,8 @@ enchantment.high_explosive=Bomba
 enchantment.recoil=Recuo
 tile.steamadvantage.steam_track.name=Pista de Vapor
 
+
+
+
+tile.steamadvantage.steam_boiler_electric.name=Caldeira de Vapor Elétrica
+tile.steamadvantage.steam_boiler_geothermal.name=Caldeira a Vapor de Lava

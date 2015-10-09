@@ -31,3 +31,7 @@ enchantment.rapid_reload=Quick Reload
 enchantment.high_explosive=High-Explosive
 enchantment.recoil=Recoil
 tile.steamadvantage.steam_track.name=Steam Track
+
+
+tile.steamadvantage.steam_boiler_electric.name=Electric Steam Boiler
+tile.steamadvantage.steam_boiler_geothermal.name=Geothermal Steam Boiler

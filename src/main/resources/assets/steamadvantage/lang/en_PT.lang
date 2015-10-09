@@ -31,3 +31,8 @@ enchantment.rapid_reload=Faster Blaster
 enchantment.high_explosive=Big Boom
 enchantment.recoil=Kickback
 tile.steamadvantage.steam_track.name=Steam Path
+
+
+
+tile.steamadvantage.steam_boiler_electric.name=Lightnin' Boiler
+tile.steamadvantage.steam_boiler_geothermal.name=Lava Boiler

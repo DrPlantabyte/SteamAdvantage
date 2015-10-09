@@ -1,10 +1,15 @@
 package cyano.steamadvantage.machines;
 
-import java.util.Arrays;
-
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.PowerRequest;
+import cyano.poweradvantage.api.fluid.FluidRequest;
+import cyano.poweradvantage.init.Fluids;
+import cyano.steamadvantage.init.Power;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -13,32 +18,28 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fml.common.FMLLog;
-import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.PowerRequest;
-import cyano.poweradvantage.api.fluid.FluidRequest;
-import cyano.poweradvantage.init.Fluids;
-import cyano.steamadvantage.init.Power;
 
-public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerSource implements IFluidHandler{
+public class GeothermalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerSource implements IFluidHandler{
 
-	
-	public static final int LAVA_REQUEST_SIZE = 100;
-	public static final float LAVA_TO_BURN_TICKS = 16;
 	
 	private final FluidTank tank;
 	
 	private final ItemStack[] inventory;
 	
-	private int burnTime = 0;
-	private int totalBurnTime = 0;
+	private float temperature = 0;
+	private final float MAX_TEMPERATURE = 2000;
+	private final float HEAT_LOSS_FACTOR = 0.5f / MAX_TEMPERATURE;
+	private final float THERMAL_RESISTANCE = 0.1f;
+	private final float ACTIVATION_TEMPERATURE = 100;
+	private final float HEAT_LOSS_PER_STEAM_UNIT = 24f;
+	private final float STEAM_UNITS_PER_TEMPERATURE = 0.001f;
 	
-	private final int[] dataSyncArray = new int[4];
+	private final int[] dataSyncArray = new int[3];
 	
-	public CoalBoilerTileEntity() {
-		super(Power.steam_power, 1000, CoalBoilerTileEntity.class.getSimpleName());
-		tank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME * 4);
-		inventory = new ItemStack[1];
+	public GeothermalBoilerTileEntity() {
+		super(Power.steam_power, 100, GeothermalBoilerTileEntity.class.getSimpleName());
+		tank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME * 2);
+		inventory = new ItemStack[0];
 	}
 
 	private boolean redstone = true;
@@ -49,8 +50,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	public void tickUpdate(boolean isServerWorld) {
 		if(isServerWorld){
 			// server-side logic
-			if(burnTime > 0){
-				burnTime--;
+			if(!redstone && tank.getFluidAmount() > 0 && temperature >= ACTIVATION_TEMPERATURE){
 				boilWater();
 				// play steam sounds occasionally
 				if(getWorld().rand.nextInt(100) == 0){
@@ -64,12 +64,6 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 				}
 				timeSinceSound++;
 			} else {
-				int fuel = getFuelBurnTime();
-				if( fuel > 0 && (!redstone) && this.getTank().getFluidAmount() > 0){
-					burnTime = fuel;
-					totalBurnTime = fuel;
-					decrementFuel();
-				}
 				energyDecay();
 			}
 		}
@@ -87,36 +81,52 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 			subtractEnergy(Power.ENERGY_LOST_PER_TICK,Power.steam_power);
 		}
 	}
-
-
-	private int getFuelBurnTime() {
-		if(inventory[0] == null) return 0;
-		return TileEntityFurnace.getItemBurnTime(inventory[0]);
+	
+	private void updateTemperature(){
+		float themalInput = 0;
+		for(EnumFacing f : EnumFacing.values()){
+			BlockPos p = getPos().offset(f);
+			if(p.getY() >= 0 && p.getY() < 256){
+				themalInput += thermalEnergy(getWorld().getBlockState(p));
+			}
+		}
+		float tSqr = temperature * temperature;
+		float delta = THERMAL_RESISTANCE * (themalInput - tSqr * HEAT_LOSS_FACTOR);
+		temperature = Math.max(0, Math.min(MAX_TEMPERATURE, temperature + delta) - 1);
+	}
+	
+	private static float thermalEnergy(IBlockState bs){
+		Block b = bs.getBlock();
+		if(b == net.minecraft.init.Blocks.fire){
+			return 200;
+		} else if(FluidRegistry.lookupFluidForBlock(b) != null) {
+			return Math.max(0, FluidRegistry.lookupFluidForBlock(b).getTemperature() - 372) * 0.5f;
+		} else {
+			return 0;
+		}
 	}
 	
 
-	private void decrementFuel() {
-		if(inventory[0].stackSize == 1 && inventory[0].getItem().getContainerItem(inventory[0]) != null){
-			inventory[0] = inventory[0].getItem().getContainerItem(inventory[0]);
-		} else {
-			this.decrStackSize(0, 1);
-		}
-	}
-
-
 	private void boilWater() {
-		if(getTank().getFluidAmount() >= 1 && (getEnergyCapacity() - getEnergy()) >= 1){
-			getTank().drain(1, true);
-			addEnergy(1,Power.steam_power);
+		if(getTank().getFluidAmount() >= 1 && (getEnergyCapacity() - getEnergy()) >= 1
+				&& temperature >= ACTIVATION_TEMPERATURE){
+			float steamDelta = Math.min(STEAM_UNITS_PER_TEMPERATURE * temperature,getEnergyCapacity() - getEnergy());
+			float heatDelta = HEAT_LOSS_PER_STEAM_UNIT * steamDelta;
+			int waterDelta = (int)steamDelta + 1;
+			getTank().drain(waterDelta, true);
+			temperature -= heatDelta;
+			addEnergy(steamDelta,Power.steam_power);
 		}
 	}
 
 	private float oldEnergy = 0;
-	private int oldBurnTime = 0;
+	private float oldTemp = 0;
 	private int oldWater = 0;
 	@Override
 	public void powerUpdate(){
 		super.powerUpdate();
+		redstone = hasRedstoneSignal();
+		updateTemperature();
 		// powerUpdate occurs once every 8 world ticks and is scheduled such that neighboring 
 		// machines don't powerUpdate in the same world tick. To reduce network congestion, 
 		// I'm doing the synchonization logic here instead of in the tickUpdate method
@@ -126,8 +136,8 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 			oldEnergy = getEnergy();
 			updateFlag = true;
 		}
-		if(oldBurnTime != burnTime){
-			oldBurnTime = burnTime;
+		if(oldTemp != temperature){
+			oldTemp = temperature;
 			updateFlag = true;
 		}
 		if(oldWater != getTank().getFluidAmount()){
@@ -135,7 +145,6 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 			updateFlag = true;
 		}
 		
-		redstone = hasRedstoneSignal();
 		
 		if(updateFlag){
 			super.sync();
@@ -150,13 +159,8 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		return this.getEnergy() / this.getEnergyCapacity();
 	}
 	
-	public float getBurnLevel(){
-		if(burnTime == 0){
-			return 0;
-		} else if (totalBurnTime == 0){
-			return 1;
-		}
-		return Math.max(0,Math.min(1,((float)burnTime)/((float)totalBurnTime)));
+	public float getTemperatureLevel(){
+		return temperature / MAX_TEMPERATURE;
 	}
 	
 	public FluidTank getTank(){
@@ -177,16 +181,14 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	public void prepareDataFieldsForSync() {
 		dataSyncArray[0] = Float.floatToRawIntBits(this.getEnergy());
 		dataSyncArray[1] = this.getTank().getFluidAmount();
-		dataSyncArray[2] = this.burnTime;
-		dataSyncArray[3] = this.totalBurnTime;
+		dataSyncArray[2] = Float.floatToIntBits(temperature);
 	}
 
 	@Override
 	public void onDataFieldUpdate() {
 		this.setEnergy(Float.intBitsToFloat(dataSyncArray[0]), this.getType());
 		this.getTank().setFluid(new FluidStack(FluidRegistry.WATER,dataSyncArray[1]));
-		this.burnTime = dataSyncArray[2];
-		this.totalBurnTime = dataSyncArray[3];
+		this.temperature = Float.intBitsToFloat(dataSyncArray[2]);
 	}
 	
 
@@ -200,39 +202,32 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
         NBTTagCompound tankTag = new NBTTagCompound();
         this.getTank().writeToNBT(tankTag);
         tagRoot.setTag("Tank", tankTag);
-		if(this.burnTime > 0)tagRoot.setInteger("BurnTime", this.burnTime);
-		if(this.totalBurnTime > 0)tagRoot.setInteger("BurnTimeTotal", this.totalBurnTime);
+		if(this.temperature > 0)tagRoot.setFloat("Temperature", this.temperature);
 	}
 	/**
 	 * Handles data saving and loading
 	 * @param tagRoot An NBT tag
 	 */
 	@Override
-    public void readFromNBT(final NBTTagCompound tagRoot) {
-    	super.readFromNBT(tagRoot);
-        if (tagRoot.hasKey("Tank")) {
-            NBTTagCompound tankTag = tagRoot.getCompoundTag("Tank");
-    		getTank().readFromNBT(tankTag);
-    		if(tankTag.hasKey("Empty")){
-    			// empty the tank if NBT says its empty (not default behavior of Tank.readFromNBT(...) )
-    			getTank().setFluid(null);
-    		}
-        }
-		if(tagRoot.hasKey("BurnTime")){
-			this.burnTime = tagRoot.getInteger("BurnTime");
-		} else {
-			this.burnTime = 0;
+	public void readFromNBT(final NBTTagCompound tagRoot) {
+		super.readFromNBT(tagRoot);
+		if (tagRoot.hasKey("Tank")) {
+			NBTTagCompound tankTag = tagRoot.getCompoundTag("Tank");
+			getTank().readFromNBT(tankTag);
+			if(tankTag.hasKey("Empty")){
+				// empty the tank if NBT says its empty (not default behavior of Tank.readFromNBT(...) )
+				getTank().setFluid(null);
+			}
 		}
-		if(tagRoot.hasKey("BurnTimeTotal")){
-			this.totalBurnTime = tagRoot.getInteger("BurnTimeTotal");
+		if(tagRoot.hasKey("Temperature")){
+			this.temperature = tagRoot.getFloat("Tempoerature");
 		} else {
-			this.totalBurnTime = 0;
+			this.temperature = 0;
 		}
-    }
+	}
 	
 	public int getComparatorOutput() {
-		if(inventory[0] == null) return 0;
-		return Math.min(Math.max(15 * inventory[0].stackSize * inventory[0].getMaxStackSize() / inventory[0].getMaxStackSize(),1),15);
+		return Math.min(Math.max((int)(15 * temperature / MAX_TEMPERATURE),1),15);
 	}
 	
 	///// Overrides to make this a multi-type block /////
@@ -257,10 +252,6 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 				} else {
 					return 0;
 				}
-			} else if(Fluids.conduitTypeToFluid(type) == FluidRegistry.LAVA){
-				burnTime += (int)(amount * LAVA_TO_BURN_TICKS);
-				totalBurnTime = (int)(LAVA_REQUEST_SIZE * LAVA_TO_BURN_TICKS);
-				return amount;
 			} else {
 				return 0;
 			}
@@ -296,7 +287,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 			} else {
 				return 0;
 			}
-		}else{
+		} else {
 			return super.subtractEnergy(amount, type);
 		}
 	}
@@ -306,14 +297,6 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		if(Fluids.conduitTypeToFluid(offer) == FluidRegistry.WATER){
 			PowerRequest request = new FluidRequest(FluidRequest.MEDIUM_PRIORITY+1,
 					(getTank().getCapacity() - getTank().getFluidAmount()),
-					this);
-			return request;
-		} else if(Fluids.conduitTypeToFluid(offer) == FluidRegistry.LAVA 
-				&& burnTime <= 0 && getFuelBurnTime() <= 0 
-				&& getTank().getFluidAmount() > 0
-				&& !redstone){
-			PowerRequest request = new FluidRequest(FluidRequest.MEDIUM_PRIORITY+1,
-					LAVA_REQUEST_SIZE,
 					this);
 			return request;
 		} else {
@@ -329,7 +312,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	 * otherwise
 	 */
 	public boolean canAcceptType(ConduitType type, EnumFacing blockFace){
-		return ConduitType.areSameType(getType(), type) || ConduitType.areSameType(Fluids.fluidConduit_general, type);
+		return canAcceptType(type);
 	}
 	/**
 	 * Determines whether this conduit is compatible with a type of energy through any side
@@ -338,7 +321,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	 * faces, false otherwise
 	 */
 	public boolean canAcceptType(ConduitType type){
-		return ConduitType.areSameType(getType(), type) || ConduitType.areSameType(Fluids.fluidConduit_general, type);
+		return ConduitType.areSameType(getType(), type);
 	}
 	///// end multi-type overrides /////
 
@@ -426,6 +409,6 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	
 	@Override
 	public boolean isItemValidForSlot(final int slot, final ItemStack item) {
-		return super.isItemValidForSlot(slot, item) && TileEntityFurnace.getItemBurnTime(item) > 0;
+		return false;
 	}
 }

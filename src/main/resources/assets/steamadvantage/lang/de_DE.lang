@@ -30,3 +30,8 @@ enchantment.rapid_reload=Schnell neu laden
 enchantment.high_explosive=Bombe
 enchantment.recoil=Rückstoß
 tile.steamadvantage.steam_track.name=Dampfkraftzug
+
+
+
+tile.steamadvantage.steam_boiler_electric.name=Elektro-Dampfkessel
+tile.steamadvantage.steam_boiler_geothermal.name=Geothermische Dampfkessel

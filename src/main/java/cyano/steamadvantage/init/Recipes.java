@@ -25,6 +25,7 @@ public class Recipes {
 		
 		RecipeMode recipeMode = PowerAdvantage.recipeMode;
 		OreDictionary.registerOre("stick", net.minecraft.init.Items.stick);
+		OreDictionary.registerOre("blockObsidian", net.minecraft.init.Blocks.obsidian);
 		
 		if(recipeMode == RecipeMode.TECH_PROGRESSION){
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.steam_governor,1)," t ","srs","btb",'t',"sprocket",'s',"barsSteel",'r',"barsBrass",'b',"ingotBrass"));
@@ -37,6 +38,8 @@ public class Recipes {
 			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.steam_crusher, new ItemStack(Items.steam_governor,2));
 			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.steam_furnace, new ItemStack(Items.steam_governor,2));
 			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.steam_boiler_coal, new ItemStack(Items.steam_governor,2));
+			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.steam_boiler_electric, new ItemStack(Items.steam_governor,2));
+			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.steam_boiler_geothermal, new ItemStack(Items.steam_governor,2));
 			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.steam_drill, new ItemStack(Items.steam_governor,2));
 			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.steam_elevator, new ItemStack(Items.steam_governor,3));
 			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.steam_tank, new ItemStack(Items.steam_governor,1));
@@ -57,6 +60,8 @@ public class Recipes {
 		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_drill,Items.steam_drill_bit));
 		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_elevator,net.minecraft.init.Blocks.piston,"sprocket"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(Blocks.steam_tank,"xgx","xpx","xxx",'x',"plateCopper",'p',"conduitSteam",'g',"governor"));
+		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_boiler_electric,"wire",net.minecraft.init.Items.bucket));
+		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_boiler_geothermal,"conduitSteam","blockObsidian"));
 		
 		GameRegistry.addRecipe(new ShapedOreRecipe(Items.blackpowder_cartridge,"L","g","p",'L',"nuggetLead",'g',net.minecraft.init.Items.gunpowder,'p',net.minecraft.init.Items.paper));
 		

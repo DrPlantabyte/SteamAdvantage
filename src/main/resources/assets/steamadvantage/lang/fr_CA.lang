@@ -31,3 +31,7 @@ enchantment.rapid_reload=Rechargement rapide
 enchantment.high_explosive=High-Explosif
 enchantment.recoil=Recul
 tile.steamadvantage.steam_track.name=Trace de vapeur
+
+
+tile.steamadvantage.steam_boiler_electric.name=Chaudière à Vapeur Électrique
+tile.steamadvantage.steam_boiler_geothermal.name=Chaudière à Vapeur Géothermique

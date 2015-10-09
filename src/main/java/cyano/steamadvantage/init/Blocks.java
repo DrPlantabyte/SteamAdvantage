@@ -22,6 +22,8 @@ public abstract class Blocks {
 
 
 	public static GUIBlock steam_boiler_coal;
+	public static GUIBlock steam_boiler_electric;
+	public static GUIBlock steam_boiler_geothermal;
 	public static GUIBlock steam_crusher;
 	public static GUIBlock steam_furnace;
 	public static GUIBlock steam_tank;
@@ -41,6 +43,8 @@ public abstract class Blocks {
 		OreDictionary.registerOre("conduitSteam", steam_pipe);
 		steam_track = addBlock(new SteamTrackBlock(),"steam_track");
 		steam_boiler_coal = (GUIBlock)addBlock(new CoalBoilerBlock(),"steam_boiler_coal");
+		steam_boiler_electric = (GUIBlock)addBlock(new ElectricBoilerBlock(),"steam_boiler_electric");
+		steam_boiler_geothermal = (GUIBlock)addBlock(new GeothermalBoilerBlock(),"steam_boiler_geothermal");
 		steam_tank = (GUIBlock)addBlock(new SteamTankBlock(),"steam_tank");
 		steam_furnace = (GUIBlock)addBlock(new BlastFurnaceBlock(),"steam_furnace");
 		steam_crusher = (GUIBlock)addBlock(new RockCrusherBlock(),"steam_crusher");

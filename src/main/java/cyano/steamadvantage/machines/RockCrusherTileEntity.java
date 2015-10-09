@@ -20,7 +20,7 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 	private int progress = 0;
 	
 	public RockCrusherTileEntity() {
-		super(Power.steam_power, 200, RockCrusherTileEntity.class.getName());
+		super(Power.steam_power, 50, RockCrusherTileEntity.class.getName());
 		allSlots = new int[inventory.length];
 		for(int i = 0; i < allSlots.length; i++){
 			allSlots[i] = i;

@@ -18,6 +18,8 @@ public class GUI {
 		Blocks.steam_furnace.setGuiID(MachineGUIRegistry.addGUI(new BlastFurnaceGUI()),PowerAdvantage.getInstance());
 		Blocks.steam_crusher.setGuiID(MachineGUIRegistry.addGUI(new RockCrusherGUI()),PowerAdvantage.getInstance());
 		Blocks.steam_drill.setGuiID(MachineGUIRegistry.addGUI(new SteamDrillGUI()),PowerAdvantage.getInstance());
+		Blocks.steam_boiler_electric.setGuiID(MachineGUIRegistry.addGUI(new ElectricBoilerGUI()),PowerAdvantage.getInstance());
+		Blocks.steam_boiler_geothermal.setGuiID(MachineGUIRegistry.addGUI(new GeothermalBoilerGUI()),PowerAdvantage.getInstance());
 		
 		
 		initDone = true;

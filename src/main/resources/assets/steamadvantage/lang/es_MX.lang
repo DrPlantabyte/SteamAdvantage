@@ -33,3 +33,8 @@ enchantment.high_explosive=Bomba
 enchantment.recoil=Retroceso
 tile.steamadvantage.steam_track.name=Vía a Vapor
 
+
+
+
+tile.steamadvantage.steam_boiler_electric.name=Caldera de Vapor Eléctrica
+tile.steamadvantage.steam_boiler_geothermal.name=Caldera de Vapor Geotérmico

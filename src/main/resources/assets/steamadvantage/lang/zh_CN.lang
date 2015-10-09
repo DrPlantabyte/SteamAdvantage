@@ -32,3 +32,8 @@ enchantment.high_explosive=炸彈
 enchantment.recoil=後坐力
 tile.steamadvantage.steam_track.name=蒸汽路径
 
+
+
+
+tile.steamadvantage.steam_boiler_electric.name=電熱蒸汽鍋爐
+tile.steamadvantage.steam_boiler_geothermal.name=地熱蒸汽鍋爐

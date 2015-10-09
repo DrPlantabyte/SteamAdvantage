@@ -32,3 +32,8 @@ enchantment.high_explosive=爆弾
 enchantment.recoil=リコイル
 tile.steamadvantage.steam_track.name=蒸気トレース
 
+
+
+
+tile.steamadvantage.steam_boiler_electric.name=電気蒸気ボイラ
+tile.steamadvantage.steam_boiler_geothermal.name=地熱蒸気ボイラー

@@ -31,3 +31,8 @@ enchantment.high_explosive=Bomba
 enchantment.recoil=Rinculo
 tile.steamadvantage.steam_track.name=Pista a Vapore
 
+
+
+
+tile.steamadvantage.steam_boiler_electric.name=Caldaia a Vapore Elettrica
+tile.steamadvantage.steam_boiler_geothermal.name=Caldaia a Vapore Geotermico

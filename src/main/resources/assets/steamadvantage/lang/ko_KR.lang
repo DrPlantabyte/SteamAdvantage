@@ -33,3 +33,8 @@ enchantment.recoil=뒷걸음질
 tile.steamadvantage.steam_track.name=증기 선로
 
 
+
+
+
+tile.steamadvantage.steam_boiler_electric.name=전기 스팀 보일러
+tile.steamadvantage.steam_boiler_geothermal.name=지열 증기 보일러
