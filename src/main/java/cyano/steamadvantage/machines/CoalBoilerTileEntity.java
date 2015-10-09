@@ -23,6 +23,9 @@ import cyano.steamadvantage.init.Power;
 public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerSource implements IFluidHandler{
 
 	
+	public static final int LAVA_REQUEST_SIZE = 100;
+	public static final float LAVA_TO_BURN_TICKS = 16;
+	
 	private final FluidTank tank;
 	
 	private final ItemStack[] inventory;
@@ -153,7 +156,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		} else if (totalBurnTime == 0){
 			return 1;
 		}
-		return ((float)burnTime)/((float)totalBurnTime);
+		return Math.max(0,Math.min(1,((float)burnTime)/((float)totalBurnTime)));
 	}
 	
 	public FluidTank getTank(){
@@ -245,11 +248,19 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	 * @param type the type of energy/fluid being added.
 	 * @return The amount that was actually added
 	 */
-    @Override
+	@Override
 	public float addEnergy(float amount, ConduitType type){
-    	if(Fluids.isFluidType(type)){
-			if(this.canFill(null, Fluids.conduitTypeToFluid(type))){
-				return this.fill(null, new FluidStack(Fluids.conduitTypeToFluid(type),(int)amount), true);
+		if(Fluids.isFluidType(type)){
+			if(Fluids.conduitTypeToFluid(type) == FluidRegistry.WATER){
+				if(this.canFill(null, Fluids.conduitTypeToFluid(type))){
+					return this.fill(null, new FluidStack(Fluids.conduitTypeToFluid(type),(int)amount), true);
+				} else {
+					return 0;
+				}
+			} else if(Fluids.conduitTypeToFluid(type) == FluidRegistry.LAVA){
+				burnTime += (int)(amount * LAVA_TO_BURN_TICKS);
+				totalBurnTime = (int)(LAVA_REQUEST_SIZE * LAVA_TO_BURN_TICKS);
+				return amount;
 			} else {
 				return 0;
 			}
@@ -293,9 +304,16 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	@Override
 	public PowerRequest getPowerRequest(ConduitType offer) {
 		if(Fluids.conduitTypeToFluid(offer) == FluidRegistry.WATER){
-			// TODO: accept lava as fuel
 			PowerRequest request = new FluidRequest(FluidRequest.MEDIUM_PRIORITY+1,
 					(getTank().getCapacity() - getTank().getFluidAmount()),
+					this);
+			return request;
+		} else if(Fluids.conduitTypeToFluid(offer) == FluidRegistry.LAVA 
+				&& burnTime <= 0 && getFuelBurnTime() <= 0 
+				&& getTank().getFluidAmount() > 0
+				&& !hasRedstoneSignal()){
+			PowerRequest request = new FluidRequest(FluidRequest.MEDIUM_PRIORITY+1,
+					LAVA_REQUEST_SIZE,
 					this);
 			return request;
 		} else {
