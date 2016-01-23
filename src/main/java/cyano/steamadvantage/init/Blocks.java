@@ -34,6 +34,12 @@ public abstract class Blocks {
 	public static Block steam_pipe;
 	public static Block drillbit;
 	public static Block steam_track;
+
+	public static Block pump_pipe;
+	public static Block steam_switch;
+	public static GUIBlock steam_still;
+	public static GUIBlock steam_pump;
+	public static GUIBlock steam_boiler_oil;
 	
 	private static boolean initDone = false;
 	public static void init(){

@@ -35,3 +35,9 @@ tile.steamadvantage.steam_track.name=Dampfkraftzug
 
 tile.steamadvantage.steam_boiler_electric.name=Elektro-Dampfkessel
 tile.steamadvantage.steam_boiler_geothermal.name=Geothermische Dampfkessel
+
+tile.steamadvantage.steam_switch.name=Dampfventil
+tile.steamadvantage.steam_still.name=Dampfkraft Brennerei
+tile.steamadvantage.steam_pump.name=Dampfkraft Pumpe
+tile.steamadvantage.steam_boiler_oil.name=Ölfeuerung Dampfkraft Kessel
+tile.steamadvantage.pump_pipe.name=Pumpenrohr

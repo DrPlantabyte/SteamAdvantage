@@ -37,3 +37,9 @@ tile.steamadvantage.steam_track.name=蒸汽路径
 
 tile.steamadvantage.steam_boiler_electric.name=電熱蒸汽鍋爐
 tile.steamadvantage.steam_boiler_geothermal.name=地熱蒸汽鍋爐
+
+tile.steamadvantage.steam_switch.name=蒸汽閥
+tile.steamadvantage.steam_still.name=蒸汽動力酒廠
+tile.steamadvantage.steam_pump.name=蒸汽動力泵
+tile.steamadvantage.steam_boiler_oil.name=燃油鍋爐
+tile.steamadvantage.pump_pipe.name=泵管

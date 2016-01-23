@@ -37,3 +37,9 @@ tile.steamadvantage.steam_track.name=蒸気トレース
 
 tile.steamadvantage.steam_boiler_electric.name=電気蒸気ボイラ
 tile.steamadvantage.steam_boiler_geothermal.name=地熱蒸気ボイラー
+
+tile.steamadvantage.steam_switch.name=蒸気弁
+tile.steamadvantage.steam_still.name=蒸気駆動の蒸留所
+tile.steamadvantage.steam_pump.name=蒸気駆動のポンプ
+tile.steamadvantage.steam_boiler_oil.name=石油燃焼ボイラー
+tile.steamadvantage.pump_pipe.name=ポンプ配管

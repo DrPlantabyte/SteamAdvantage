@@ -36,3 +36,9 @@ tile.steamadvantage.steam_track.name=Pista a Vapore
 
 tile.steamadvantage.steam_boiler_electric.name=Caldaia a Vapore Elettrica
 tile.steamadvantage.steam_boiler_geothermal.name=Caldaia a Vapore Geotermico
+
+tile.steamadvantage.steam_switch.name=Valvola del Vapore
+tile.steamadvantage.steam_still.name=A Vapore Alimentata Distilleria
+tile.steamadvantage.steam_pump.name=Pompa Alimentata a Vapore
+tile.steamadvantage.steam_boiler_oil.name=Caldaia ad Olio Combustibile
+tile.electricadvantage.pump_pipe.name=Tubo Pompa

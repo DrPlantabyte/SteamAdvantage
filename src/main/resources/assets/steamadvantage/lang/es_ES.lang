@@ -35,3 +35,9 @@ tile.steamadvantage.steam_track.name=Vía a Vapor
 
 tile.steamadvantage.steam_boiler_electric.name=Caldera de Vapor Eléctrica
 tile.steamadvantage.steam_boiler_geothermal.name=Caldera de Vapor Geotérmico
+
+tile.steamadvantage.steam_switch.name=Válvula de Vapor
+tile.steamadvantage.steam_still.name=Vapor Destilería
+tile.steamadvantage.steam_pump.name=Vapor de la Bomba Accionada
+tile.steamadvantage.steam_boiler_oil.name=Caldera de Vapor con Aceite
+tile.steamadvantage.pump_pipe.name=Tubería de la Bomba
