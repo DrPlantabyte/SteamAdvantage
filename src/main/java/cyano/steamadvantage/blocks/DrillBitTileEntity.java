@@ -1,18 +1,17 @@
 package cyano.steamadvantage.blocks;
 
+import cyano.steamadvantage.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
-import cyano.steamadvantage.init.Blocks;
 
-public class DrillBitTileEntity extends TileEntity implements IUpdatePlayerListBox{
+public class DrillBitTileEntity extends TileEntity implements ITickable{
 
 	public final static float ROTATION_PER_TICK = 360f / 20f; // in degrees, 20 ticks per revolution
 	public float rotation = 0;

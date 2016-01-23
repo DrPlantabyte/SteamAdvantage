@@ -115,16 +115,8 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	 * @return true if this conduit can flow the given energy type through the given face, false 
 	 * otherwise
 	 */
-	public boolean canAcceptType(ConduitType type, EnumFacing blockFace){
-		return ConduitType.areSameType(getType(), type);
-	}
-	/**
-	 * Determines whether this conduit is compatible with a type of energy through any side
-	 * @param type The type of energy in the conduit
-	 * @return true if this conduit can flow the given energy type through one or more of its block 
-	 * faces, false otherwise
-	 */
-	public boolean canAcceptType(ConduitType type){
+	@Override
+	public boolean canAcceptType(IBlockState state, ConduitType type, EnumFacing blockFace){
 		return ConduitType.areSameType(getType(), type);
 	}
 

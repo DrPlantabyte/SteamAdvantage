@@ -1,6 +1,7 @@
 package cyano.steamadvantage.gui;
 
 import cyano.poweradvantage.api.simple.SimpleMachineGUI.GUIContainer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 public abstract class GUIHelper {
 
@@ -66,11 +67,11 @@ public abstract class GUIHelper {
 		v[2] = v[1];		
 		v[3] = v[0];
 		
-		renderer.startDrawingQuads();
+		renderer.begin(7, DefaultVertexFormats.POSITION_TEX);
 
 		// (x, y, z, u, v)
 		for(int i = 3; i >= 0; i--){
-			renderer.addVertexWithUV(x[i], y[i], zLevel, u[i],v[i]); 
+			renderer.pos(x[i], y[i], zLevel).tex(u[i],v[i]).endVertex();; 
 		}
 		net.minecraft.client.renderer.Tessellator.getInstance().draw();
 		

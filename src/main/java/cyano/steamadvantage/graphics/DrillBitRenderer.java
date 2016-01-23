@@ -1,9 +1,12 @@
 package cyano.steamadvantage.graphics;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -41,14 +44,29 @@ public class DrillBitRenderer extends TileEntitySpecialRenderer{
 	}
 	
 	private void render(DrillBitTileEntity e, World world, BlockPos pos, float partialTick){
-		this.bindTexture(texture);
 		final Tessellator instance = Tessellator.getInstance();
+		final WorldRenderer worldRenderer = instance.getWorldRenderer();
+		
+		this.bindTexture(texture);
 		
 		//This will make your block brightness dependent from surroundings lighting.
-		instance.getWorldRenderer().setBrightness(world.getCombinedLight(pos, 0));
-		instance.getWorldRenderer().setColorOpaque_F(1f, 1f, 1f);
+//		instance.getWorldRenderer().setBrightness(world.getCombinedLight(pos, 0));
+//		instance.getWorldRenderer().color(1f, 1f, 1f, 1f);
+		net.minecraft.client.renderer.tileentity.TileEntityBeaconRenderer k;
+        RenderHelper.disableStandardItemLighting();
+        GlStateManager.blendFunc(770, 771);
+        GlStateManager.enableBlend();
+        GlStateManager.disableCull();
+
+        if (Minecraft.isAmbientOcclusionEnabled())
+        {
+            GlStateManager.shadeModel(7425);
+        }
+        else
+        {
+            GlStateManager.shadeModel(7424);
+        }
 		
-		final WorldRenderer worldRenderer = instance.getWorldRenderer();
 		final float sideU0 = 0;
 		final float sideU1 = 0.5f;
 		final float sideV0 = 0;
@@ -68,39 +86,40 @@ public class DrillBitRenderer extends TileEntitySpecialRenderer{
 		}
 		GlStateManager.rotate(e.rotation + DrillBitTileEntity.ROTATION_PER_TICK * partialTick, 0.0f, 1.0f, 0.0f);
 
-		worldRenderer.startDrawingQuads();
-		worldRenderer.setNormal(0.0f, 1.0f, 0.0f);
-		worldRenderer.addVertexWithUV( radius, 0.5f, -radius, sideU0, sideV0);
-		worldRenderer.addVertexWithUV( radius,-0.5f, -radius, sideU0, sideV1);
-		worldRenderer.addVertexWithUV(-radius,-0.5f, -radius, sideU1, sideV1);
-		worldRenderer.addVertexWithUV(-radius, 0.5f, -radius, sideU1, sideV0);
+		worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
+		worldRenderer.pos( radius, 0.5f, -radius).tex( sideU0, sideV0).endVertex();
+		worldRenderer.pos( radius,-0.5f, -radius).tex( sideU0, sideV1).endVertex();
+		worldRenderer.pos(-radius,-0.5f, -radius).tex( sideU1, sideV1).endVertex();
+		worldRenderer.pos(-radius, 0.5f, -radius).tex( sideU1, sideV0).endVertex();
 
-		worldRenderer.addVertexWithUV(-radius, 0.5f,  radius, sideU0, sideV0);
-		worldRenderer.addVertexWithUV(-radius,-0.5f,  radius, sideU0, sideV1);
-		worldRenderer.addVertexWithUV( radius,-0.5f,  radius, sideU1, sideV1);
-		worldRenderer.addVertexWithUV( radius, 0.5f,  radius, sideU1, sideV0);
+		worldRenderer.pos(-radius, 0.5f,  radius).tex( sideU0, sideV0).endVertex();
+		worldRenderer.pos(-radius,-0.5f,  radius).tex( sideU0, sideV1).endVertex();
+		worldRenderer.pos( radius,-0.5f,  radius).tex( sideU1, sideV1).endVertex();
+		worldRenderer.pos( radius, 0.5f,  radius).tex( sideU1, sideV0).endVertex();
 
-		worldRenderer.addVertexWithUV(-radius, 0.5f, -radius, sideU0, sideV0);
-		worldRenderer.addVertexWithUV(-radius,-0.5f, -radius, sideU0, sideV1);
-		worldRenderer.addVertexWithUV(-radius,-0.5f,  radius, sideU1, sideV1);
-		worldRenderer.addVertexWithUV(-radius, 0.5f,  radius, sideU1, sideV0);
+		worldRenderer.pos(-radius, 0.5f, -radius).tex( sideU0, sideV0).endVertex();
+		worldRenderer.pos(-radius,-0.5f, -radius).tex( sideU0, sideV1).endVertex();
+		worldRenderer.pos(-radius,-0.5f,  radius).tex( sideU1, sideV1).endVertex();
+		worldRenderer.pos(-radius, 0.5f,  radius).tex( sideU1, sideV0).endVertex();
 
-		worldRenderer.addVertexWithUV( radius, 0.5f,  radius, sideU0, sideV0);
-		worldRenderer.addVertexWithUV( radius,-0.5f,  radius, sideU0, sideV1);
-		worldRenderer.addVertexWithUV( radius,-0.5f, -radius, sideU1, sideV1);
-		worldRenderer.addVertexWithUV( radius, 0.5f, -radius, sideU1, sideV0);
+		worldRenderer.pos( radius, 0.5f,  radius).tex( sideU0, sideV0).endVertex();
+		worldRenderer.pos( radius,-0.5f,  radius).tex( sideU0, sideV1).endVertex();
+		worldRenderer.pos( radius,-0.5f, -radius).tex( sideU1, sideV1).endVertex();
+		worldRenderer.pos( radius, 0.5f, -radius).tex( sideU1, sideV0).endVertex();
 
-		worldRenderer.addVertexWithUV(-radius, 0.5f, -radius, endU0, endV0);
-		worldRenderer.addVertexWithUV(-radius, 0.5f,  radius, endU0, endV1);
-		worldRenderer.addVertexWithUV( radius, 0.5f,  radius, endU1, endV1);
-		worldRenderer.addVertexWithUV( radius, 0.5f, -radius, endU1, endV0);
+		worldRenderer.pos(-radius, 0.5f, -radius).tex( endU0, endV0).endVertex();
+		worldRenderer.pos(-radius, 0.5f,  radius).tex( endU0, endV1).endVertex();
+		worldRenderer.pos( radius, 0.5f,  radius).tex( endU1, endV1).endVertex();
+		worldRenderer.pos( radius, 0.5f, -radius).tex( endU1, endV0).endVertex();
 
-		worldRenderer.addVertexWithUV(-radius,-0.5f,  radius, endU0, endV0);
-		worldRenderer.addVertexWithUV(-radius,-0.5f, -radius, endU0, endV1);
-		worldRenderer.addVertexWithUV( radius,-0.5f, -radius, endU1, endV1);
-		worldRenderer.addVertexWithUV( radius,-0.5f,  radius, endU1, endV0);
+		worldRenderer.pos(-radius,-0.5f,  radius).tex( endU0, endV0).endVertex();
+		worldRenderer.pos(-radius,-0.5f, -radius).tex( endU0, endV1).endVertex();
+		worldRenderer.pos( radius,-0.5f, -radius).tex( endU1, endV1).endVertex();
+		worldRenderer.pos( radius,-0.5f,  radius).tex( endU1, endV0).endVertex();
 		
 		instance.draw();
+        RenderHelper.enableStandardItemLighting();
+		
 	}
 
 	

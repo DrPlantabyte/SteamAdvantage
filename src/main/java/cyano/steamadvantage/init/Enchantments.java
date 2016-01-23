@@ -1,8 +1,14 @@
 package cyano.steamadvantage.init;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import cyano.steamadvantage.enchanments.HighExplosiveEnchantment;
+import cyano.steamadvantage.enchanments.PowderlessEnchantment;
+import cyano.steamadvantage.enchanments.RapidReloadEnchantment;
+import cyano.steamadvantage.enchanments.RecoilEnchantment;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraftforge.fml.common.FMLLog;
-import cyano.steamadvantage.enchanments.*;
 
 public class Enchantments {
 
@@ -28,9 +34,11 @@ public class Enchantments {
 		return e;
 	}
 	
+	private static final Set<Integer> reservedIDs = new HashSet<>();
 	private static int getNextEnchantmentID(){
 		for(int i = 0; i < 255; i++){
-			if(Enchantment.getEnchantmentById(i) == null){
+			if(Enchantment.getEnchantmentById(i) == null && reservedIDs.contains(i) == false){
+				reservedIDs.add(i);
 				return i;
 			}
 		}
