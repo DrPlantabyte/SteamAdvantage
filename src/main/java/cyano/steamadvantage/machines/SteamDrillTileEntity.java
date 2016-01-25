@@ -3,7 +3,14 @@ package cyano.steamadvantage.machines;
 import java.util.Arrays;
 import java.util.List;
 
+import cyano.basemetals.registry.CrusherRecipeRegistry;
+import cyano.basemetals.registry.recipe.ICrusherRecipe;
+import cyano.poweradvantage.util.InventoryWrapper;
+import cyano.steamadvantage.blocks.DrillBitTileEntity;
+import cyano.steamadvantage.init.Blocks;
+import cyano.steamadvantage.init.Power;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -12,11 +19,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
-import cyano.poweradvantage.util.InventoryWrapper;
-import cyano.steamadvantage.blocks.DrillBitTileEntity;
-import cyano.steamadvantage.init.Blocks;
-import cyano.steamadvantage.init.Power;
 
 public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerConsumer{
 	
@@ -31,6 +33,7 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	private int progress = 0;
 	private int progressGoal = 0;
 	private BlockPos targetBlockCoord = null;
+	private IBlockState targetBlockState = null;
 	private Block targetBlock = null;
 	private List<ItemStack> targetBlockItems = null;
 	private EnumFacing oldDir = null;
@@ -302,8 +305,14 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		progress = 0;
 		targetBlockCoord = n;
 		progressGoal = this.getBlockStrength(n);
-		targetBlock = getWorld().getBlockState(n).getBlock();
-		targetBlockItems = targetBlock.getDrops(getWorld(), n, getWorld().getBlockState(n), 0);
+		targetBlockState = getWorld().getBlockState(n); 
+		targetBlock = targetBlockState.getBlock();
+		ICrusherRecipe cr = CrusherRecipeRegistry.getInstance().getRecipeForInputItem(targetBlockState);
+		if(cr != null){
+			targetBlockItems = Arrays.asList(cr.getOutput());
+		} else {
+			targetBlockItems = targetBlock.getDrops(getWorld(), n, getWorld().getBlockState(n), 0);
+		}
 		deferred = false;
 	}
 	
@@ -317,6 +326,7 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		progressGoal = 0;
 		targetBlockCoord = null;
 		targetBlock = null;
+		targetBlockState = null;
 		targetBlockItems = null;
 	}
 	

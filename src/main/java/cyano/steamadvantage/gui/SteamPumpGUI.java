@@ -1,16 +1,17 @@
 package cyano.steamadvantage.gui;
 
-import net.minecraft.util.ResourceLocation;
 import cyano.poweradvantage.api.simple.SimpleMachineGUI;
 import cyano.poweradvantage.math.Integer2D;
 import cyano.steamadvantage.SteamAdvantage;
-import cyano.steamadvantage.machines.SteamTankTileEntity;
+import cyano.steamadvantage.machines.SteamPumpTileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.FluidStack;
 
-public class SteamTankGUI extends SimpleMachineGUI{
+public class SteamPumpGUI extends SimpleMachineGUI{
 
-	public SteamTankGUI() {
+	public SteamPumpGUI() {
 		super(
-				new ResourceLocation(SteamAdvantage.MODID+":textures/gui/container/steam_tank.png"), 
+				new ResourceLocation(SteamAdvantage.MODID+":textures/gui/container/steam_pump.png"), 
 				new Integer2D[0]
 		);
 	}
@@ -44,8 +45,8 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 	@Override
 	public void drawGUIDecorations(Object srcEntity, GUIContainer guiContainer, int x, int y, float  z){
 		
-		if(srcEntity.getClass() == SteamTankTileEntity.class){
-			SteamTankTileEntity target = (SteamTankTileEntity)srcEntity;
+		if(srcEntity.getClass() == SteamPumpTileEntity.class){
+			SteamPumpTileEntity target = (SteamPumpTileEntity)srcEntity;
 
 			
 			float steamPivotX = 88f;
@@ -62,6 +63,11 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 			lastUpdate = t;
 			
 			GUIHelper.drawNeedle(x+steamPivotX, y+steamPivotY, z, steam);
+			
+			float fluidLevel = (float)target.getTank().getFluidAmount() / (float)target.getTank().getCapacity();
+			FluidStack fs = target.getTank().getFluid();
+			GUIHelper.drawFluidBar(fs, fluidLevel, 130, 30, guiContainer, x, y, super.guiDisplayImage, 
+					176, 42, 32, 88);
 			
 		}
 		

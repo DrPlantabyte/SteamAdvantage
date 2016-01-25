@@ -43,4 +43,4 @@ tile.steamadvantage.steam_switch.name=Válvula de Vapor
 tile.steamadvantage.steam_still.name=Destilaria vapor Alimentado
 tile.steamadvantage.steam_pump.name=Pomba de Vapor Alimentado
 tile.steamadvantage.steam_boiler_oil.name=Óleo de Caldeira Ardente
-tile.steamadvantage.pump_pipe.name=Tubo de Bomba
+tile.steamadvantage.pump_pipe_steam.name=Tubo de Bomba

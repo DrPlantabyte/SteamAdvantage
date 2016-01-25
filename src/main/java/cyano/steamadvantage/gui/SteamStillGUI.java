@@ -1,16 +1,17 @@
 package cyano.steamadvantage.gui;
 
-import net.minecraft.util.ResourceLocation;
 import cyano.poweradvantage.api.simple.SimpleMachineGUI;
 import cyano.poweradvantage.math.Integer2D;
 import cyano.steamadvantage.SteamAdvantage;
-import cyano.steamadvantage.machines.SteamTankTileEntity;
+import cyano.steamadvantage.machines.SteamStillTileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.FluidStack;
 
-public class SteamTankGUI extends SimpleMachineGUI{
+public class SteamStillGUI extends SimpleMachineGUI{
 
-	public SteamTankGUI() {
+	public SteamStillGUI() {
 		super(
-				new ResourceLocation(SteamAdvantage.MODID+":textures/gui/container/steam_tank.png"), 
+				new ResourceLocation(SteamAdvantage.MODID+":textures/gui/container/steam_still.png"), 
 				new Integer2D[0]
 		);
 	}
@@ -44,8 +45,8 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 	@Override
 	public void drawGUIDecorations(Object srcEntity, GUIContainer guiContainer, int x, int y, float  z){
 		
-		if(srcEntity.getClass() == SteamTankTileEntity.class){
-			SteamTankTileEntity target = (SteamTankTileEntity)srcEntity;
+		if(srcEntity.getClass() == SteamStillTileEntity.class){
+			SteamStillTileEntity target = (SteamStillTileEntity)srcEntity;
 
 			
 			float steamPivotX = 88f;
@@ -62,6 +63,18 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 			lastUpdate = t;
 			
 			GUIHelper.drawNeedle(x+steamPivotX, y+steamPivotY, z, steam);
+			
+			float fluidLevel = (float)target.getOutputTank().getFluidAmount() / (float)target.getOutputTank().getCapacity();
+			FluidStack fs = target.getOutputTank().getFluid();
+			GUIHelper.drawFluidBar(fs, fluidLevel, 130, 30, guiContainer, x, y, super.guiDisplayImage, 
+					176, 42, 32, 88);
+			
+			
+
+			fluidLevel = (float)target.getInputTank().getFluidAmount() / (float)target.getInputTank().getCapacity();
+			fs = target.getInputTank().getFluid();
+			GUIHelper.drawFluidBar(fs, fluidLevel,  30, 30, guiContainer, x, y, super.guiDisplayImage, 
+					176, 42, 32, 88);
 			
 		}
 		

@@ -67,6 +67,12 @@ public class Recipes {
 		
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(Blocks.steam_track),Blocks.steam_pipe, cyano.poweradvantage.init.Blocks.steel_frame));
 		
+		GameRegistry.addRecipe(new ShapedOreRecipe(Blocks.steam_switch," L ","pfp",'L',net.minecraft.init.Blocks.lever,'p',"conduitSteam",'f',"frameSteel"));
+		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_boiler_oil,net.minecraft.init.Blocks.furnace, net.minecraft.init.Items.bucket));
+		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_pump,net.minecraft.init.Blocks.piston,net.minecraft.init.Items.bucket));
+		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_still,net.minecraft.init.Items.bucket,net.minecraft.init.Items.bucket));
+		
+		
 		
 		initDone = true;
 	}

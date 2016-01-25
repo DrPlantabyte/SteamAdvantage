@@ -26,6 +26,9 @@ public class Entities {
 		GameRegistry.registerTileEntity(SteamDrillTileEntity.class, SteamAdvantage.MODID+"."+"steam_drill");
 		GameRegistry.registerTileEntity(SteamElevatorTileEntity.class, SteamAdvantage.MODID+"."+"steam_elevator");
 		GameRegistry.registerTileEntity(DrillBitTileEntity.class, SteamAdvantage.MODID+"."+"drillbit");
+		GameRegistry.registerTileEntity(SteamStillTileEntity.class, SteamAdvantage.MODID+"."+"steam_still");
+		GameRegistry.registerTileEntity(SteamPumpTileEntity.class, SteamAdvantage.MODID+"."+"steam_pump");
+		GameRegistry.registerTileEntity(OilBoilerTileEntity.class, SteamAdvantage.MODID+"."+"steam_boiler_oil");
 		
 		
 		initDone = true;

@@ -287,22 +287,14 @@ public class ElectricBoilerTileEntity extends cyano.poweradvantage.api.simple.Ti
 		}
 	}
 	
-	/**
-	 * Determines whether this conduit is compatible with an adjacent one
-	 * @param type The type of energy in the conduit
-	 * @param blockFace The side through-which the energy is flowing
-	 * @return true if this conduit can flow the given energy type through the given face, false 
-	 * otherwise
-	 */
-	public boolean canAcceptType(ConduitType type, EnumFacing blockFace){
-		return canAcceptType(type);
-	}
+	
 	/**
 	 * Determines whether this conduit is compatible with a type of energy through any side
 	 * @param type The type of energy in the conduit
 	 * @return true if this conduit can flow the given energy type through one or more of its block 
 	 * faces, false otherwise
 	 */
+	@Override
 	public boolean canAcceptType(ConduitType type){
 		return ConduitType.areSameType(getType(), type) || ConduitType.areSameType(ELECTRIC_POWER, type);
 	}

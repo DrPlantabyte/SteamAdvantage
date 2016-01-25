@@ -41,4 +41,4 @@ tile.steamadvantage.steam_switch.name=Valvola del Vapore
 tile.steamadvantage.steam_still.name=A Vapore Alimentata Distilleria
 tile.steamadvantage.steam_pump.name=Pompa Alimentata a Vapore
 tile.steamadvantage.steam_boiler_oil.name=Caldaia ad Olio Combustibile
-tile.electricadvantage.pump_pipe.name=Tubo Pompa
+tile.electricadvantage.pump_pipe_steam.name=Tubo Pompa

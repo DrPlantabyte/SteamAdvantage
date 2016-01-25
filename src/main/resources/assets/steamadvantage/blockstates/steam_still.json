@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=east": { "model": "steamadvantage:steam_still", "y": 90 },
+        "facing=north": { "model": "steamadvantage:steam_still" },
+        "facing=south": { "model": "steamadvantage:steam_still", "y": 180 },
+        "facing=west": { "model": "steamadvantage:steam_still", "y": 270 }
+    }
+}

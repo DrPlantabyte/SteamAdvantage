@@ -3,6 +3,11 @@ package cyano.steamadvantage.init;
 import java.util.HashMap;
 import java.util.Map;
 
+import cyano.poweradvantage.api.GUIBlock;
+import cyano.poweradvantage.blocks.BlockPowerSwitch;
+import cyano.steamadvantage.SteamAdvantage;
+import cyano.steamadvantage.blocks.*;
+import cyano.steamadvantage.machines.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -12,10 +17,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
-import cyano.poweradvantage.api.GUIBlock;
-import cyano.steamadvantage.SteamAdvantage;
-import cyano.steamadvantage.blocks.*;
-import cyano.steamadvantage.machines.*;
 
 public abstract class Blocks {
 	private static final Map<String,Block> allBlocks = new HashMap<>();
@@ -35,7 +36,7 @@ public abstract class Blocks {
 	public static Block drillbit;
 	public static Block steam_track;
 
-	public static Block pump_pipe;
+	public static Block pump_pipe_steam;
 	public static Block steam_switch;
 	public static GUIBlock steam_still;
 	public static GUIBlock steam_pump;
@@ -62,6 +63,12 @@ public abstract class Blocks {
 			steam_elevator_platforms[i] = steam_elevator_platform.getStateFromMeta(i);
 		}
 		steam_elevator = (GUIBlock)addBlock(new SteamElevatorBlock(),"steam_elevator");
+
+		steam_switch = addBlock(new BlockPowerSwitch(Power.steam_power),"steam_switch");
+		pump_pipe_steam = addBlock(new PumpPipeBlock(),"pump_pipe_steam");
+		steam_still = (GUIBlock)addBlock(new SteamStillBlock(),"steam_still");
+		steam_pump = (GUIBlock)addBlock(new SteamPumpBlock(),"steam_pump");
+		steam_boiler_oil = (GUIBlock)addBlock(new OilBoilerBlock(),"steam_boiler_oil");
 		
 		initDone = true;
 	}

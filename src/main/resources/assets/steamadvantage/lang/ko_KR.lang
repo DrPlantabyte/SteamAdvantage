@@ -43,4 +43,4 @@ tile.steamadvantage.steam_switch.name=스팀 밸브
 tile.steamadvantage.steam_still.name=증기 구동 증류소
 tile.steamadvantage.steam_pump.name=증기 구동 펌프
 tile.steamadvantage.steam_boiler_oil.name=기름 연소 보일러
-tile.steamadvantage.pump_pipe.name=펌프 파이프
+tile.steamadvantage.pump_pipe_steam.name=펌프 파이프

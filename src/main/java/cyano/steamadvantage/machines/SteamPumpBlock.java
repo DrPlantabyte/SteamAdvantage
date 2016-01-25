@@ -13,11 +13,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PoweredEntity;
 import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 import cyano.poweradvantage.init.Fluids;
+import cyano.steamadvantage.init.Blocks;
 import cyano.steamadvantage.init.Power;
 
 
@@ -27,16 +27,16 @@ import cyano.steamadvantage.init.Power;
  * @author DrCyano
  *
  */
-public class CoalBoilerBlock extends cyano.poweradvantage.api.simple.BlockSimplePowerSource{
+public class SteamPumpBlock extends cyano.poweradvantage.api.simple.BlockSimplePowerSource{
 
 	
-	public CoalBoilerBlock() {
+	public SteamPumpBlock() {
 		super(Material.piston, 0.75f, Power.steam_power);
 	}
 
 	@Override
 	public PoweredEntity createNewTileEntity(World world, int metaDataValue) {
-		return new CoalBoilerTileEntity();
+		return new SteamPumpTileEntity();
 	}
 
 	@Override
@@ -46,8 +46,8 @@ public class CoalBoilerBlock extends cyano.poweradvantage.api.simple.BlockSimple
 
 	@Override
 	public int getComparatorInputOverride(World world, BlockPos coord) {
-		if(world.getTileEntity(coord) instanceof CoalBoilerTileEntity){
-			return ((CoalBoilerTileEntity)world.getTileEntity(coord)).getComparatorOutput();
+		if(world.getTileEntity(coord) instanceof SteamPumpTileEntity){
+			return ((SteamPumpTileEntity)world.getTileEntity(coord)).getComparatorOutput();
 		}
 		return 0;
 	}
@@ -72,6 +72,7 @@ public class CoalBoilerBlock extends cyano.poweradvantage.api.simple.BlockSimple
 	public void onBlockDestroyedByPlayer(World w, BlockPos coord, IBlockState state){
 		super.onBlockDestroyedByPlayer(w, coord, state);
 		ConduitRegistry.getInstance().conduitBlockPlacedEvent(w, w.provider.getDimensionId(), coord, cyano.poweradvantage.init.Fluids.fluidConduit_general);
+		destroyPipe(w,coord);
 	}
 	/**
 	 * This method is called when the block is destroyed by an explosion.
@@ -80,9 +81,20 @@ public class CoalBoilerBlock extends cyano.poweradvantage.api.simple.BlockSimple
 	public void onBlockDestroyedByExplosion(World w, BlockPos coord, Explosion boom){
 		super.onBlockDestroyedByExplosion(w, coord, boom);
 		ConduitRegistry.getInstance().conduitBlockPlacedEvent(w, w.provider.getDimensionId(), coord, Fluids.fluidConduit_general);
+		destroyPipe(w,coord);
 	}
 	
 	
+	private void destroyPipe(World w, BlockPos coord) {
+		if(w.isRemote) return;
+		// destroy connected drill bits
+		BlockPos c = coord.down();
+		while(c.getY() > 0 && w.getBlockState(c).getBlock() == Blocks.pump_pipe_steam){
+			w.setBlockToAir(c);
+			c = c.down();
+		}
+	}
+
 	/**
 	 * Determines whether this conduit is compatible with an adjacent one
 	 * @param type The type of energy in the conduit
@@ -90,8 +102,11 @@ public class CoalBoilerBlock extends cyano.poweradvantage.api.simple.BlockSimple
 	 * @return true if this conduit can flow the given energy type through the given face, false 
 	 * otherwise
 	 */
+	public boolean canAcceptType(IBlockState state, ConduitType type, EnumFacing blockFace){
+		return ConduitType.areSameType(getType(), type) || ConduitType.areSameType(Fluids.fluidConduit_general, type);
+	}
 	public boolean canAcceptType(ConduitType type, EnumFacing blockFace){
-		return canAcceptType(type);
+		return ConduitType.areSameType(getType(), type) || ConduitType.areSameType(Fluids.fluidConduit_general, type);
 	}
 	/**
 	 * Determines whether this conduit is compatible with a type of energy through any side
@@ -99,6 +114,7 @@ public class CoalBoilerBlock extends cyano.poweradvantage.api.simple.BlockSimple
 	 * @return true if this conduit can flow the given energy type through one or more of its block 
 	 * faces, false otherwise
 	 */
+	@Override
 	public boolean canAcceptType(ConduitType type){
 		return  ConduitType.areSameType(getType(), type) || ConduitType.areSameType(Fluids.fluidConduit_general, type);
 	}

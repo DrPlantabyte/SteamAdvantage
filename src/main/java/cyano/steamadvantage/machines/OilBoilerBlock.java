@@ -13,7 +13,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PoweredEntity;
 import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
@@ -27,16 +26,16 @@ import cyano.steamadvantage.init.Power;
  * @author DrCyano
  *
  */
-public class CoalBoilerBlock extends cyano.poweradvantage.api.simple.BlockSimplePowerSource{
+public class OilBoilerBlock extends cyano.poweradvantage.api.simple.BlockSimplePowerSource{
 
 	
-	public CoalBoilerBlock() {
+	public OilBoilerBlock() {
 		super(Material.piston, 0.75f, Power.steam_power);
 	}
 
 	@Override
 	public PoweredEntity createNewTileEntity(World world, int metaDataValue) {
-		return new CoalBoilerTileEntity();
+		return new OilBoilerTileEntity();
 	}
 
 	@Override
@@ -46,8 +45,8 @@ public class CoalBoilerBlock extends cyano.poweradvantage.api.simple.BlockSimple
 
 	@Override
 	public int getComparatorInputOverride(World world, BlockPos coord) {
-		if(world.getTileEntity(coord) instanceof CoalBoilerTileEntity){
-			return ((CoalBoilerTileEntity)world.getTileEntity(coord)).getComparatorOutput();
+		if(world.getTileEntity(coord) instanceof OilBoilerTileEntity){
+			return ((OilBoilerTileEntity)world.getTileEntity(coord)).getComparatorOutput();
 		}
 		return 0;
 	}
@@ -91,7 +90,7 @@ public class CoalBoilerBlock extends cyano.poweradvantage.api.simple.BlockSimple
 	 * otherwise
 	 */
 	public boolean canAcceptType(ConduitType type, EnumFacing blockFace){
-		return canAcceptType(type);
+		return ConduitType.areSameType(getType(), type) || ConduitType.areSameType(Fluids.fluidConduit_general, type);
 	}
 	/**
 	 * Determines whether this conduit is compatible with a type of energy through any side

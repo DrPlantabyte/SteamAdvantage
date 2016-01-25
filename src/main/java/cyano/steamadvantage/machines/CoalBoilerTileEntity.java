@@ -64,11 +64,13 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 				}
 				timeSinceSound++;
 			} else {
-				int fuel = getFuelBurnTime();
-				if( fuel > 0 && (!redstone) && this.getTank().getFluidAmount() > 0){
-					burnTime = fuel;
-					totalBurnTime = fuel;
-					decrementFuel();
+				if(!hasRedstoneSignal()){
+					int fuel = getFuelBurnTime();
+					if( fuel > 0 && (!redstone) && this.getTank().getFluidAmount() > 0){
+						burnTime = fuel;
+						totalBurnTime = fuel;
+						decrementFuel();
+					}
 				}
 				energyDecay();
 			}
@@ -321,22 +323,14 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		}
 	}
 	
-	/**
-	 * Determines whether this conduit is compatible with an adjacent one
-	 * @param type The type of energy in the conduit
-	 * @param blockFace The side through-which the energy is flowing
-	 * @return true if this conduit can flow the given energy type through the given face, false 
-	 * otherwise
-	 */
-	public boolean canAcceptType(ConduitType type, EnumFacing blockFace){
-		return ConduitType.areSameType(getType(), type) || ConduitType.areSameType(Fluids.fluidConduit_general, type);
-	}
+	
 	/**
 	 * Determines whether this conduit is compatible with a type of energy through any side
 	 * @param type The type of energy in the conduit
 	 * @return true if this conduit can flow the given energy type through one or more of its block 
 	 * faces, false otherwise
 	 */
+	@Override
 	public boolean canAcceptType(ConduitType type){
 		return ConduitType.areSameType(getType(), type) || ConduitType.areSameType(Fluids.fluidConduit_general, type);
 	}

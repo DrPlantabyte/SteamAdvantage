@@ -20,6 +20,9 @@ public class GUI {
 		Blocks.steam_drill.setGuiID(MachineGUIRegistry.addGUI(new SteamDrillGUI()),PowerAdvantage.getInstance());
 		Blocks.steam_boiler_electric.setGuiID(MachineGUIRegistry.addGUI(new ElectricBoilerGUI()),PowerAdvantage.getInstance());
 		Blocks.steam_boiler_geothermal.setGuiID(MachineGUIRegistry.addGUI(new GeothermalBoilerGUI()),PowerAdvantage.getInstance());
+		Blocks.steam_boiler_oil.setGuiID(MachineGUIRegistry.addGUI(new OilBoilerGUI()),PowerAdvantage.getInstance());
+		Blocks.steam_still.setGuiID(MachineGUIRegistry.addGUI(new SteamStillGUI()),PowerAdvantage.getInstance());
+		Blocks.steam_pump.setGuiID(MachineGUIRegistry.addGUI(new SteamPumpGUI()),PowerAdvantage.getInstance());
 		
 		
 		initDone = true;

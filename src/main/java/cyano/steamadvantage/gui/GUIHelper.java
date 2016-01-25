@@ -1,10 +1,18 @@
 package cyano.steamadvantage.gui;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import cyano.poweradvantage.api.simple.SimpleMachineGUI.GUIContainer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.FMLLog;
 
 public abstract class GUIHelper {
 
+
+	private static final Map<ResourceLocation,ResourceLocation> realTextureLocationCache = new HashMap<>();
 	
 	public static float maxDelta(float newValue,float oldValue,float maxChange){
 		if((newValue - oldValue) > maxChange){
@@ -89,6 +97,31 @@ public abstract class GUIHelper {
 			gc.drawTexturedModalRect(x, y+h, flameTexX, flameTexY+h, width, height - h);
 		}
 	}
+	
+	public static void drawFluidBar(FluidStack fs, float barHeight, int xPos, int yPos, 
+			GUIContainer guiContainer, int x, int y,
+			ResourceLocation displayImage, int texOverlayX, int texOverlayY, int texOverlayW, int texOverlayH){
+		final int texMarginW = (texOverlayW - 16) / 2;
+		final int texMarginH = (texOverlayH - 60) / 2;
+		final int w = 16;
+		final int barSlotHeight = 60;
+		final int h = (int)(barSlotHeight * barHeight);
+		final float fluidTexWidth = 16;
+		final float fluidTexHeight = 512;
+		final float texPerPixel = 4 * (fluidTexWidth / fluidTexHeight) / barSlotHeight;
+		if(barHeight > 0){
+			ResourceLocation fluidTexture = realTextureLocationCache.computeIfAbsent(fs.getFluid().getStill(fs),
+					(ResourceLocation r) -> new ResourceLocation(r.getResourceDomain(),"textures/".concat(r.getResourcePath()).concat(".png"))
+					);
+			guiContainer.mc.renderEngine.bindTexture(fluidTexture);
+			
+			guiContainer.drawModalRectWithCustomSizedTexture(x+xPos, y+yPos+barSlotHeight-h, 0, 0, w, h, 16, h);//h * texPerPixel); // x, y, u, v, width, height, textureWidth, textureHeight
+		}
+			guiContainer.mc.renderEngine.bindTexture(displayImage);
+		
+		guiContainer.drawTexturedModalRect(x+xPos-texMarginW, y+yPos-texMarginH, texOverlayX, texOverlayY, texOverlayW, texOverlayH); // x, y, textureOffsetX, textureOffsetY, width, height)
+	}
+	
 	/*
 	// from Forge source:
 	public void drawTexturedModalRect(final float x, final float y, final int u, final int v, final int w, final int h) {

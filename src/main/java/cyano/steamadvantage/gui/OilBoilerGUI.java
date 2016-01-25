@@ -1,16 +1,18 @@
 package cyano.steamadvantage.gui;
 
-import net.minecraft.util.ResourceLocation;
 import cyano.poweradvantage.api.simple.SimpleMachineGUI;
 import cyano.poweradvantage.math.Integer2D;
 import cyano.steamadvantage.SteamAdvantage;
-import cyano.steamadvantage.machines.SteamTankTileEntity;
+import cyano.steamadvantage.machines.OilBoilerTileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.FMLLog;
 
-public class SteamTankGUI extends SimpleMachineGUI{
+public class OilBoilerGUI extends SimpleMachineGUI{
 
-	public SteamTankGUI() {
+	public OilBoilerGUI() {
 		super(
-				new ResourceLocation(SteamAdvantage.MODID+":textures/gui/container/steam_tank.png"), 
+				new ResourceLocation(SteamAdvantage.MODID+":textures/gui/container/oil_boiler.png"), 
 				new Integer2D[0]
 		);
 	}
@@ -44,8 +46,8 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 	@Override
 	public void drawGUIDecorations(Object srcEntity, GUIContainer guiContainer, int x, int y, float  z){
 		
-		if(srcEntity.getClass() == SteamTankTileEntity.class){
-			SteamTankTileEntity target = (SteamTankTileEntity)srcEntity;
+		if(srcEntity.getClass() == OilBoilerTileEntity.class){
+			OilBoilerTileEntity target = (OilBoilerTileEntity)srcEntity;
 
 			
 			float steamPivotX = 88f;
@@ -62,6 +64,19 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 			lastUpdate = t;
 			
 			GUIHelper.drawNeedle(x+steamPivotX, y+steamPivotY, z, steam);
+			
+			
+			float fluidLevel = (float)target.getWaterTank().getFluidAmount() / (float)target.getWaterTank().getCapacity();
+			FluidStack fs = target.getWaterTank().getFluid();
+			GUIHelper.drawFluidBar(fs, fluidLevel, 130, 30, guiContainer, x, y, super.guiDisplayImage, 
+					176, 42, 32, 88);
+		
+			
+
+			fluidLevel = (float)target.getFuelTank().getFluidAmount() / (float)target.getFuelTank().getCapacity();
+			fs = target.getFuelTank().getFluid();
+			GUIHelper.drawFluidBar(fs, fluidLevel,  30, 30, guiContainer, x, y, super.guiDisplayImage, 
+					176, 42, 32, 88);
 			
 		}
 		
