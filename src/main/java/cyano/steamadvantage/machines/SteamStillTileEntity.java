@@ -3,6 +3,7 @@ package cyano.steamadvantage.machines;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.fluid.FluidRequest;
+import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 import cyano.poweradvantage.init.Fluids;
 import cyano.poweradvantage.registry.still.recipe.DistillationRecipe;
 import cyano.poweradvantage.registry.still.recipe.DistillationRecipeRegistry;
@@ -87,7 +88,8 @@ public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		if(this.getOutputTank().getFluidAmount() > 0){
 			ConduitType type = Fluids.fluidToConduitType(getOutputTank().getFluid().getFluid());
 			float availableAmount = getOutputTank().getFluidAmount();
-			float delta = this.transmitPowerToConsumers(availableAmount, type, getMinimumSinkPriority());
+			float delta =  ConduitRegistry.transmitPowerToConsumers(availableAmount, cyano.poweradvantage.init.Fluids.fluidConduit_general, type, 
+					this.getMinimumSinkPriority(), getWorld(), getPos(), this);
 			if(delta > 0){
 				getOutputTank().drain(Math.max((int)delta,1),true); // no free energy!
 			}

@@ -50,9 +50,6 @@ public class DrillBitRenderer extends TileEntitySpecialRenderer{
 		this.bindTexture(texture);
 		
 		//This will make your block brightness dependent from surroundings lighting.
-//		instance.getWorldRenderer().setBrightness(world.getCombinedLight(pos, 0));
-//		instance.getWorldRenderer().color(1f, 1f, 1f, 1f);
-		net.minecraft.client.renderer.tileentity.TileEntityBeaconRenderer k;
         RenderHelper.disableStandardItemLighting();
         GlStateManager.blendFunc(770, 771);
         GlStateManager.enableBlend();

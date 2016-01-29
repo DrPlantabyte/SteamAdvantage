@@ -5,6 +5,7 @@ import java.util.Set;
 
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
+import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 import cyano.poweradvantage.init.Fluids;
 import cyano.steamadvantage.init.Power;
 import net.minecraft.block.Block;
@@ -188,7 +189,8 @@ public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 		if(this.getTank().getFluidAmount() > 0){
 			ConduitType type = Fluids.fluidToConduitType(getTank().getFluid().getFluid());
 			float availableAmount = getTank().getFluidAmount();
-			float delta = this.transmitPowerToConsumers(availableAmount, type, getMinimumSinkPriority());
+			float delta = ConduitRegistry.transmitPowerToConsumers(availableAmount, cyano.poweradvantage.init.Fluids.fluidConduit_general, type, 
+					this.getMinimumSinkPriority(), getWorld(), getPos(), this);
 			if(delta > 0){
 				getTank().drain(Math.max((int)delta,1),true); // no free energy!
 			}
