@@ -27,12 +27,12 @@ allprojects {
     targetCompatibility = 1.8
 }
 
-version = "1.5.1"
+version = "1.5.2"
 group= "cyano.steamadvantage" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "SteamAdvantage"
 
 minecraft {
-    version = "1.8.9-11.15.0.1705"
+    version = "1.8.9-11.15.1.1726"
     runDir = "run"
 
     mappings = "stable_20"
@@ -42,7 +42,7 @@ minecraft {
 dependencies {
     compile files(
         'lib/PowerAdvantage/PowerAdvantage-API-1.4.0.jar',
-        'lib/BaseMetals/BaseMetals-API-1.6.0.jar',
+        'lib/BaseMetals/BaseMetals-API-1.7.0.jar',
         'lib/NEI/CodeChickenCore-1.8-1.0.5.34-dev.jar',
         'lib/NEI/NotEnoughItems-1.8-1.0.5.84-dev.jar'
     )
