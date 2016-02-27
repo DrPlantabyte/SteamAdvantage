@@ -1,14 +1,14 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "steamadvantage",
+  "name": "Steam Advantage",
+  "description": "Add-on mod to Power Advantage that adds steam-powered machines to Minecraft",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["DrCyano"],
+  "credits": "The Forge and FML guys, the author of this mod, James Watt, and water vapor",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
