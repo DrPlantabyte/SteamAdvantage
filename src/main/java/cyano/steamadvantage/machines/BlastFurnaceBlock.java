@@ -1,17 +1,18 @@
 package cyano.steamadvantage.machines;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
 import cyano.poweradvantage.api.PoweredEntity;
 import cyano.steamadvantage.init.Power;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 
 /**
  * @author DrCyano
  *
  */
-public class BlastFurnaceBlock extends cyano.poweradvantage.api.simple.BlockSimplePowerConsumer{
+public class BlastFurnaceBlock extends cyano.poweradvantage.api.simple.BlockSimplePowerMachine{
 
 	
 	public BlastFurnaceBlock() {
@@ -24,12 +25,12 @@ public class BlastFurnaceBlock extends cyano.poweradvantage.api.simple.BlockSimp
 	}
 
 	@Override
-	public boolean hasComparatorInputOverride() {
+	public boolean hasComparatorInputOverride(IBlockState bs) {
 		return true;
 	}
 
 	@Override
-	public int getComparatorInputOverride(World world, BlockPos coord) {
+	public int getComparatorInputOverride(IBlockState bs, World world, BlockPos coord) {
 		if(world.getTileEntity(coord) instanceof BlastFurnaceTileEntity){
 			return ((BlastFurnaceTileEntity)world.getTileEntity(coord)).getComparatorOutput();
 		}

@@ -1,16 +1,14 @@
 package cyano.steamadvantage.enchanments;
 
-import net.minecraft.enchantment.EnumEnchantmentType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import cyano.steamadvantage.SteamAdvantage;
 import cyano.steamadvantage.init.Items;
+import net.minecraft.enchantment.EnumEnchantmentType;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
 
 public class HighExplosiveEnchantment extends net.minecraft.enchantment.Enchantment{
 
-	public HighExplosiveEnchantment(int enchID, 
-			int enchWeight) {
-		super(enchID, new ResourceLocation(SteamAdvantage.MODID+":"+"high_explosive"), enchWeight,EnumEnchantmentType.ALL);
+	public HighExplosiveEnchantment() {
+		super(Rarity.UNCOMMON,EnumEnchantmentType.ALL,new EntityEquipmentSlot[]{EntityEquipmentSlot.MAINHAND});
 		this.setName("high_explosive");
 	}
 

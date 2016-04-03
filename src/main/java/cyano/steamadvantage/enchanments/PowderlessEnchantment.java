@@ -1,16 +1,14 @@
 package cyano.steamadvantage.enchanments;
 
-import net.minecraft.enchantment.EnumEnchantmentType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import cyano.steamadvantage.SteamAdvantage;
 import cyano.steamadvantage.init.Items;
+import net.minecraft.enchantment.EnumEnchantmentType;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
 
 public class PowderlessEnchantment extends net.minecraft.enchantment.Enchantment{
 
-	public PowderlessEnchantment(int enchID, 
-			int enchWeight) {
-		super(enchID, new ResourceLocation(SteamAdvantage.MODID+":"+"powderless"), enchWeight,EnumEnchantmentType.ALL);
+	public PowderlessEnchantment() {
+		super(Rarity.VERY_RARE,EnumEnchantmentType.ALL,new EntityEquipmentSlot[]{EntityEquipmentSlot.MAINHAND});
 		this.setName("powderless");
 	}
 

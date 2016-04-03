@@ -66,7 +66,7 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 			
 			float fluidLevel = (float)target.getTank().getFluidAmount() / (float)target.getTank().getCapacity();
 			FluidStack fs = target.getTank().getFluid();
-			GUIHelper.drawFluidBar(fs, fluidLevel, 130, 30, guiContainer, x, y, super.guiDisplayImage, 
+			GUIHelper.drawFluidBar(fs, fluidLevel, 130, 30, guiContainer, x, y,z, super.guiDisplayImage,
 					176, 42, 32, 88);
 			
 		}

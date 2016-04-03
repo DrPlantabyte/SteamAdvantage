@@ -4,11 +4,11 @@ import cyano.steamadvantage.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class DrillBitTileEntity extends TileEntity implements ITickable{
@@ -83,13 +83,13 @@ public class DrillBitTileEntity extends TileEntity implements ITickable{
 	public Packet getDescriptionPacket(){
 		NBTTagCompound nbtTag = new NBTTagCompound();
 		nbtTag.setByte("d",(byte)direction.getIndex());
-		return new S35PacketUpdateTileEntity(this.pos, 0, nbtTag);
+		return new SPacketUpdateTileEntity(this.pos, 0, nbtTag);
 	}
 	/**
 	 * Receives the network packet made by <code>getDescriptionPacket()</code>
 	 */
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
 		NBTTagCompound tag = packet.getNbtCompound();
 		if(tag.hasKey("d")){
 			this.direction = EnumFacing.getFront(tag.getByte("d"));

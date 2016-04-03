@@ -1,17 +1,19 @@
 package cyano.steamadvantage.machines;
 
-import java.util.Arrays;
-
+import cyano.steamadvantage.init.Power;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import cyano.steamadvantage.init.Power;
 
-public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerConsumer{
+import java.util.Arrays;
+
+public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine{
 
 
 	public static final float STEAM_PER_TICK = 0.5f;
@@ -68,14 +70,14 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 					burnTime = fuel;
 					totalBurnTime = fuel;
 					decrementFuel();
-					getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "fire.fire", 0.5f, 1f);
+					getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_furnace_fire_crackle, SoundCategory.AMBIENT, 0.5f, 1f, false);
 				}
 				energyDecay();
 			}
 			// steam bonus
-			if(this.getEnergy() > STEAM_PER_TICK && burnTime > 0 && (!redstone)){
+			if(this.getEnergy(Power.steam_power) > STEAM_PER_TICK && burnTime > 0 && (!redstone)){
 				e = 15;
-				this.subtractEnergy(STEAM_PER_TICK, getType());
+				this.subtractEnergy(STEAM_PER_TICK, Power.steam_power);
 			}
 			temperature = iterateTemperature(temperature,e);
 			if(temperature < minSmeltingTemperature){
@@ -93,7 +95,7 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 							doSmelt(slot);
 							if(--inventory[slot].stackSize <= 0){inventory[slot] = null;} // decrement the input slot
 							if(!smeltSuccess){
-								getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "random.fizz", 0.5f, 1f);
+								getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, false);
 							}
 							smeltSuccess = true;
 						}
@@ -143,9 +145,9 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 		
 		boolean updateFlag = false;
 		
-		if(oldSteam != this.getEnergy()){
+		if(oldSteam != this.getEnergy(Power.steam_power)){
 			updateFlag = true;
-			oldSteam = this.getEnergy();
+			oldSteam = this.getEnergy(Power.steam_power);
 		}
 		if(oldTemp != temperature){
 			updateFlag = true;
@@ -170,7 +172,7 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 
 
 	private void energyDecay() {
-		if(getEnergy() > 0){
+		if(getEnergy(Power.steam_power) > 0){
 			subtractEnergy(Power.ENERGY_LOST_PER_TICK,Power.steam_power);
 		}
 	}
@@ -306,4 +308,13 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 	}
 
 
+	@Override
+	public boolean isPowerSink() {
+		return true;
+	}
+
+	@Override
+	public boolean isPowerSource() {
+		return false;
+	}
 }

@@ -6,7 +6,6 @@ import cyano.steamadvantage.SteamAdvantage;
 import cyano.steamadvantage.machines.OilBoilerTileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.FMLLog;
 
 public class OilBoilerGUI extends SimpleMachineGUI{
 
@@ -68,14 +67,14 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 			
 			float fluidLevel = (float)target.getWaterTank().getFluidAmount() / (float)target.getWaterTank().getCapacity();
 			FluidStack fs = target.getWaterTank().getFluid();
-			GUIHelper.drawFluidBar(fs, fluidLevel, 130, 30, guiContainer, x, y, super.guiDisplayImage, 
+			GUIHelper.drawFluidBar(fs, fluidLevel, 130, 30, guiContainer, x, y, z, super.guiDisplayImage,
 					176, 42, 32, 88);
 		
 			
 
 			fluidLevel = (float)target.getFuelTank().getFluidAmount() / (float)target.getFuelTank().getCapacity();
 			fs = target.getFuelTank().getFluid();
-			GUIHelper.drawFluidBar(fs, fluidLevel,  30, 30, guiContainer, x, y, super.guiDisplayImage, 
+			GUIHelper.drawFluidBar(fs, fluidLevel,  30, 30, guiContainer, x, y, z, super.guiDisplayImage,
 					176, 42, 32, 88);
 			
 		}

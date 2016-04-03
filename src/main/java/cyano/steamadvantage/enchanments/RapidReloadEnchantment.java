@@ -1,16 +1,14 @@
 package cyano.steamadvantage.enchanments;
 
-import net.minecraft.enchantment.EnumEnchantmentType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import cyano.steamadvantage.SteamAdvantage;
 import cyano.steamadvantage.init.Items;
+import net.minecraft.enchantment.EnumEnchantmentType;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
 
 public class RapidReloadEnchantment extends net.minecraft.enchantment.Enchantment{
 
-	public RapidReloadEnchantment(int enchID, 
-			int enchWeight) {
-		super(enchID, new ResourceLocation(SteamAdvantage.MODID+":"+"rapid_reload"), enchWeight,EnumEnchantmentType.ALL);
+	public RapidReloadEnchantment() {
+		super(Rarity.RARE,EnumEnchantmentType.ALL,new EntityEquipmentSlot[]{EntityEquipmentSlot.MAINHAND});
 		this.setName("rapid_reload");
 	}
 

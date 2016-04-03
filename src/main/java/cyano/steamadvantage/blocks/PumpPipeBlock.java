@@ -1,27 +1,21 @@
 package cyano.steamadvantage.blocks;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
 import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
-import cyano.steamadvantage.init.Blocks;
-import cyano.steamadvantage.init.Power;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 public class PumpPipeBlock extends Block{
 
@@ -44,44 +38,41 @@ public class PumpPipeBlock extends Block{
 	@Override public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune){
 		return Collections.EMPTY_LIST;
 	}
-	
-	/**
-	 * 3 = normal block (model specified in assets folder as .json model)<br>
-	 * -1 = special renderer
-	 */
+
+
 	@Override
-	public int getRenderType()
-	{
-		return 3;
+	public EnumBlockRenderType getRenderType(IBlockState state) {
+		return EnumBlockRenderType.MODEL;
 	}
 
 	//And this tell it that you can see through this block, and neighbor blocks should be rendered.
 	@Override
-	public boolean isOpaqueCube()
+	public boolean isOpaqueCube(IBlockState bs)
 	{
 		return false;
 	}
 	
 	@Override
-	public boolean isFullCube(){
+	public boolean isFullCube(IBlockState bs){
 		return false;
 	}
-	
+
+
+	private static final AxisAlignedBB blockBounds = new AxisAlignedBB(0.0f, 0.25f, 0.0f, 0.75f, 1.0f, 1.0f);
 	@Override
-	public void addCollisionBoxesToList(final World w, final BlockPos coord, final IBlockState bs, 
-			final AxisAlignedBB bb, final List list, final Entity e) {
-		this.setBlockBounds(0.25f, 0.0f, 0.25f, 0.75f, 1.0f, 0.75f);
-		super.addCollisionBoxesToList(w, coord, bs, bb, list, e);
+	public void addCollisionBoxToList(final IBlockState state, final World w, final BlockPos coord, final AxisAlignedBB bb, final List<AxisAlignedBB> list, final Entity e) {
+		super.addCollisionBoxToList(coord, bb, list, blockBounds);
 	}
 
 	@Override
-	public void setBlockBoundsBasedOnState(final IBlockAccess bs, final BlockPos coord) {
-		this.setBlockBounds(0.25f, 0.0f, 0.25f, 0.75f, 1.0f, 0.75f);
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+		return blockBounds;
 	}
 
 
-	
-	
+
+
+
 	@Override
 	public void onBlockDestroyedByPlayer(World w, BlockPos coord, IBlockState state){
 		destroyNeighbors(w,coord,w.getBlockState(coord));

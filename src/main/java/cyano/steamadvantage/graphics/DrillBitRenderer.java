@@ -1,21 +1,21 @@
 package cyano.steamadvantage.graphics;
 
+import cyano.steamadvantage.SteamAdvantage;
+import cyano.steamadvantage.blocks.DrillBitTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import cyano.steamadvantage.SteamAdvantage;
-import cyano.steamadvantage.blocks.DrillBitTileEntity;
 
 @SideOnly(Side.CLIENT) // This is needed for classes that extend client-only classes
 public class DrillBitRenderer extends TileEntitySpecialRenderer{
@@ -45,7 +45,7 @@ public class DrillBitRenderer extends TileEntitySpecialRenderer{
 	
 	private void render(DrillBitTileEntity e, World world, BlockPos pos, float partialTick){
 		final Tessellator instance = Tessellator.getInstance();
-		final WorldRenderer worldRenderer = instance.getWorldRenderer();
+		final VertexBuffer worldRenderer = instance.getBuffer();
 		
 		this.bindTexture(texture);
 		

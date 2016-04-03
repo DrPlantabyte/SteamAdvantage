@@ -1,13 +1,16 @@
 package cyano.steamadvantage.gui;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import cyano.poweradvantage.api.simple.SimpleMachineGUI.GUIContainer;
+import cyano.poweradvantage.gui.FluidTankGUI;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.FMLLog;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class GUIHelper {
 
@@ -41,10 +44,10 @@ public abstract class GUIHelper {
 		float angle = (1f - value) * PI;
 		float offsetX = pivotX;
 		float offsetY = pivotY;
-		net.minecraft.client.renderer.WorldRenderer renderer = net.minecraft.client.renderer.Tessellator.getInstance().getWorldRenderer();
+		VertexBuffer renderer = Tessellator.getInstance().getBuffer();
 
-		float sin = net.minecraft.util.MathHelper.sin(angle);
-		float cos = net.minecraft.util.MathHelper.cos(angle);
+		float sin = MathHelper.sin(angle);
+		float cos = MathHelper.cos(angle);
 
 		float tipX =   cos * needleL + offsetX;
 		float tipY =  -sin * needleL + offsetY;
@@ -99,44 +102,22 @@ public abstract class GUIHelper {
 	}
 	
 	public static void drawFluidBar(FluidStack fs, float barHeight, int xPos, int yPos, 
-			GUIContainer guiContainer, int x, int y,
+			GUIContainer guiContainer, int x, int y, float z,
 			ResourceLocation displayImage, int texOverlayX, int texOverlayY, int texOverlayW, int texOverlayH){
 		final int texMarginW = (texOverlayW - 16) / 2;
 		final int texMarginH = (texOverlayH - 60) / 2;
 		final int w = 16;
 		final int barSlotHeight = 60;
 		final int h = (int)(barSlotHeight * barHeight);
-		final float fluidTexWidth = 16;
-		final float fluidTexHeight = 512;
-		final float texPerPixel = 4 * (fluidTexWidth / fluidTexHeight) / barSlotHeight;
 		if(barHeight > 0){
-			ResourceLocation fluidTexture = realTextureLocationCache.computeIfAbsent(fs.getFluid().getStill(fs),
-					(ResourceLocation r) -> new ResourceLocation(r.getResourceDomain(),"textures/".concat(r.getResourcePath()).concat(".png"))
-					);
-			guiContainer.mc.renderEngine.bindTexture(fluidTexture);
-			
-			guiContainer.drawModalRectWithCustomSizedTexture(x+xPos, y+yPos+barSlotHeight-h, 0, 0, w, h, 16, h);//h * texPerPixel); // x, y, u, v, width, height, textureWidth, textureHeight
+			FluidTankGUI.drawFluidFilledRectangle(guiContainer,fs,x+xPos, y+yPos+barSlotHeight-h,w, h,z);
 		}
 			guiContainer.mc.renderEngine.bindTexture(displayImage);
 		
 		guiContainer.drawTexturedModalRect(x+xPos-texMarginW, y+yPos-texMarginH, texOverlayX, texOverlayY, texOverlayW, texOverlayH); // x, y, textureOffsetX, textureOffsetY, width, height)
 	}
 	
-	/*
-	// from Forge source:
-	public void drawTexturedModalRect(final float x, final float y, final int u, final int v, final int w, final int h) {
-        final float n = 0.00390625f;
-        final float n2 = 0.00390625f;
-        final Tessellator instance = Tessellator.getInstance();
-        final WorldRenderer worldRenderer = instance.getWorldRenderer();
-        worldRenderer.startDrawingQuads();
-        worldRenderer.addVertexWithUV(x + 0.0f, y + h, zLevel, (u + 0) * n, (v + h) * n2);
-        worldRenderer.addVertexWithUV(x + w, y + h, zLevel, (u + w) * n, (v + h) * n2);
-        worldRenderer.addVertexWithUV(x + w, y + 0.0f, zLevel, (u + w) * n, (v + 0) * n2);
-        worldRenderer.addVertexWithUV(x + 0.0f, y + 0.0f, zLevel, (u + 0) * n, (v + 0) * n2);
-        instance.draw();
-    }
-    */
+
 
 	public static void drawDownArrowProgress(int x, int y, float progress,
 			GUIContainer gc) {

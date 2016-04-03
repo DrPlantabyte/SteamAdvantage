@@ -1,79 +1,74 @@
 package cyano.steamadvantage.blocks;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
+import cyano.steamadvantage.init.Blocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import cyano.steamadvantage.init.Blocks;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 public class PlatformBlock extends Block{
 
 
 	public static final net.minecraft.block.properties.PropertyInteger HEIGHT = PropertyInteger.create("height", 0, 4);
+
+	private static final AxisAlignedBB[] boxes = new AxisAlignedBB[5];
+	static{
+		for(int i = 0; i < boxes.length; i++){
+			if(i == 0){
+				boxes[i] = new AxisAlignedBB(0.25f, 0f, 0.25f, 0.75f, 1f, 0.75f);
+				continue;
+			}
+			boxes[i] = new AxisAlignedBB(0, 0, 0, 1, 0.25f*i, 1);
+		}
+	}
+
 	public PlatformBlock() {
 		super(Material.iron);
 		this.setHardness(5.0F).setResistance(2000.0F);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(HEIGHT, 1));
-		this.setBlockBoundsForItemRender();
 	}
 
 	@Override
-	protected BlockState createBlockState()
+	protected BlockStateContainer createBlockState()
 	{
-		return new BlockState(this, new IProperty[]{HEIGHT});
+		return new BlockStateContainer(this, new IProperty[]{HEIGHT});
 	}
 
 	@Override
-	public void setBlockBoundsBasedOnState(final IBlockAccess world, final BlockPos coord) {
-		Integer height = ((Integer)world.getBlockState(coord).getValue(HEIGHT));
-		if(height == 0) {
-			this.setBlockBounds(0.25f, 0f, 0.25f, 0.75f, 1f, 0.75f);
-			return;
-		}
-		this.setBlockBounds(0, 0, 0, 1, 0.25f*height, 1);
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos coord) {
+		Integer height = ((Integer)state.getValue(HEIGHT));
+		return boxes[height];
 	}
 
 	@Override
-	public void addCollisionBoxesToList(final World world, final BlockPos coord, 
-			final IBlockState bs, final AxisAlignedBB box, final List collisionBoxList, 
-			final Entity entity) {
+	public void addCollisionBoxToList(final IBlockState bs, final World world, final BlockPos coord,
+										final AxisAlignedBB box, final List collisionBoxList,
+										final Entity entity) {
 		Integer height = ((Integer)world.getBlockState(coord).getValue(HEIGHT));
-		if(height == 0) {
-			// shaft only
-			this.setBlockBounds(0.25f, 0f, 0.25f, 0.75f, 1f, 0.75f);
-			super.addCollisionBoxesToList(world, coord, bs, box, collisionBoxList, entity);
-			return;
-		}
-		if(height > 1){
-			this.setBlockBounds(0.25f, 0f, 0.25f, 0.75f, 0.25f*(height - 1), 0.75f);
-			super.addCollisionBoxesToList(world, coord, bs, box, collisionBoxList, entity);
-		}
-		this.setBlockBounds(0f, 0.25f*(height - 1), 0f, 1f, 0.25f*height, 1f);
-		super.addCollisionBoxesToList(world, coord, bs, box, collisionBoxList, entity);
-
+		super.addCollisionBoxToList(coord, box, collisionBoxList, boxes[height]);
 	}
 
 	/**
 	 * Override of default block behavior
 	 */
 	@Override
-	public boolean isOpaqueCube() {
+	public boolean isOpaqueCube(final IBlockState bs) {
 		return false;
 	}
 
@@ -81,7 +76,7 @@ public class PlatformBlock extends Block{
 	 * Override of default block behavior
 	 */
 	@Override
-	public boolean isFullCube() {
+	public boolean isFullCube(final IBlockState bs) {
 		return false;
 	}
 
@@ -137,7 +132,7 @@ public class PlatformBlock extends Block{
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public boolean shouldSideBeRendered(final IBlockAccess world, final BlockPos coord, final EnumFacing face) {
+	public boolean shouldSideBeRendered(final IBlockState bs, final IBlockAccess world, final BlockPos coord, final EnumFacing face) {
 		return true;
 	}
 }
