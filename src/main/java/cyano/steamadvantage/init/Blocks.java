@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -66,6 +67,7 @@ public abstract class Blocks {
 
 		steam_switch = addBlock(new BlockPowerSwitch(Power.steam_power),"steam_switch");
 		pump_pipe_steam = addBlock(new PumpPipeBlock(),"pump_pipe_steam");
+		pump_pipe_steam.setCreativeTab(CreativeTabs.tabAllSearch);
 		steam_still = (GUIBlock)addBlock(new SteamStillBlock(),"steam_still");
 		steam_pump = (GUIBlock)addBlock(new SteamPumpBlock(),"steam_pump");
 		steam_boiler_oil = (GUIBlock)addBlock(new OilBoilerBlock(),"steam_boiler_oil");

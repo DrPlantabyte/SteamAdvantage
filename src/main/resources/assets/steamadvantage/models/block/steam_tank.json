@@ -1,5 +1,6 @@
 {
-    "textures": {
+  "parent": "block/block",
+  "textures": {
         "top": "steamadvantage:materials/bolted_copper",
         "bottom": "steamadvantage:materials/bolted_copper",
         "side": "steamadvantage:materials/bolted_copper",

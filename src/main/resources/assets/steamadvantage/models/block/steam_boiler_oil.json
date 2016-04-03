@@ -1,5 +1,6 @@
 {
-    "textures": {
+  "parent": "block/block",
+  "textures": {
         "side": "steamadvantage:materials/iron",
         "end": "steamadvantage:blocks/oil_tank_end",
         "particle": "steamadvantage:materials/bolted_iron"

@@ -1,5 +1,6 @@
 {
-     "textures": {
+  "parent": "block/block",
+  "textures": {
         "support": "poweradvantage:materials/steel",
         "side": "steamadvantage:materials/bolted_iron",
         "top": "steamadvantage:blocks/steam_drill_top",

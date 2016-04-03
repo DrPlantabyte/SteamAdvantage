@@ -1,5 +1,6 @@
 {
-    "textures": {
+  "parent": "block/block",
+  "textures": {
         "shaft": "poweradvantage:materials/steel",
         "platform": "steamadvantage:blocks/platform_top",
         "particle": "poweradvantage:materials/steel"

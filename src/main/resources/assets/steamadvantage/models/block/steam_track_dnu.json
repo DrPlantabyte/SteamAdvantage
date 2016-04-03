@@ -1,5 +1,6 @@
 {
-    "textures": {
+  "parent": "poweradvantage:block/steel_frame",
+  "textures": {
         "texture": "steamadvantage:blocks/steam_pipe",
         "particle": "poweradvantage:materials/brass",
         "face": "poweradvantage:blocks/steel_frame"
@@ -44,49 +45,6 @@
                 "south": { "uv": [ 8, 2, 12, 6 ], "texture": "#texture", "rotation": 270 },
                 "west":  { "uv": [ 8, 2, 12, 6 ], "texture": "#texture", "rotation": 270 },
                 "east":  { "uv": [ 12, 2, 8, 6 ], "texture": "#texture", "rotation": 90 }
-            }
-        },
-        {   
-            "from": [ 0, 0, 0 ],
-            "to": [ 16, 16, 2 ],
-            "faces": {
-                "north": { "uv": [ 0, 0,16,16 ], "texture": "#face", "cullface": "north" },
-                "south": { "uv": [ 0, 0,16,16 ], "texture": "#face" }
-            }
-        },{   
-            "from": [ 0, 0, 14 ],
-            "to": [ 16, 16, 16 ],
-            "faces": {
-                "north": { "uv": [ 0, 0,16,16 ], "texture": "#face" },
-                "south": { "uv": [ 0, 0,16,16 ], "texture": "#face", "cullface": "south" }
-            }
-        },{   
-            "from": [ 0, 0, 0 ],
-            "to": [ 2, 16, 16 ],
-            "faces": {
-                "east": { "uv": [ 0, 0,16,16 ], "texture": "#face" },
-                "west": { "uv": [ 0, 0,16,16 ], "texture": "#face", "cullface": "west" }
-            }
-        },{   
-            "from": [ 14, 0, 0 ],
-            "to": [ 16, 16, 16 ],
-            "faces": {
-                "east": { "uv": [ 0, 0,16,16 ], "texture": "#face", "cullface": "east" },
-                "west": { "uv": [ 0, 0,16,16 ], "texture": "#face" }
-            }
-        },{   
-            "from": [ 0, 0, 0 ],
-            "to": [ 16, 2, 16 ],
-            "faces": {
-                "up":   { "uv": [ 0, 0,16,16 ], "texture": "#face" },
-                "down": { "uv": [ 0, 0,16,16 ], "texture": "#face", "cullface": "down" }
-            }
-        },{   
-            "from": [ 0, 14, 0 ],
-            "to": [ 16, 16, 16 ],
-            "faces": {
-                "up":   { "uv": [ 0, 0,16,16 ], "texture": "#face", "cullface": "up" },
-                "down": { "uv": [ 0, 0,16,16 ], "texture": "#face" }
             }
         }
     ]

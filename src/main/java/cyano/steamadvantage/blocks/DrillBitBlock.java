@@ -1,27 +1,24 @@
 package cyano.steamadvantage.blocks;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
+import cyano.steamadvantage.init.Power;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
-import cyano.steamadvantage.init.Blocks;
-import cyano.steamadvantage.init.Power;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 public class DrillBitBlock extends Block implements ITileEntityProvider {
 
@@ -73,8 +70,8 @@ public class DrillBitBlock extends Block implements ITileEntityProvider {
 	}
 	
 	@Override
-	public void addCollisionBoxesToList(final World w, final BlockPos coord, final IBlockState bs, 
-			final AxisAlignedBB bb, final List list, final Entity e) {
+	public void addCollisionBoxesToList(final World w, final BlockPos coord, final IBlockState bs,
+										final AxisAlignedBB bb, final List list, final Entity e) {
 		this.setBlockBounds(0.25f, 0.25f, 0.25f, 0.75f, 0.75f, 0.75f);
 		super.addCollisionBoxesToList(w, coord, bs, bb, list, e);
 	}
