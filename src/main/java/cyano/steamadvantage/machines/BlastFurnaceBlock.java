@@ -1,5 +1,6 @@
 package cyano.steamadvantage.machines;
 
+import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PoweredEntity;
 import cyano.steamadvantage.init.Power;
 import net.minecraft.block.material.Material;
@@ -35,6 +36,17 @@ public class BlastFurnaceBlock extends cyano.poweradvantage.api.simple.BlockSimp
 			return ((BlastFurnaceTileEntity)world.getTileEntity(coord)).getComparatorOutput();
 		}
 		return 0;
+	}
+
+
+	@Override
+	public boolean isPowerSink(ConduitType powerType) {
+		return ConduitType.areSameType(Power.steam_power,powerType);
+	}
+
+	@Override
+	public boolean isPowerSource(ConduitType powerType) {
+		return false;
 	}
 
 }

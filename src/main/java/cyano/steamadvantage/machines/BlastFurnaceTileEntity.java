@@ -1,5 +1,6 @@
 package cyano.steamadvantage.machines;
 
+import cyano.poweradvantage.api.ConduitType;
 import cyano.steamadvantage.init.Power;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -309,12 +310,12 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 
 
 	@Override
-	public boolean isPowerSink() {
-		return true;
+	public boolean isPowerSink(ConduitType powerType) {
+		return ConduitType.areSameType(Power.steam_power,powerType);
 	}
 
 	@Override
-	public boolean isPowerSource() {
+	public boolean isPowerSource(ConduitType powerType) {
 		return false;
 	}
 }

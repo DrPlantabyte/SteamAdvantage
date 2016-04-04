@@ -1,13 +1,15 @@
 package cyano.steamadvantage.machines;
 
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import cyano.basemetals.registry.CrusherRecipeRegistry;
 import cyano.basemetals.registry.recipe.ICrusherRecipe;
 import cyano.steamadvantage.init.Power;
+import net.minecraft.util.SoundCategory;
 
-public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerConsumer{
+public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine{
 
 	public static final float STEAM_PER_PROGRESS_TICK = 1.5f;
 	public static final int TICKS_PER_ACTION = 125;
@@ -61,13 +63,13 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 					int availableSlot = canAddToOutputInventory(output); // returns -1 if no slot is available
 					if(availableSlot >= 0){
 						// crusher progress
-						if(this.getEnergy() >= STEAM_PER_PROGRESS_TICK){
+						if(this.getEnergy(Power.steam_power) >= STEAM_PER_PROGRESS_TICK){
 							progress++;
-							this.subtractEnergy(STEAM_PER_PROGRESS_TICK, getType());
+							this.subtractEnergy(STEAM_PER_PROGRESS_TICK, Power.steam_power);
 							// play steam sounds occasionally
 							timeSinceLastSteamBurst++;
 							if(timeSinceLastSteamBurst > 50){
-								getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "random.fizz", 0.5f, 1f);
+								getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, false);
 								timeSinceLastSteamBurst = 0;
 							}
 						} else if (progress > 0){
@@ -83,7 +85,7 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 							}
 							if(--inventory[0].stackSize <= 0){inventory[0] = null;} // decrement the input slot
 							progress = 0;
-							getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "dig.gravel", 0.5f, 0.2f);
+							getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_gravel_break, SoundCategory.AMBIENT, 0.5f, 0.2f, false);
 						}
 					} else if (progress > 0){
 						// cannot crush, undo progress
@@ -105,9 +107,9 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 		
 		redstone = hasRedstoneSignal();
 		
-		if(oldSteam != this.getEnergy() || progress != oldProgress){
+		if(oldSteam != this.getEnergy(Power.steam_power) || progress != oldProgress){
 			this.sync();
-			oldSteam = this.getEnergy();
+			oldSteam = this.getEnergy(Power.steam_power);
 			oldProgress = progress;
 		}
 	}
@@ -115,7 +117,7 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 	
 
 	private void energyDecay() {
-		if(getEnergy() > 0){
+		if(getEnergy(Power.steam_power) > 0){
 			subtractEnergy(Power.ENERGY_LOST_PER_TICK,Power.steam_power);
 		}
 	}
@@ -134,7 +136,7 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 	}
 	
 	public float getSteamLevel(){
-		return this.getEnergy() / this.getEnergyCapacity();
+		return this.getEnergy(Power.steam_power) / this.getEnergyCapacity(Power.steam_power);
 	}
 	
 	@Override
@@ -149,13 +151,13 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 
 	@Override
 	public void prepareDataFieldsForSync() {
-		dataSyncArray[0] = Float.floatToRawIntBits(this.getEnergy());
+		dataSyncArray[0] = Float.floatToRawIntBits(this.getEnergy(Power.steam_power));
 		dataSyncArray[1] = this.progress;
 	}
 
 	@Override
 	public void onDataFieldUpdate() {
-		this.setEnergy(Float.intBitsToFloat(dataSyncArray[0]), this.getType());
+		this.setEnergy(Float.intBitsToFloat(dataSyncArray[0]), Power.steam_power);
 		this.progress = dataSyncArray[1];
 	}
 
