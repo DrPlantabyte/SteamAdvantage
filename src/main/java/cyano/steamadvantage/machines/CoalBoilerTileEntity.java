@@ -1,26 +1,19 @@
 package cyano.steamadvantage.machines;
 
-import java.util.Arrays;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.fluid.FluidRequest;
 import cyano.poweradvantage.init.Fluids;
 import cyano.steamadvantage.init.Power;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundCategory;
+import net.minecraftforge.fluids.*;
 
-public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerSource implements IFluidHandler{
+public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine implements IFluidHandler{
 
 	
 	public static final int LAVA_REQUEST_SIZE = 100;
@@ -36,7 +29,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	private final int[] dataSyncArray = new int[4];
 	
 	public CoalBoilerTileEntity() {
-		super(Power.steam_power, 1000, CoalBoilerTileEntity.class.getSimpleName());
+		super(new ConduitType[]{Power.steam_power,Fluids.fluidConduit_general}, new float[]{1000,1000}, CoalBoilerTileEntity.class.getSimpleName());
 		tank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME * 4);
 		inventory = new ItemStack[1];
 	}
@@ -54,11 +47,11 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 				boilWater();
 				// play steam sounds occasionally
 				if(getWorld().rand.nextInt(100) == 0){
-					getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "random.fizz", 0.5f, 1f);
+					getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, false);
 				}
 				if(timeSinceSound > 200){
 					if(getTank().getFluidAmount() > 0){
-						getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "liquid.lava", 0.3f, 1f);
+						getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_lava_ambient, SoundCategory.AMBIENT, 0.3f, 1f, false);
 					}
 					timeSinceSound = 0;
 				}
@@ -85,7 +78,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 
 
 	private void energyDecay() {
-		if(getEnergy() > 0){
+		if(getEnergy(Power.steam_power) > 0){
 			subtractEnergy(Power.ENERGY_LOST_PER_TICK,Power.steam_power);
 		}
 	}
@@ -107,7 +100,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 
 
 	private void boilWater() {
-		if(getTank().getFluidAmount() >= 1 && (getEnergyCapacity() - getEnergy()) >= 1){
+		if(getTank().getFluidAmount() >= 1 && (getEnergyCapacity(Power.steam_power) - getEnergy(Power.steam_power)) >= 1){
 			getTank().drain(1, true);
 			addEnergy(1,Power.steam_power);
 		}
@@ -124,8 +117,8 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		// I'm doing the synchonization logic here instead of in the tickUpdate method
 		boolean updateFlag = false;
 
-		if(oldEnergy != getEnergy()){
-			oldEnergy = getEnergy();
+		if(oldEnergy != getEnergy(Power.steam_power)){
+			oldEnergy = getEnergy(Power.steam_power);
 			updateFlag = true;
 		}
 		if(oldBurnTime != burnTime){
@@ -149,7 +142,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	}
 	
 	public float getSteamLevel(){
-		return this.getEnergy() / this.getEnergyCapacity();
+		return this.getEnergy(Power.steam_power) / this.getEnergyCapacity(Power.steam_power);
 	}
 	
 	public float getBurnLevel(){
@@ -177,7 +170,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 
 	@Override
 	public void prepareDataFieldsForSync() {
-		dataSyncArray[0] = Float.floatToRawIntBits(this.getEnergy());
+		dataSyncArray[0] = Float.floatToRawIntBits(this.getEnergy(Power.steam_power));
 		dataSyncArray[1] = this.getTank().getFluidAmount();
 		dataSyncArray[2] = this.burnTime;
 		dataSyncArray[3] = this.totalBurnTime;
@@ -185,7 +178,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 
 	@Override
 	public void onDataFieldUpdate() {
-		this.setEnergy(Float.intBitsToFloat(dataSyncArray[0]), this.getType());
+		this.setEnergy(Float.intBitsToFloat(dataSyncArray[0]), Power.steam_power);
 		this.getTank().setFluid(new FluidStack(FluidRegistry.WATER,dataSyncArray[1]));
 		this.burnTime = dataSyncArray[2];
 		this.totalBurnTime = dataSyncArray[3];
@@ -239,8 +232,14 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	
 	///// Overrides to make this a multi-type block /////
 	@Override
-	public boolean isPowerSink(){
-		return true;
+	public boolean isPowerSink(ConduitType type) {
+		return ConduitType.areSameType(Fluids.fluidConduit_general, type)
+				|| ConduitType.areSameType(Fluids.fluidConduit_water, type);
+	}
+
+	@Override
+	public boolean isPowerSource(ConduitType type){
+		return ConduitType.areSameType(Power.steam_power,type);
 	}
 	
 	/**
@@ -323,17 +322,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		}
 	}
 	
-	
-	/**
-	 * Determines whether this conduit is compatible with a type of energy through any side
-	 * @param type The type of energy in the conduit
-	 * @return true if this conduit can flow the given energy type through one or more of its block 
-	 * faces, false otherwise
-	 */
-	@Override
-	public boolean canAcceptType(ConduitType type){
-		return ConduitType.areSameType(getType(), type) || ConduitType.areSameType(Fluids.fluidConduit_general, type);
-	}
+
 	///// end multi-type overrides /////
 
 	

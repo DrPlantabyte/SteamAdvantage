@@ -65,6 +65,10 @@ public class SteamAdvantage
 
 		config.save();
 
+		Blocks.init();
+		Items.init();
+		TreasureChests.init(config.getConfigFile().toPath().getParent());
+
 
 		if(event.getSide() == Side.CLIENT){
 			clientPreInit(event);
@@ -90,12 +94,9 @@ public class SteamAdvantage
 	@EventHandler
 	public void init(FMLInitializationEvent event)
 	{
-		Blocks.init();
-		Items.init();
 		Recipes.init();
 		Entities.init();
 		GUI.init();
-		TreasureChests.init();
 		Enchantments.init();
 		Villages.init();
 

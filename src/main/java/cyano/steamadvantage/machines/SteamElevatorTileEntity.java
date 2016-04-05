@@ -1,17 +1,19 @@
 package cyano.steamadvantage.machines;
 
-import java.util.List;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import cyano.poweradvantage.api.ConduitType;
 import cyano.steamadvantage.init.Blocks;
 import cyano.steamadvantage.init.Power;
+import net.minecraft.entity.Entity;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 
-public class SteamElevatorTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerConsumer{
+import java.util.List;
+
+public class SteamElevatorTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine{
 
 	public static final float STEAM_PER_ELEVATOR_MOVE = 32f;
 	public static final int MAX_RANGE = 16;
@@ -49,10 +51,10 @@ public class SteamElevatorTileEntity extends cyano.poweradvantage.api.simple.Til
 	}
 
 	private boolean moveUp(){
-		if(this.getEnergy() < STEAM_PER_ELEVATOR_MOVE) return false;
-		this.subtractEnergy(STEAM_PER_ELEVATOR_MOVE, getType());
-		getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "random.fizz", 0.5f, 1f);
-		getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "tile.piston.out", 0.5f, 1f);
+		if(this.getEnergy(Power.steam_power) < STEAM_PER_ELEVATOR_MOVE) return false;
+		this.subtractEnergy(STEAM_PER_ELEVATOR_MOVE, Power.steam_power);
+		getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, false);
+		getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_piston_extend, SoundCategory.BLOCKS, 0.5f, 1f, false);
 		// scan up to find solid block, then move piston up to 2 less than that
 		final int maxTop = MAX_RANGE + 2;
 		int dist = 0;
@@ -76,7 +78,7 @@ public class SteamElevatorTileEntity extends cyano.poweradvantage.api.simple.Til
 		}
 		// move people
 		List<Entity> passengers = getWorld().getEntitiesWithinAABB(Entity.class, 
-				new AxisAlignedBB(getPos().getX(),getPos().getY()+1,getPos().getZ(), 
+				new AxisAlignedBB(getPos().getX(),getPos().getY()+1,getPos().getZ(),
 						getPos().getX()+1, topPos.getY(), getPos().getZ()+1));
 
 		for(Entity e : passengers){
@@ -87,10 +89,10 @@ public class SteamElevatorTileEntity extends cyano.poweradvantage.api.simple.Til
 	}
 
 	private boolean moveDown(){
-		if(this.getEnergy() < STEAM_PER_ELEVATOR_MOVE) return false;
-		this.subtractEnergy(STEAM_PER_ELEVATOR_MOVE, getType());
-		getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "random.fizz", 0.5f, 1f);
-		getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "tile.piston.in", 0.5f, 1f);
+		if(this.getEnergy(Power.steam_power) < STEAM_PER_ELEVATOR_MOVE) return false;
+		this.subtractEnergy(STEAM_PER_ELEVATOR_MOVE, Power.steam_power);
+		getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, false);
+		getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_piston_contract, SoundCategory.BLOCKS, 0.5f, 1f, false);
 		// scan up the piston and clear it
 		BlockPos destination = this.getPos().up();
 		BlockPos p = destination;
@@ -122,9 +124,9 @@ public class SteamElevatorTileEntity extends cyano.poweradvantage.api.simple.Til
 		
 		redstone = hasRedstoneSignal();
 		
-		if(oldSteam != this.getEnergy()){
+		if(oldSteam != this.getEnergy(Power.steam_power)){
 			this.sync();
-			oldSteam = this.getEnergy();
+			oldSteam = this.getEnergy(Power.steam_power);
 		}
 	}
 
@@ -137,7 +139,7 @@ public class SteamElevatorTileEntity extends cyano.poweradvantage.api.simple.Til
 	
 	
 	public float getSteamLevel(){
-		return this.getEnergy() / this.getEnergyCapacity();
+		return this.getEnergy(Power.steam_power) / this.getEnergyCapacity(Power.steam_power);
 	}
 	
 	@Override
@@ -187,7 +189,15 @@ public class SteamElevatorTileEntity extends cyano.poweradvantage.api.simple.Til
 		if(up) return 15;
 		return 0;
 	}
-	
 
 
+	@Override
+	public boolean isPowerSink(ConduitType conduitType) {
+		return true;
+	}
+
+	@Override
+	public boolean isPowerSource(ConduitType conduitType) {
+		return false;
+	}
 }

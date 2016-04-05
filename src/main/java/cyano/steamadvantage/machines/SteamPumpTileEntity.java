@@ -1,8 +1,5 @@
 package cyano.steamadvantage.machines;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
@@ -12,23 +9,19 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.BlockFluidClassic;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fluids.*;
 
-public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerSource implements IFluidHandler{
+import java.util.HashSet;
+import java.util.Set;
+
+public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine implements IFluidHandler{
 
 
 
@@ -36,7 +29,6 @@ public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 	public static final float ENERGY_COST_PIPE = 5f;
 	public static final float ENERGY_COST_VERTICAL = 1f;
 	public static final float ENERGY_COST_PUMP = 32f;
-	public static final int VOLUME_PER_PUMP = FluidContainerRegistry.BUCKET_VOLUME;
 	public static final byte PUMP_INTERVAL = 32;
 	public static final byte PIPE_INTERVAL = 11;
 	private static final int limit = 5 * 5 * 5; // do not search more than this many block at a time
@@ -47,7 +39,7 @@ public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 	private byte timeUntilNextPump = PUMP_INTERVAL;
 
 	public SteamPumpTileEntity() {
-		super(Power.steam_power, 300f, SteamPumpTileEntity.class.getSimpleName());
+		super(new ConduitType[]{Power.steam_power,Fluids.fluidConduit_general}, new float[]{300f,1000f}, SteamPumpTileEntity.class.getSimpleName());
 		tank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME);
 	}
 
@@ -69,12 +61,12 @@ public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 					while(target.getY() > 0 && w.getBlockState(target).getBlock() == cyano.steamadvantage.init.Blocks.pump_pipe_steam){
 						target = target.down();
 					}
-					if(target.getY() > 0 && w.isAirBlock(target) && getEnergy() >= ENERGY_COST_PIPE){
+					if(target.getY() > 0 && w.isAirBlock(target) && getEnergy(Power.steam_power) >= ENERGY_COST_PIPE){
 						// place pipe
 						w.setBlockState(target, cyano.steamadvantage.init.Blocks.pump_pipe_steam.getDefaultState());
 						this.subtractEnergy(ENERGY_COST_PIPE, Power.steam_power);
 						timeUntilNextPump = PIPE_INTERVAL;
-						getWorld().playSoundEffect(target.getX()+0.5, target.getY()+0.5, target.getZ()+0.5, "step.stone", 0.3f, 1f);
+						getWorld().playSound(target.getX()+0.5, target.getY()+0.5, target.getZ()+0.5, SoundEvents.block_stone_place, SoundCategory.BLOCKS, 0.3f, 1f, true);
 					} else {
 						// pump fluids
 						BlockPos fluidSource = null;
@@ -89,7 +81,7 @@ public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 							// Found a fluid to suck-up!
 							IBlockState blockstate = w.getBlockState(fluidSource);
 							Fluid f = getFluid(blockstate);
-							if(f != null && getEnergy() >= cost){
+							if(f != null && getEnergy(Power.steam_power) >= cost){
 								this.getTank().fill(new FluidStack(f,FluidContainerRegistry.BUCKET_VOLUME), true);
 								this.subtractEnergy(cost, Power.steam_power);
 								w.setBlockToAir(fluidSource);
@@ -99,14 +91,15 @@ public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 						timeUntilNextPump = PUMP_INTERVAL;
 					}
 					if(success){
-						getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "random.fizz", 0.5f, 1f);
-						getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "tile.piston.out", 0.3f, 1f);
+						getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, true);
+						getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_piston_extend, SoundCategory.BLOCKS, 0.3f, 1f, true);
 						timeToSound = 14;
 					}
 				}
 			}
 			if(timeToSound == 1){
-				getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "tile.piston.in", 0.3f, 1f);
+				getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_piston_contract, SoundCategory.BLOCKS, 0.3f, 1f, true);
+				getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.item_bucket_fill, SoundCategory.BLOCKS, 1f, 1f, true);
 			}
 			if(timeToSound > 0) timeToSound--;
 			energyDecay();
@@ -174,7 +167,7 @@ public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 
 
 	private void energyDecay() {
-		if(getEnergy() > 0){
+		if(getEnergy(Power.steam_power) > 0){
 			subtractEnergy(Power.ENERGY_LOST_PER_TICK,Power.steam_power);
 		}
 	}
@@ -200,8 +193,8 @@ public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 		// I'm doing the synchonization logic here instead of in the tickUpdate method
 		boolean updateFlag = false;
 
-		if(oldEnergy != getEnergy()){
-			oldEnergy = getEnergy();
+		if(oldEnergy != getEnergy(Power.steam_power)){
+			oldEnergy = getEnergy(Power.steam_power);
 			updateFlag = true;
 		}
 		if(oldFluid != getTank().getFluidAmount()){
@@ -219,7 +212,7 @@ public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 
 
 	public float getSteamLevel(){
-		return this.getEnergy() / this.getEnergyCapacity();
+		return this.getEnergy(Power.steam_power) / this.getEnergyCapacity(Power.steam_power);
 	}
 
 
@@ -239,9 +232,9 @@ public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 
 	@Override
 	public void prepareDataFieldsForSync() {
-		dataSyncArray[0] = Float.floatToRawIntBits(this.getEnergy());
+		dataSyncArray[0] = Float.floatToRawIntBits(this.getEnergy(Power.steam_power));
 		dataSyncArray[1] = this.getTank().getFluidAmount();
-		dataSyncArray[2] = (this.getTank().getFluidAmount() > 0 ? this.getTank().getFluid().getFluid().getID() : FluidRegistry.WATER.getID());
+		dataSyncArray[2] = (this.getTank().getFluidAmount() > 0 ? FluidRegistry.getFluidID(this.getTank().getFluid().getFluid()) : FluidRegistry.getFluidID(FluidRegistry.WATER));
 		dataSyncArray[3] = this.timeUntilNextPump;
 	}
 
@@ -291,23 +284,17 @@ public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 	}
 
 	///// Overrides to make this a multi-type block /////
-	/**
-	 * Determines whether this block/entity should receive energy 
-	 * @return true if this block/entity should receive energy
-	 */
+
+
 	@Override
-	public boolean isPowerSink(){
-		return true;
-	}
-	/**
-	 * Determines whether this block/entity can provide energy 
-	 * @return true if this block/entity can provide energy
-	 */
-	@Override
-	public boolean isPowerSource(){
-		return true;
+	public boolean isPowerSink(ConduitType type){
+		return ConduitType.areSameType(Power.steam_power, type);
 	}
 
+	@Override
+	public boolean isPowerSource(ConduitType type){
+		return !ConduitType.areSameType(Power.steam_power, type);
+	}
 	/**
 	 * Adds "energy" as a fluid to the FluidTank returned by getTank(). This implementation ignores 
 	 * all non-fluid energy types.
@@ -345,22 +332,13 @@ public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 		if(Fluids.isFluidType(offer)){
 			return PowerRequest.REQUEST_NOTHING;
 		} else  if(ConduitType.areSameType(offer, Power.steam_power)){
-			return new PowerRequest(PowerRequest.MEDIUM_PRIORITY,this.getEnergyCapacity() - this.getEnergy(), this);
+			return new PowerRequest(PowerRequest.MEDIUM_PRIORITY,this.getEnergyCapacity(Power.steam_power) - this.getEnergy(Power.steam_power), this);
 		}
 		return PowerRequest.REQUEST_NOTHING;
 	}
 
 
-	/**
-	 * Determines whether this conduit is compatible with a type of energy through any side
-	 * @param type The type of energy in the conduit
-	 * @return true if this conduit can flow the given energy type through one or more of its block 
-	 * faces, false otherwise
-	 */
-	@Override
-	public boolean canAcceptType(ConduitType type){
-		return ConduitType.areSameType(getType(), type) || ConduitType.areSameType(Fluids.fluidConduit_general, type);
-	}
+
 	///// end multi-type overrides /////
 
 

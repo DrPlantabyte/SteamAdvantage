@@ -7,15 +7,14 @@ import cyano.poweradvantage.init.Fluids;
 import cyano.steamadvantage.init.Power;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
-public class GeothermalBoilerBlock extends cyano.poweradvantage.api.simple.BlockSimplePowerSource{
+public class GeothermalBoilerBlock extends cyano.poweradvantage.api.simple.BlockSimplePowerMachine{
 
 	public GeothermalBoilerBlock() {
-		super(Material.piston, 0.75f, Power.steam_power);
+		super(Material.piston, 0.75f, Power.steam_power, Fluids.fluidConduit_general);
 	}
 
 	@Override
@@ -24,26 +23,34 @@ public class GeothermalBoilerBlock extends cyano.poweradvantage.api.simple.Block
 	}
 
 	@Override
-	public boolean hasComparatorInputOverride() {
+	public boolean hasComparatorInputOverride(IBlockState bs) {
 		return true;
 	}
 
 	@Override
-	public int getComparatorInputOverride(World world, BlockPos coord) {
+	public int getComparatorInputOverride(IBlockState bs, World world, BlockPos coord) {
 		if(world.getTileEntity(coord) instanceof GeothermalBoilerTileEntity){
 			return ((GeothermalBoilerTileEntity)world.getTileEntity(coord)).getComparatorOutput();
 		}
 		return 0;
 	}
 ///// Overrides to make this a multi-type block /////
-	
+@Override
+public boolean isPowerSink(ConduitType type){
+	return !ConduitType.areSameType(Power.steam_power, type);
+}
+
+	@Override
+	public boolean isPowerSource(ConduitType type){
+		return ConduitType.areSameType(Power.steam_power, type);
+	}
 	/**
 	 * This method is called whenever the block is placed into the world
 	 */
 	@Override
 	public void onBlockAdded(World w, BlockPos coord, IBlockState state){
 		super.onBlockAdded(w, coord, state);
-		ConduitRegistry.getInstance().conduitBlockPlacedEvent(w, w.provider.getDimensionId(), coord, cyano.poweradvantage.init.Fluids.fluidConduit_general);
+		ConduitRegistry.getInstance().conduitBlockPlacedEvent(w, w.provider.getDimension(), coord, cyano.poweradvantage.init.Fluids.fluidConduit_general);
 	}
 	
 	/**
@@ -52,7 +59,7 @@ public class GeothermalBoilerBlock extends cyano.poweradvantage.api.simple.Block
 	@Override
 	public void onBlockDestroyedByPlayer(World w, BlockPos coord, IBlockState state){
 		super.onBlockDestroyedByPlayer(w, coord, state);
-		ConduitRegistry.getInstance().conduitBlockPlacedEvent(w, w.provider.getDimensionId(), coord, cyano.poweradvantage.init.Fluids.fluidConduit_general);
+		ConduitRegistry.getInstance().conduitBlockPlacedEvent(w, w.provider.getDimension(), coord, cyano.poweradvantage.init.Fluids.fluidConduit_general);
 	}
 	/**
 	 * This method is called when the block is destroyed by an explosion.
@@ -60,30 +67,10 @@ public class GeothermalBoilerBlock extends cyano.poweradvantage.api.simple.Block
 	@Override
 	public void onBlockDestroyedByExplosion(World w, BlockPos coord, Explosion boom){
 		super.onBlockDestroyedByExplosion(w, coord, boom);
-		ConduitRegistry.getInstance().conduitBlockPlacedEvent(w, w.provider.getDimensionId(), coord, Fluids.fluidConduit_general);
+		ConduitRegistry.getInstance().conduitBlockPlacedEvent(w, w.provider.getDimension(), coord, Fluids.fluidConduit_general);
 	}
 	
-	
-	/**
-	 * Determines whether this conduit is compatible with an adjacent one
-	 * @param type The type of energy in the conduit
-	 * @param blockFace The side through-which the energy is flowing
-	 * @return true if this conduit can flow the given energy type through the given face, false 
-	 * otherwise
-	 */
-	public boolean canAcceptType(ConduitType type, EnumFacing blockFace){
-		return ConduitType.areSameType(getType(), type) || ConduitType.areSameType(Fluids.fluidConduit_general, type);
-	}
-	/**
-	 * Determines whether this conduit is compatible with a type of energy through any side
-	 * @param type The type of energy in the conduit
-	 * @return true if this conduit can flow the given energy type through one or more of its block 
-	 * faces, false otherwise
-	 */
-	public boolean canAcceptType(ConduitType type){
-		return  ConduitType.areSameType(getType(), type) || ConduitType.areSameType(Fluids.fluidConduit_general, type);
-	}
-	
+
 	///// end multi-type overrides /////
 
 }

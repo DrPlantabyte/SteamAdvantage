@@ -1,8 +1,5 @@
 package cyano.steamadvantage.init;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import cyano.poweradvantage.api.GUIBlock;
 import cyano.poweradvantage.blocks.BlockPowerSwitch;
 import cyano.steamadvantage.SteamAdvantage;
@@ -11,13 +8,16 @@ import cyano.steamadvantage.machines.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class Blocks {
 	private static final Map<String,Block> allBlocks = new HashMap<>();

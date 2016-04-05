@@ -8,19 +8,14 @@ import cyano.poweradvantage.init.Fluids;
 import cyano.poweradvantage.registry.still.recipe.DistillationRecipe;
 import cyano.poweradvantage.registry.still.recipe.DistillationRecipeRegistry;
 import cyano.steamadvantage.init.Power;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraft.util.SoundCategory;
+import net.minecraftforge.fluids.*;
 
-public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerSource implements IFluidHandler{
+public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine implements IFluidHandler{
 
 
 
@@ -34,7 +29,7 @@ public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	private final int[] dataSyncArray = new int[5];
 
 	public SteamStillTileEntity() {
-		super(Power.steam_power, 100, SteamStillTileEntity.class.getSimpleName());
+		super(new ConduitType[]{Power.steam_power, Fluids.fluidConduit_general}, new float[]{100,1000}, SteamStillTileEntity.class.getSimpleName());
 		outputTank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME );
 		inputTank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME);
 	}
@@ -49,12 +44,12 @@ public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 			// server-side logic
 			if(!redstone){
 				if(getInputTank().getFluidAmount() > 0 
-						&& getEnergy() > steamPerDistill
+						&& getEnergy(Power.steam_power) > steamPerDistill
 						&& canDistill(getInputTank().getFluid())){
 					distill();
 					this.subtractEnergy(steamPerDistill, Power.steam_power);
 					if(timeSinceSound > 200){
-						getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "liquid.lava", 0.3f, 1.5f);
+						getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_lava_ambient, SoundCategory.AMBIENT, 0.3f, 1.5f, false);
 						timeSinceSound = 0;
 					}
 					timeSinceSound++;
@@ -72,7 +67,7 @@ public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 
 
 	private void energyDecay() {
-		if(getEnergy() > 0){
+		if(getEnergy(Power.steam_power) > 0){
 			subtractEnergy(Power.ENERGY_LOST_PER_TICK,Power.steam_power);
 		}
 	}
@@ -99,8 +94,8 @@ public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		// I'm doing the synchonization logic here instead of in the tickUpdate method
 		boolean updateFlag = false;
 
-		if(oldEnergy != getEnergy()){
-			oldEnergy = getEnergy();
+		if(oldEnergy != getEnergy(Power.steam_power)){
+			oldEnergy = getEnergy(Power.steam_power);
 			updateFlag = true;
 		}
 		if(oldFluidIn != getInputTank().getFluidAmount()){
@@ -122,7 +117,7 @@ public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 
 
 	public float getSteamLevel(){
-		return this.getEnergy() / this.getEnergyCapacity();
+		return this.getEnergy(Power.steam_power) / this.getEnergyCapacity(Power.steam_power);
 	}
 
 
@@ -145,11 +140,11 @@ public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 
 	@Override
 	public void prepareDataFieldsForSync() {
-		dataSyncArray[0] = Float.floatToRawIntBits(this.getEnergy());
+		dataSyncArray[0] = Float.floatToRawIntBits(this.getEnergy(Power.steam_power));
 		dataSyncArray[1] = this.getOutputTank().getFluidAmount();
-		dataSyncArray[2] = (this.getOutputTank().getFluidAmount() > 0 ? this.getOutputTank().getFluid().getFluid().getID() : FluidRegistry.WATER.getID());
+		dataSyncArray[2] = FluidRegistry.getFluidID(this.getOutputTank().getFluidAmount() > 0 ? this.getOutputTank().getFluid().getFluid() : FluidRegistry.WATER);
 		dataSyncArray[3] = inputTank.getFluidAmount();
-		dataSyncArray[4] = (inputTank.getFluidAmount() > 0 ? inputTank.getFluid().getFluid().getID() : FluidRegistry.WATER.getID());
+		dataSyncArray[4] = FluidRegistry.getFluidID(inputTank.getFluidAmount() > 0 ? inputTank.getFluid().getFluid() : FluidRegistry.WATER);
 	}
 
 	@Override
@@ -205,21 +200,15 @@ public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	}
 
 	///// Overrides to make this a multi-type block /////
-	/**
-	 * Determines whether this block/entity should receive energy 
-	 * @return true if this block/entity should receive energy
-	 */
+
 	@Override
-	public boolean isPowerSink(){
+	public boolean isPowerSink(ConduitType type){
 		return true;
 	}
-	/**
-	 * Determines whether this block/entity can provide energy 
-	 * @return true if this block/entity can provide energy
-	 */
+
 	@Override
-	public boolean isPowerSource(){
-		return true;
+	public boolean isPowerSource(ConduitType type){
+		return Fluids.isFluidType(type);
 	}
 
 	/**
@@ -280,7 +269,7 @@ public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 				return PowerRequest.REQUEST_NOTHING;
 			} 
 		} else if(ConduitType.areSameType(offer, Power.steam_power)){
-			return new PowerRequest(PowerRequest.MEDIUM_PRIORITY,this.getEnergyCapacity() - this.getEnergy(), this);
+			return new PowerRequest(PowerRequest.MEDIUM_PRIORITY,this.getEnergyCapacity(Power.steam_power) - this.getEnergy(Power.steam_power), this);
 		}
 		return PowerRequest.REQUEST_NOTHING;
 	}
@@ -318,7 +307,7 @@ public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	 * otherwise
 	 */
 	public boolean canAcceptType(ConduitType type, EnumFacing blockFace){
-		return ConduitType.areSameType(getType(), type) || ConduitType.areSameType(Fluids.fluidConduit_general, type);
+		return ConduitType.areSameType(Power.steam_power, type) || ConduitType.areSameType(Fluids.fluidConduit_general, type);
 	}
 	/**
 	 * Determines whether this conduit is compatible with a type of energy through any side
@@ -327,7 +316,7 @@ public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	 * faces, false otherwise
 	 */
 	public boolean canAcceptType(ConduitType type){
-		return ConduitType.areSameType(getType(), type) || ConduitType.areSameType(Fluids.fluidConduit_general, type);
+		return ConduitType.areSameType(Power.steam_power, type) || ConduitType.areSameType(Fluids.fluidConduit_general, type);
 	}
 	///// end multi-type overrides /////
 

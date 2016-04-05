@@ -1,5 +1,6 @@
 package cyano.steamadvantage.blocks;
 
+import cyano.poweradvantage.api.ConduitType;
 import cyano.steamadvantage.init.Power;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -46,5 +47,6 @@ public class SteamTrackBlock extends cyano.poweradvantage.api.simple.BlockSimple
 	public BlockRenderLayer getBlockLayer() {
 		return BlockRenderLayer.CUTOUT;
 	}
+
 
 }

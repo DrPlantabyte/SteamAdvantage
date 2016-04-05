@@ -1,17 +1,12 @@
 package cyano.steamadvantage.machines;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
-import cyano.poweradvantage.api.fluid.FluidRequest;
-import cyano.poweradvantage.init.Fluids;
 import cyano.steamadvantage.init.Power;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidContainerRegistry;
 
-public class SteamTankTileEntity  extends cyano.poweradvantage.api.simple.TileEntitySimplePowerSource {
+public class SteamTankTileEntity  extends cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine {
 
 	private final ItemStack[] inventory = new ItemStack[0];
 	private final int[] dataSyncArray = new int[1];
@@ -39,9 +34,9 @@ public class SteamTankTileEntity  extends cyano.poweradvantage.api.simple.TileEn
 		
 		redstone = hasRedstoneSignal();
 		
-		if(oldSteam != this.getEnergy()){
+		if(oldSteam != this.getEnergy(Power.steam_power)){
 			this.sync();
-			oldSteam = this.getEnergy();
+			oldSteam = this.getEnergy(Power.steam_power);
 		}
 	}
 	
@@ -61,13 +56,17 @@ public class SteamTankTileEntity  extends cyano.poweradvantage.api.simple.TileEn
 	
 	
 	private void energyDecay() {
-		if(getEnergy() > 0){
+		if(getEnergy(Power.steam_power) > 0){
 			subtractEnergy(Power.ENERGY_LOST_PER_TICK,Power.steam_power);
 		}
 	}
-	
+
 	@Override
-	public boolean isPowerSink(){
+	public boolean isPowerSink(ConduitType offer){
+		return true;
+	}
+	@Override
+	public boolean isPowerSource(ConduitType offer){
 		return true;
 	}
 	
@@ -75,7 +74,7 @@ public class SteamTankTileEntity  extends cyano.poweradvantage.api.simple.TileEn
 	public PowerRequest getPowerRequest(ConduitType offer) {
 		if(ConduitType.areSameType(Power.steam_power, offer)){
 			PowerRequest request = new PowerRequest(PowerRequest.BACKUP_PRIORITY,
-					(this.getEnergyCapacity() - this.getEnergy()),
+					(this.getEnergyCapacity(Power.steam_power) - this.getEnergy(Power.steam_power)),
 					this);
 			return request;
 		} else {
@@ -101,15 +100,15 @@ public class SteamTankTileEntity  extends cyano.poweradvantage.api.simple.TileEn
 
 	@Override
 	public void prepareDataFieldsForSync() {
-		dataSyncArray[0] = Float.floatToIntBits(this.getEnergy());
+		dataSyncArray[0] = Float.floatToIntBits(this.getEnergy(Power.steam_power));
 	}
 
 	@Override
 	public void onDataFieldUpdate() {
-		this.setEnergy(Float.intBitsToFloat(dataSyncArray[0]), this.getType());
+		this.setEnergy(Float.intBitsToFloat(dataSyncArray[0]), Power.steam_power);
 	}
 
 	public float getSteamLevel(){
-		return this.getEnergy() / this.getEnergyCapacity();
+		return this.getEnergy(Power.steam_power) / this.getEnergyCapacity(Power.steam_power);
 	}
 }

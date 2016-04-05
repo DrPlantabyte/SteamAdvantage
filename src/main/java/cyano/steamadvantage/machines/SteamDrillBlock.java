@@ -1,13 +1,14 @@
 package cyano.steamadvantage.machines;
 
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockPistonBase;
+import cyano.poweradvantage.api.*;
+import cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine;
+import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
+import cyano.steamadvantage.blocks.DrillBitTileEntity;
+import cyano.steamadvantage.init.Power;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.IInventory;
@@ -15,27 +16,15 @@ import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.google.common.base.Predicate;
-
-import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.GUIBlock;
-import cyano.poweradvantage.api.ITypedConduit;
-import cyano.poweradvantage.api.PoweredEntity;
-import cyano.poweradvantage.api.simple.TileEntitySimplePowerConsumer;
-import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
-import cyano.steamadvantage.blocks.DrillBitTileEntity;
-import cyano.steamadvantage.init.Power;
+import java.util.Random;
 
 public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
-	private final ConduitType type;
+	private final ConduitType[] type = {Power.steam_power};
 	/**
 	 * Blockstate property
 	 */
@@ -43,7 +32,6 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 
 	public SteamDrillBlock(){
 		super(Material.piston);
-		this.type = Power.steam_power;
 		super.setHardness(0.75f);
 	}
 
@@ -53,7 +41,7 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	@Override
 	public void onBlockAdded(final World world, final BlockPos coord, final IBlockState state) {
 		super.onBlockAdded(world, coord, state);
-		ConduitRegistry.getInstance().conduitBlockPlacedEvent(world, world.provider.getDimensionId(), coord, getType());
+		ConduitRegistry.getInstance().conduitBlockPlacedEvent(world, world.provider.getDimension(), coord, Power.steam_power);
 	}
 	/**
 	 * This method is called when the block is removed from the world by an entity.
@@ -62,7 +50,7 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	public void onBlockDestroyedByPlayer(World w, BlockPos coord, IBlockState state){
 		super.onBlockDestroyedByPlayer(w, coord, state);
 		destroyNeighbors(w,coord,w.getBlockState(coord));
-		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimensionId(), coord, getType());
+		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimension(), coord, Power.steam_power);
 	}
 	/**
 	 * This method is called when the block is destroyed by an explosion.
@@ -71,7 +59,7 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	public void onBlockDestroyedByExplosion(World w, BlockPos coord, Explosion boom){
 		super.onBlockDestroyedByExplosion(w, coord, boom);
 		destroyNeighbors(w,coord,w.getBlockState(coord));
-		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimensionId(), coord, getType());
+		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimension(), coord, Power.steam_power);
 	}
 
 
@@ -104,34 +92,21 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	 * @return The type of energy for this block 
 	 */
 	@Override
-	public ConduitType getType() {
+	public ConduitType[] getTypes() {
 		return type;
 	}
 
-	/**
-	 * Determines whether this conduit is compatible with an adjacent one
-	 * @param type The type of energy in the conduit
-	 * @param blockFace The side through-which the energy is flowing
-	 * @return true if this conduit can flow the given energy type through the given face, false 
-	 * otherwise
-	 */
-	@Override
-	public boolean canAcceptType(IBlockState state, ConduitType type, EnumFacing blockFace){
-		return ConduitType.areSameType(getType(), type);
-	}
 
-	/**
-	 * Determines whether this block/entity should receive energy 
-	 * @return true if this block/entity should receive energy
-	 */
-	public boolean isPowerSink(){
+	@Override
+	public boolean canAcceptConnection(PowerConnectorContext connection){
+		return ConduitType.areSameType(Power.steam_power, connection.powerType);
+	}
+@Override
+	public boolean isPowerSink(ConduitType t){
 		return true;
 	}
-	/**
-	 * Determines whether this block/entity can provide energy 
-	 * @return true if this block/entity can provide energy
-	 */
-	public boolean isPowerSource(){
+	@Override
+	public boolean isPowerSource(ConduitType t){
 		return false;
 	}
 
@@ -179,7 +154,7 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	@Override
 	public void breakBlock(final World world, final BlockPos coord, final IBlockState bs) {
 		final TileEntity tileEntity = world.getTileEntity(coord);
-		if (tileEntity instanceof TileEntitySimplePowerConsumer) {
+		if (tileEntity instanceof TileEntitySimplePowerMachine) {
 			InventoryHelper.dropInventoryItems(world, coord, (IInventory)tileEntity);
 			world.updateComparatorOutputLevel(coord, this);
 		}
@@ -203,7 +178,7 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	 * false otherwise
 	 */
 	@Override
-	public boolean hasComparatorInputOverride(){
+	public boolean hasComparatorInputOverride(IBlockState bs){
 		return true;
 	}
 
@@ -224,21 +199,13 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	 * @return a number from 0 to 15
 	 */
 	@Override
-	public int getComparatorInputOverride(final World world, final BlockPos coord){
+	public int getComparatorInputOverride(IBlockState bs, final World world, final BlockPos coord){
 		TileEntity te = world.getTileEntity(coord);
 		if(te instanceof SteamDrillTileEntity){
 			return ((SteamDrillTileEntity)te).getComparatorOutput();
 		} else {
 			return 0;
 		}
-	}
-
-	/**
-	 * Override of default block behavior
-	 */
-	@Override
-	public int getRenderType() {
-		return 3;
 	}
 
 	/**
@@ -262,28 +229,8 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	 * Creates a blockstate
 	 */
 	@Override
-	protected BlockState createBlockState() {
-		return new BlockState(this, new IProperty[] {  FACING });
-	}
-
-	///// CLIENT-SIDE CODE /////
-
-	/**
-	 * (Client-only) Gets the blockstate used for GUI and such.
-	 */
-	@SideOnly(Side.CLIENT)
-	@Override
-	public IBlockState getStateForEntityRender(final IBlockState bs) {
-		return this.getDefaultState().withProperty( FACING, EnumFacing.SOUTH);
-	}
-
-	/**
-	 * (Client-only) Override of default block behavior
-	 */
-	@SideOnly(Side.CLIENT)
-	@Override
-	public Item getItem(final World world, final BlockPos coord) {
-		return Item.getItemFromBlock(this);
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, new IProperty[] {  FACING });
 	}
 
 

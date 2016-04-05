@@ -1,5 +1,6 @@
 package cyano.steamadvantage.machines;
 
+import cyano.poweradvantage.api.ConduitType;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -228,4 +229,13 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 		}
 	}
 
+	@Override
+	public boolean isPowerSink(ConduitType conduitType) {
+		return true;
+	}
+
+	@Override
+	public boolean isPowerSource(ConduitType conduitType) {
+		return false;
+	}
 }

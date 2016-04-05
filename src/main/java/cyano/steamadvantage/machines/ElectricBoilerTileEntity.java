@@ -5,19 +5,14 @@ import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.fluid.FluidRequest;
 import cyano.poweradvantage.init.Fluids;
 import cyano.steamadvantage.init.Power;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraft.util.SoundCategory;
+import net.minecraftforge.fluids.*;
 
-public class ElectricBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerSource implements IFluidHandler{
+public class ElectricBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine implements IFluidHandler{
 
 	static final ConduitType ELECTRIC_POWER = new ConduitType("electricity");
 
@@ -26,15 +21,16 @@ public class ElectricBoilerTileEntity extends cyano.poweradvantage.api.simple.Ti
 	private final FluidTank tank;
 	
 	private final ItemStack[] inventory;
-	
-	private float electricity = 0;
-	private final float ELECTRICITY_PER_TICK = 16;
-	private final float MAX_ELECTRICITY = ELECTRICITY_PER_TICK * 10;
+
+	private static final float ELECTRICITY_PER_TICK = 16;
+	private static final float MAX_ELECTRICITY = ELECTRICITY_PER_TICK * 10;
 	
 	private final int[] dataSyncArray = new int[3];
 	
 	public ElectricBoilerTileEntity() {
-		super(Power.steam_power, 100, ElectricBoilerTileEntity.class.getSimpleName());
+		super(new ConduitType[]{Power.steam_power, ELECTRIC_POWER, Fluids.fluidConduit_general},
+				new float[]{100, MAX_ELECTRICITY, 1000},
+				ElectricBoilerTileEntity.class.getSimpleName());
 		tank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME * 2);
 		inventory = new ItemStack[0];
 	}
@@ -47,15 +43,15 @@ public class ElectricBoilerTileEntity extends cyano.poweradvantage.api.simple.Ti
 	public void tickUpdate(boolean isServerWorld) {
 		if(isServerWorld){
 			// server-side logic
-			if(!redstone && electricity >= ELECTRICITY_PER_TICK){
+			if(!redstone && getEnergy(ELECTRIC_POWER) >= ELECTRICITY_PER_TICK){
 				boilWater();
 				// play steam sounds occasionally
 				if(getWorld().rand.nextInt(100) == 0){
-					getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "random.fizz", 0.5f, 1f);
+					getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, false);
 				}
 				if(timeSinceSound > 200){
 					if(getTank().getFluidAmount() > 0){
-						getWorld().playSoundEffect(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, "liquid.lava", 0.3f, 1f);
+						getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_lava_ambient, SoundCategory.AMBIENT, 0.3f, 1f, false);
 					}
 					timeSinceSound = 0;
 				}
@@ -73,16 +69,16 @@ public class ElectricBoilerTileEntity extends cyano.poweradvantage.api.simple.Ti
 
 
 	private void energyDecay() {
-		if(getEnergy() > 0){
+		if(getEnergy(Power.steam_power) > 0){
 			subtractEnergy(Power.ENERGY_LOST_PER_TICK,Power.steam_power);
 		}
 	}
 
 	private void boilWater() {
-		if(getTank().getFluidAmount() >= 1 && (getEnergyCapacity() - getEnergy()) >= 1
-				&& electricity >= ELECTRICITY_PER_TICK){
+		if(getTank().getFluidAmount() >= 1 && (getEnergyCapacity(Power.steam_power) - getEnergy(Power.steam_power)) >= 1
+				&& getEnergy(ELECTRIC_POWER) >= ELECTRICITY_PER_TICK){
 			getTank().drain(1, true);
-			electricity -= ELECTRICITY_PER_TICK;
+			subtractEnergy(ELECTRICITY_PER_TICK,ELECTRIC_POWER);
 			addEnergy(ELECTRICITY_PER_TICK * ELECTRICITY_TO_STEAM,Power.steam_power);
 		}
 	}
@@ -98,12 +94,12 @@ public class ElectricBoilerTileEntity extends cyano.poweradvantage.api.simple.Ti
 		// I'm doing the synchonization logic here instead of in the tickUpdate method
 		boolean updateFlag = false;
 
-		if(oldEnergy != getEnergy()){
-			oldEnergy = getEnergy();
+		if(oldEnergy != getEnergy(Power.steam_power)){
+			oldEnergy = getEnergy(Power.steam_power);
 			updateFlag = true;
 		}
-		if(oldElec != electricity){
-			oldElec = electricity;
+		if(oldElec != getEnergy(ELECTRIC_POWER)){
+			oldElec = getEnergy(ELECTRIC_POWER);
 			updateFlag = true;
 		}
 		if(oldWater != getTank().getFluidAmount()){
@@ -123,11 +119,11 @@ public class ElectricBoilerTileEntity extends cyano.poweradvantage.api.simple.Ti
 	}
 	
 	public float getSteamLevel(){
-		return this.getEnergy() / this.getEnergyCapacity();
+		return this.getEnergy(Power.steam_power) / this.getEnergyCapacity(Power.steam_power);
 	}
 	
 	public float getElectricityLevel(){
-		return electricity / MAX_ELECTRICITY;
+		return getEnergy(ELECTRIC_POWER) / getEnergyCapacity(ELECTRIC_POWER);
 	}
 	
 	public FluidTank getTank(){
@@ -146,16 +142,16 @@ public class ElectricBoilerTileEntity extends cyano.poweradvantage.api.simple.Ti
 
 	@Override
 	public void prepareDataFieldsForSync() {
-		dataSyncArray[0] = Float.floatToRawIntBits(this.getEnergy());
+		dataSyncArray[0] = Float.floatToRawIntBits(this.getEnergy(Power.steam_power));
 		dataSyncArray[1] = this.getTank().getFluidAmount();
-		dataSyncArray[2] = Float.floatToIntBits(electricity);
+		dataSyncArray[2] = Float.floatToIntBits(getEnergy(ELECTRIC_POWER));
 	}
 
 	@Override
 	public void onDataFieldUpdate() {
-		this.setEnergy(Float.intBitsToFloat(dataSyncArray[0]), this.getType());
+		this.setEnergy(Float.intBitsToFloat(dataSyncArray[0]), Power.steam_power);
 		this.getTank().setFluid(new FluidStack(FluidRegistry.WATER,dataSyncArray[1]));
-		this.electricity = Float.intBitsToFloat(dataSyncArray[2]);
+		this.setEnergy(Float.intBitsToFloat(dataSyncArray[2]),ELECTRIC_POWER);
 	}
 	
 
@@ -169,7 +165,7 @@ public class ElectricBoilerTileEntity extends cyano.poweradvantage.api.simple.Ti
         NBTTagCompound tankTag = new NBTTagCompound();
         this.getTank().writeToNBT(tankTag);
         tagRoot.setTag("Tank", tankTag);
-		if(this.electricity > 0)tagRoot.setFloat("Electricity", this.electricity);
+		if(getEnergy(ELECTRIC_POWER) > 0)tagRoot.setFloat("Electricity", getEnergy(ELECTRIC_POWER));
 	}
 	/**
 	 * Handles data saving and loading
@@ -187,20 +183,25 @@ public class ElectricBoilerTileEntity extends cyano.poweradvantage.api.simple.Ti
 			}
 		}
 		if(tagRoot.hasKey("Electricity")){
-			this.electricity = tagRoot.getFloat("Electricity");
+			this.setEnergy(tagRoot.getFloat("Electricity"),ELECTRIC_POWER);
 		} else {
-			this.electricity = 0;
+			this.setEnergy(0,ELECTRIC_POWER);
 		}
 	}
 	
 	public int getComparatorOutput() {
-		return Math.min(Math.max((int)(15 * electricity / MAX_ELECTRICITY),1),15);
+		return Math.min(Math.max((int)(15 * getEnergy(ELECTRIC_POWER) / getEnergyCapacity(ELECTRIC_POWER)),1),15);
 	}
 	
 	///// Overrides to make this a multi-type block /////
 	@Override
-	public boolean isPowerSink(){
-		return true;
+	public boolean isPowerSink(ConduitType type){
+		return !ConduitType.areSameType(Power.steam_power, type);
+	}
+
+	@Override
+	public boolean isPowerSource(ConduitType type){
+		return ConduitType.areSameType(Power.steam_power, type);
 	}
 	
 	/**
@@ -219,10 +220,6 @@ public class ElectricBoilerTileEntity extends cyano.poweradvantage.api.simple.Ti
 				} else {
 					return 0;
 				}
-			} else if(ConduitType.areSameType(type, ELECTRIC_POWER)){
-				float delta = Math.min(amount, MAX_ELECTRICITY - electricity);
-				electricity += delta;
-				return delta;
 			} else {
 				return 0;
 			}
@@ -237,11 +234,9 @@ public class ElectricBoilerTileEntity extends cyano.poweradvantage.api.simple.Ti
      */
 	@Override
 	public void setEnergy(float amount,ConduitType type) {
-		if(Fluids.isFluidType(type)){
-			getTank().setFluid(new FluidStack(Fluids.conduitTypeToFluid(type),(int)amount));
-		} else if(ConduitType.areSameType(type, ELECTRIC_POWER)){
-			electricity = amount;
-		}else{
+		if(Fluids.isFluidType(type)) {
+			getTank().setFluid(new FluidStack(Fluids.conduitTypeToFluid(type), (int) amount));
+		} else {
 			super.setEnergy(amount, type);
 		}
 	}
@@ -260,44 +255,23 @@ public class ElectricBoilerTileEntity extends cyano.poweradvantage.api.simple.Ti
 			} else {
 				return 0;
 			}
-		} else if(ConduitType.areSameType(type, ELECTRIC_POWER)){
-			float delta = Math.max(amount, -electricity);
-			electricity += delta;
-			return delta;
-		}else{
+		} else {
 			return super.subtractEnergy(amount, type);
 		}
 	}
 	
 	@Override
 	public PowerRequest getPowerRequest(ConduitType offer) {
-		if(Fluids.conduitTypeToFluid(offer) == FluidRegistry.WATER){
+		if(Fluids.isFluidType(offer) && Fluids.conduitTypeToFluid(offer) == FluidRegistry.WATER){
 			PowerRequest request = new FluidRequest(FluidRequest.MEDIUM_PRIORITY+1,
 					(getTank().getCapacity() - getTank().getFluidAmount()),
 					this);
 			return request;
-		} else if(ConduitType.areSameType(offer, ELECTRIC_POWER)
-				&& !redstone){
-			PowerRequest request = new PowerRequest(FluidRequest.MEDIUM_PRIORITY+1,
-					MAX_ELECTRICITY - electricity,
-					this);
-			return request;
 		} else {
-			return PowerRequest.REQUEST_NOTHING;
+			return super.getPowerRequest(offer);
 		}
 	}
-	
-	
-	/**
-	 * Determines whether this conduit is compatible with a type of energy through any side
-	 * @param type The type of energy in the conduit
-	 * @return true if this conduit can flow the given energy type through one or more of its block 
-	 * faces, false otherwise
-	 */
-	@Override
-	public boolean canAcceptType(ConduitType type){
-		return ConduitType.areSameType(getType(), type) || ConduitType.areSameType(ELECTRIC_POWER, type);
-	}
+
 	///// end multi-type overrides /////
 
 	
