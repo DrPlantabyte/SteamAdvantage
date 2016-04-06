@@ -4,6 +4,7 @@ import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.fluid.FluidRequest;
 import cyano.poweradvantage.init.Fluids;
+import cyano.steamadvantage.SteamAdvantage;
 import cyano.steamadvantage.init.Power;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -12,6 +13,9 @@ import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fluids.*;
+import net.minecraftforge.fml.common.FMLLog;
+
+import static cyano.steamadvantage.util.SoundHelper.playSoundAtTileEntity;
 
 public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine implements IFluidHandler{
 
@@ -47,11 +51,11 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 				boilWater();
 				// play steam sounds occasionally
 				if(getWorld().rand.nextInt(100) == 0){
-					getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, false);
+					playSoundAtTileEntity(SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, this);
 				}
 				if(timeSinceSound > 200){
 					if(getTank().getFluidAmount() > 0){
-						getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_lava_ambient, SoundCategory.AMBIENT, 0.3f, 1f, false);
+						playSoundAtTileEntity( SoundEvents.block_lava_ambient, SoundCategory.AMBIENT, 0.3f, 1f, this);
 					}
 					timeSinceSound = 0;
 				}
@@ -69,6 +73,8 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 			}
 		}
 	}
+
+
 
 
 
@@ -191,6 +197,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	 */
 	@Override
     public void writeToNBT(final NBTTagCompound tagRoot) {
+		FMLLog.info("%s: writing NBT data for %s", SteamAdvantage.MODID, this.getClass());// TODO: remove
 		super.writeToNBT(tagRoot);
         NBTTagCompound tankTag = new NBTTagCompound();
         this.getTank().writeToNBT(tankTag);
@@ -204,6 +211,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	 */
 	@Override
     public void readFromNBT(final NBTTagCompound tagRoot) {
+		FMLLog.info("%s: reading NBT data for %s", SteamAdvantage.MODID, this.getClass());// TODO: remove
     	super.readFromNBT(tagRoot);
         if (tagRoot.hasKey("Tank")) {
             NBTTagCompound tankTag = tagRoot.getCompoundTag("Tank");
@@ -276,7 +284,7 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
      */
 	@Override
 	public void setEnergy(float amount,ConduitType type) {
-		if(Fluids.isFluidType(type)){
+		if(Fluids.isFluidType(type) && !ConduitType.areSameType(Fluids.fluidConduit_general,type)){
 			getTank().setFluid(new FluidStack(Fluids.conduitTypeToFluid(type),(int)amount));
 		}else{
 			super.setEnergy(amount, type);

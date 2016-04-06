@@ -21,6 +21,8 @@ import net.minecraftforge.fluids.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import static cyano.steamadvantage.util.SoundHelper.playSoundAtTileEntity;
+
 public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine implements IFluidHandler{
 
 
@@ -66,7 +68,7 @@ public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 						w.setBlockState(target, cyano.steamadvantage.init.Blocks.pump_pipe_steam.getDefaultState());
 						this.subtractEnergy(ENERGY_COST_PIPE, Power.steam_power);
 						timeUntilNextPump = PIPE_INTERVAL;
-						getWorld().playSound(target.getX()+0.5, target.getY()+0.5, target.getZ()+0.5, SoundEvents.block_stone_place, SoundCategory.BLOCKS, 0.3f, 1f, true);
+						playSoundAtTileEntity( SoundEvents.block_stone_place, SoundCategory.BLOCKS, 0.3f, 1f, this);
 					} else {
 						// pump fluids
 						BlockPos fluidSource = null;
@@ -91,15 +93,15 @@ public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 						timeUntilNextPump = PUMP_INTERVAL;
 					}
 					if(success){
-						getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, true);
-						getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_piston_extend, SoundCategory.BLOCKS, 0.3f, 1f, true);
+						playSoundAtTileEntity( SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, this);
+						playSoundAtTileEntity( SoundEvents.block_piston_extend, SoundCategory.BLOCKS, 0.3f, 1f, this);
 						timeToSound = 14;
 					}
 				}
 			}
 			if(timeToSound == 1){
-				getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_piston_contract, SoundCategory.BLOCKS, 0.3f, 1f, true);
-				getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.item_bucket_fill, SoundCategory.BLOCKS, 1f, 1f, true);
+				playSoundAtTileEntity( SoundEvents.block_piston_contract, SoundCategory.BLOCKS, 0.3f, 1f, this);
+				playSoundAtTileEntity( SoundEvents.item_bucket_fill, SoundCategory.BLOCKS, 1f, 1f, this);
 			}
 			if(timeToSound > 0) timeToSound--;
 			energyDecay();

@@ -10,6 +10,8 @@ import cyano.basemetals.registry.recipe.ICrusherRecipe;
 import cyano.steamadvantage.init.Power;
 import net.minecraft.util.SoundCategory;
 
+import static cyano.steamadvantage.util.SoundHelper.playSoundAtTileEntity;
+
 public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine{
 
 	public static final float STEAM_PER_PROGRESS_TICK = 1.5f;
@@ -70,7 +72,7 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 							// play steam sounds occasionally
 							timeSinceLastSteamBurst++;
 							if(timeSinceLastSteamBurst > 50){
-								getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, false);
+								playSoundAtTileEntity( SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, this);
 								timeSinceLastSteamBurst = 0;
 							}
 						} else if (progress > 0){
@@ -86,7 +88,7 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 							}
 							if(--inventory[0].stackSize <= 0){inventory[0] = null;} // decrement the input slot
 							progress = 0;
-							getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_gravel_break, SoundCategory.AMBIENT, 0.5f, 0.2f, false);
+							playSoundAtTileEntity( SoundEvents.block_gravel_break, SoundCategory.AMBIENT, 0.5f, 0.2f, this);
 						}
 					} else if (progress > 0){
 						// cannot crush, undo progress

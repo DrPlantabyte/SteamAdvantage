@@ -13,6 +13,8 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
 
+import static cyano.steamadvantage.util.SoundHelper.playSoundAtTileEntity;
+
 public class SteamElevatorTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine{
 
 	public static final float STEAM_PER_ELEVATOR_MOVE = 32f;
@@ -53,8 +55,8 @@ public class SteamElevatorTileEntity extends cyano.poweradvantage.api.simple.Til
 	private boolean moveUp(){
 		if(this.getEnergy(Power.steam_power) < STEAM_PER_ELEVATOR_MOVE) return false;
 		this.subtractEnergy(STEAM_PER_ELEVATOR_MOVE, Power.steam_power);
-		getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, false);
-		getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_piston_extend, SoundCategory.BLOCKS, 0.5f, 1f, false);
+		playSoundAtTileEntity( SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, this);
+		playSoundAtTileEntity( SoundEvents.block_piston_extend, SoundCategory.BLOCKS, 0.5f, 1f, this);
 		// scan up to find solid block, then move piston up to 2 less than that
 		final int maxTop = MAX_RANGE + 2;
 		int dist = 0;
@@ -91,8 +93,8 @@ public class SteamElevatorTileEntity extends cyano.poweradvantage.api.simple.Til
 	private boolean moveDown(){
 		if(this.getEnergy(Power.steam_power) < STEAM_PER_ELEVATOR_MOVE) return false;
 		this.subtractEnergy(STEAM_PER_ELEVATOR_MOVE, Power.steam_power);
-		getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, false);
-		getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_piston_contract, SoundCategory.BLOCKS, 0.5f, 1f, false);
+		playSoundAtTileEntity( SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, this);
+		playSoundAtTileEntity( SoundEvents.block_piston_contract, SoundCategory.BLOCKS, 0.5f, 1f, this);
 		// scan up the piston and clear it
 		BlockPos destination = this.getPos().up();
 		BlockPos p = destination;

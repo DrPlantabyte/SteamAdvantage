@@ -14,6 +14,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Arrays;
 
+import static cyano.steamadvantage.util.SoundHelper.playSoundAtTileEntity;
+
 public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine{
 
 
@@ -71,7 +73,7 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 					burnTime = fuel;
 					totalBurnTime = fuel;
 					decrementFuel();
-					getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_furnace_fire_crackle, SoundCategory.AMBIENT, 0.5f, 1f, false);
+					playSoundAtTileEntity( SoundEvents.block_furnace_fire_crackle, SoundCategory.AMBIENT, 0.5f, 1f, this);
 				}
 				energyDecay();
 			}
@@ -96,7 +98,7 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 							doSmelt(slot);
 							if(--inventory[slot].stackSize <= 0){inventory[slot] = null;} // decrement the input slot
 							if(!smeltSuccess){
-								getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, false);
+								playSoundAtTileEntity(SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, this);
 							}
 							smeltSuccess = true;
 						}

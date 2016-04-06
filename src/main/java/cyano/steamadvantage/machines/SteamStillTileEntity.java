@@ -15,6 +15,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fluids.*;
 
+import static cyano.steamadvantage.util.SoundHelper.playSoundAtTileEntity;
+
 public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine implements IFluidHandler{
 
 
@@ -24,7 +26,7 @@ public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	private final int speed = 2;
 	private final float steamPerDistill = 1.5f;
 
-
+	// TODO: fix ouput fluid not transmitting
 
 	private final int[] dataSyncArray = new int[5];
 
@@ -49,7 +51,7 @@ public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 					distill();
 					this.subtractEnergy(steamPerDistill, Power.steam_power);
 					if(timeSinceSound > 200){
-						getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_lava_ambient, SoundCategory.AMBIENT, 0.3f, 1.5f, false);
+						playSoundAtTileEntity(SoundEvents.block_lava_ambient, SoundCategory.AMBIENT, 0.3f, 1.5f, this);
 						timeSinceSound = 0;
 					}
 					timeSinceSound++;

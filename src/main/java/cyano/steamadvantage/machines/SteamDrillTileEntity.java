@@ -23,6 +23,9 @@ import net.minecraft.world.World;
 import java.util.Arrays;
 import java.util.List;
 
+import static cyano.steamadvantage.util.SoundHelper.playSoundAtPosition;
+import static cyano.steamadvantage.util.SoundHelper.playSoundAtTileEntity;
+
 public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine{
 	
 	public static final int MAX_RANGE = 64;
@@ -80,8 +83,8 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 						progress++;
 						if(progress >= progressGoal){
 							// Mined it!
-							getWorld().playSound(targetBlockCoord.getX()+0.5, targetBlockCoord.getY()+0.5, targetBlockCoord.getZ()+0.5, targetBlock.getStepSound().getBreakSound(), SoundCategory.BLOCKS, 0.5f, 1f, true);
-							getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, false);
+							playSoundAtPosition(targetBlockCoord.getX()+0.5, targetBlockCoord.getY()+0.5, targetBlockCoord.getZ()+0.5, targetBlock.getStepSound().getBreakSound(), SoundCategory.BLOCKS, 0.5f, 1f, this.getWorld());
+							playSoundAtTileEntity( SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, this);
 							getWorld().setBlockToAir(targetBlockCoord);
 							for(ItemStack item : targetBlockItems){
 								addItem(item);

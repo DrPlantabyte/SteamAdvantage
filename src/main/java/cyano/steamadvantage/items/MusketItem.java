@@ -33,13 +33,16 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.List;
 
+import static cyano.steamadvantage.util.SoundHelper.playSoundAtPosition;
+
 public class MusketItem extends net.minecraft.item.Item{
 	
 	
 	public static final String NBT_DATA_KEY_LOADED = "loaded";
 	public static final double MAX_RANGE = 64;
 	private static final int maxUseTime = 7200;
-	
+	// TODO: item model overrides (like the Bow item)
+	// TODO: make the musket not tell you how much damage it does when held by your feet
 	public MusketItem(){
 		super();
 		this.setMaxStackSize(1);
@@ -74,11 +77,12 @@ public class MusketItem extends net.minecraft.item.Item{
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(ItemStack srcItemStack, World world, EntityPlayer playerEntity, EnumHand hand){
 		if(hand != EnumHand.MAIN_HAND) return ActionResult.newResult(EnumActionResult.PASS,srcItemStack);
+		if(!hasAmmo(playerEntity, srcItemStack)) return ActionResult.newResult(EnumActionResult.FAIL,srcItemStack);
 		if(isNotLoaded(srcItemStack) && EnchantmentHelper.getEnchantmentLevel(Enchantments.rapid_reload, srcItemStack) > 0){
 			// instant reload
 			decrementAmmo(playerEntity,srcItemStack);
 			startLoad(srcItemStack);
-			playSound("random.click",world,playerEntity);
+			playSound(SoundEvents.block_lever_click,world,playerEntity);
 			finishLoad(srcItemStack);
 			return ActionResult.newResult(EnumActionResult.SUCCESS,srcItemStack);
 		}
@@ -103,7 +107,7 @@ public class MusketItem extends net.minecraft.item.Item{
 		if(isNotLoaded(srcItemStack) && hasAmmo(playerEntity,srcItemStack)){
 			decrementAmmo(playerEntity,srcItemStack);
 			startLoad(srcItemStack);
-			playSound("random.click",world,playerEntity);
+			playSound(SoundEvents.block_lever_click,world,playerEntity);
 		}
 		return srcItemStack;
 	}
@@ -131,8 +135,8 @@ public class MusketItem extends net.minecraft.item.Item{
 			playerEntity.rotationPitch -= 15;
 			return;
 		}
-		playSound("fire.ignite",world,playerEntity);
-		world.playSound(playerEntity.posX,playerEntity.posY,playerEntity.posZ, SoundEvents.entity_firework_blast,SoundCategory.PLAYERS,2F,0.5F,true);
+		playSound(SoundEvents.item_flintandsteel_use,world,playerEntity);
+		playSoundAtPosition(playerEntity.posX,playerEntity.posY,playerEntity.posZ, SoundEvents.entity_firework_blast,SoundCategory.PLAYERS,2F,0.5F,world);
 		
 		Vec3d start = new Vec3d(playerEntity.posX, playerEntity.posY+playerEntity.getEyeHeight(),playerEntity.posZ);
 		Vec3d end = start.addVector(MAX_RANGE * lookVector.xCoord, MAX_RANGE * lookVector.yCoord, MAX_RANGE * lookVector.zCoord);
@@ -158,8 +162,8 @@ public class MusketItem extends net.minecraft.item.Item{
 				}
 			}
 		} else if(rayTrace.typeOfHit == RayTraceResult.Type.BLOCK){
-			world.playSound(rayTrace.hitVec.xCoord, rayTrace.hitVec.yCoord, rayTrace.hitVec.zCoord, 
-					SoundEvents.block_gravel_hit, SoundCategory.BLOCKS, 1f, 1f, true);
+			playSoundAtPosition(rayTrace.hitVec.xCoord, rayTrace.hitVec.yCoord, rayTrace.hitVec.zCoord, 
+					SoundEvents.block_gravel_hit, SoundCategory.BLOCKS, 1f, 1f, world);
 			BlockPos coord = rayTrace.getBlockPos();
 			if(coord.getY()>= 0 && coord.getY() <= 255 && !world.isAirBlock(coord)){
 				IBlockState bs = world.getBlockState(coord);
@@ -229,10 +233,10 @@ public class MusketItem extends net.minecraft.item.Item{
 	}
 	
 	/** plays a sound at the player location */
-	protected void playSound(String soundID, World world, Entity e){
+	protected void playSound(SoundEvent sound, World world, Entity e){
 		if (!world.isRemote)
 		{
-			world.playSound(e.posX, e.posY, e.posZ, SoundEvent.soundEventRegistry.getObject(new ResourceLocation(soundID)),SoundCategory.PLAYERS,1F,1F,true);
+			playSoundAtPosition(e.posX, e.posY, e.posZ, sound,SoundCategory.PLAYERS,1F,1F,world);
 		}
 	}
 	

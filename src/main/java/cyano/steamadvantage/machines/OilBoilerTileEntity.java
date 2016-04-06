@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static cyano.steamadvantage.util.SoundHelper.playSoundAtTileEntity;
+
 public class OilBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine implements IFluidHandler{
 
 
@@ -29,6 +31,7 @@ public class OilBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 	private static final Map<Fluid,List<FluidContainerData>> bucketCache = new HashMap<>();
 	private static final Map<Fluid,Integer> burnCache = new HashMap<>();
 
+	// TODO: overhaul fuel calculation
 
 	private int burnTime = 0;
 	private int totalBurnTime = 0;
@@ -54,11 +57,11 @@ public class OilBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 				boilWater();
 				// play steam sounds occasionally
 				if(getWorld().rand.nextInt(100) == 0){
-					getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, false);
+					playSoundAtTileEntity( SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, this);
 				}
 				if(timeSinceSound > 200){
 					if(getWaterTank().getFluidAmount() > 0){
-						getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_lava_ambient, SoundCategory.AMBIENT, 0.3f, 1f, false);
+						playSoundAtTileEntity( SoundEvents.block_lava_ambient, SoundCategory.AMBIENT, 0.3f, 1f, this);
 					}
 					timeSinceSound = 0;
 				}
@@ -322,8 +325,13 @@ public class OilBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 	 */
 	@Override
 	public void setEnergy(float amount,ConduitType type) {
-		if(Fluids.isFluidType(type)){
-			// do nothing, use getTank() methods instead
+		if(Fluids.isFluidType(type) && !ConduitType.areSameType(Fluids.fluidConduit_general,type)){
+			Fluid f = Fluids.conduitTypeToFluid(type);
+			if(f == FluidRegistry.WATER){
+				this.getWaterTank().setFluid(new FluidStack(f,(int)amount));
+			}else{
+				this.getFuelTank().setFluid(new FluidStack(f,(int)amount));
+			}
 		}else{
 			super.setEnergy(amount, type);
 		}

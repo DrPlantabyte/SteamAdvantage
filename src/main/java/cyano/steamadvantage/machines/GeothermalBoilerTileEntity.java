@@ -15,6 +15,8 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.*;
 
+import static cyano.steamadvantage.util.SoundHelper.playSoundAtTileEntity;
+
 public class GeothermalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine implements IFluidHandler{
 
 	
@@ -50,11 +52,11 @@ public class GeothermalBoilerTileEntity extends cyano.poweradvantage.api.simple.
 				boilWater();
 				// play steam sounds occasionally
 				if(getWorld().rand.nextInt(100) == 0){
-					getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, false);
+					playSoundAtTileEntity( SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, this);
 				}
 				if(timeSinceSound > 200){
 					if(getTank().getFluidAmount() > 0){
-						getWorld().playSound(getPos().getX()+0.5, getPos().getY()+0.5, getPos().getZ()+0.5, SoundEvents.block_lava_ambient, SoundCategory.AMBIENT, 0.3f, 1f, false);
+						playSoundAtTileEntity( SoundEvents.block_lava_ambient, SoundCategory.AMBIENT, 0.3f, 1f, this);
 					}
 					timeSinceSound = 0;
 				}
@@ -267,7 +269,7 @@ public class GeothermalBoilerTileEntity extends cyano.poweradvantage.api.simple.
      */
 	@Override
 	public void setEnergy(float amount,ConduitType type) {
-		if(Fluids.isFluidType(type)){
+		if(Fluids.isFluidType(type) && !ConduitType.areSameType(Fluids.fluidConduit_general,type)){
 			getTank().setFluid(new FluidStack(Fluids.conduitTypeToFluid(type),(int)amount));
 		}else{
 			super.setEnergy(amount, type);
