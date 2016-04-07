@@ -19,6 +19,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumAction;
+import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
@@ -29,10 +30,14 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.List;
 
+import static cyano.steamadvantage.util.SoundHelper.playBigSoundAtPosition;
 import static cyano.steamadvantage.util.SoundHelper.playSoundAtPosition;
 
 public class MusketItem extends net.minecraft.item.Item{
@@ -47,6 +52,24 @@ public class MusketItem extends net.minecraft.item.Item{
 		super();
 		this.setMaxStackSize(1);
 		this.setMaxDamage(250);
+		this.addPropertyOverride(new ResourceLocation("loaded"), new IItemPropertyGetter()
+		{
+			@SideOnly(Side.CLIENT)
+			public float apply(ItemStack item, World w, EntityLivingBase e)
+			{
+				FMLLog.info("override: loaded=%s",e != null && e.getActiveItemStack() == item && isLoaded(item) ? 1.0F : 0.0F);// TODO: remove
+				return e != null && e.getActiveItemStack() == item && isLoaded(item) ? 1.0F : 0.0F;
+			}
+		});
+		this.addPropertyOverride(new ResourceLocation("loading"), new IItemPropertyGetter()
+		{
+			@SideOnly(Side.CLIENT)
+			public float apply(ItemStack item, World w, EntityLivingBase e)
+			{
+				FMLLog.info("override: loading=%s",e != null && e.isHandActive() && e.getActiveItemStack() == item ? 1.0F : 0.0F);// TODO: remove
+				return e != null && e.isHandActive() && e.getActiveItemStack() == item ? 1.0F : 0.0F;
+			}
+		});
 	}
 	
 
@@ -136,7 +159,7 @@ public class MusketItem extends net.minecraft.item.Item{
 			return;
 		}
 		playSound(SoundEvents.item_flintandsteel_use,world,playerEntity);
-		playSoundAtPosition(playerEntity.posX,playerEntity.posY,playerEntity.posZ, SoundEvents.entity_firework_blast,SoundCategory.PLAYERS,2F,0.5F,world);
+		playBigSoundAtPosition(playerEntity.posX,playerEntity.posY,playerEntity.posZ, SoundEvents.entity_firework_blast,SoundCategory.PLAYERS,2F,0.5F,world);
 		
 		Vec3d start = new Vec3d(playerEntity.posX, playerEntity.posY+playerEntity.getEyeHeight(),playerEntity.posZ);
 		Vec3d end = start.addVector(MAX_RANGE * lookVector.xCoord, MAX_RANGE * lookVector.yCoord, MAX_RANGE * lookVector.zCoord);

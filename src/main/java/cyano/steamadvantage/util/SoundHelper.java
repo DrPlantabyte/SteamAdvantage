@@ -31,4 +31,16 @@ public class SoundHelper {
 					x, y, z, (float)volume, (float)pitch));
 		}
 	}
+
+	public static void playBigSoundAtPosition(double x, double y, double z, SoundEvent sound, SoundCategory soundType, float volume, float pitch, World serverWorld){
+		if(serverWorld.isRemote) return;
+		final double range = 50;
+		List<EntityPlayerMP> players = serverWorld.getEntitiesWithinAABB(EntityPlayerMP.class, new AxisAlignedBB(
+				x - range, y - range, z - range,
+				x + range, y + range, z + range));
+		for(EntityPlayerMP player : players){
+			player.playerNetServerHandler.sendPacket(new SPacketCustomSound(sound.getRegistryName().toString(), soundType,
+					x, y, z, (float)volume, (float)pitch));
+		}
+	}
 }
