@@ -26,7 +26,6 @@ public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	private final int speed = 2;
 	private final float steamPerDistill = 1.5f;
 
-	// TODO: fix ouput fluid not transmitting
 
 	private final int[] dataSyncArray = new int[5];
 
@@ -116,6 +115,10 @@ public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 		}
 	}
 
+	@Override
+	protected byte getMinimumSinkPriority(){
+		return PowerRequest.LAST_PRIORITY;
+	}
 
 
 	public float getSteamLevel(){

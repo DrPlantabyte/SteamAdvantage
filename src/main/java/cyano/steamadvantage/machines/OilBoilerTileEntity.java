@@ -1,22 +1,21 @@
 package cyano.steamadvantage.machines;
 
+import cyano.basemetals.init.Items;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.fluid.FluidRequest;
 import cyano.poweradvantage.init.Fluids;
+import cyano.poweradvantage.registry.FuelRegistry;
+import cyano.steamadvantage.SteamAdvantage;
 import cyano.steamadvantage.init.Power;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fluids.*;
-import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static cyano.steamadvantage.util.SoundHelper.playSoundAtTileEntity;
@@ -28,10 +27,9 @@ public class OilBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 
 	private final FluidTank waterTank;
 	private final FluidTank fuelTank;
-	private static final Map<Fluid,List<FluidContainerData>> bucketCache = new HashMap<>();
+	private static final Map<Fluid,Float> flammibilityCache = new HashMap<>();
 	private static final Map<Fluid,Integer> burnCache = new HashMap<>();
 
-	// TODO: overhaul fuel calculation
 
 	private int burnTime = 0;
 	private int totalBurnTime = 0;
@@ -96,43 +94,50 @@ public class OilBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 
 
 	private int getFuelBurnTime(Fluid fluid, int amount) {
-		return getBurnTimePerBucketFor(fluid) * amount / FluidContainerRegistry.BUCKET_VOLUME;
+		return (int)(getBurnTimePerBucketFor(fluid) * amount / FluidContainerRegistry.BUCKET_VOLUME);
 	}
 
-	private static int getBurnTimePerBucketFor(Fluid fluid){
-		if(fluid == null) return 0;
-		if(burnCache.containsKey(fluid)){
-			return burnCache.get(fluid);
+	private static Float getBurnTimePerBucketFor(Fluid fluid){
+		if(fluid == null) return 0f;
+		if(flammibilityCache.containsKey(fluid)){
+			return flammibilityCache.get(fluid)*1000;
 		} else {
-			if(bucketCache.isEmpty()){
-				FluidContainerData[] data = FluidContainerRegistry.getRegisteredFluidContainerData();
-				for(FluidContainerData d : data){
-					if(d == null) continue;
-					Fluid f = d.fluid.getFluid();
-					List<FluidContainerData> list = bucketCache.computeIfAbsent(f, (Fluid flu)->new ArrayList<FluidContainerData>());
-					list.add(d);
-				}
+			// first, check configured overrides
+			if(SteamAdvantage.fluidBurnValues.containsKey(fluid.getUnlocalizedName())){
+				Float fuelPerBucket = SteamAdvantage.fluidBurnValues.get(fluid.getUnlocalizedName());
+				flammibilityCache.put(fluid,0.001F*fuelPerBucket);
+				return fuelPerBucket;
 			}
-			if(bucketCache.containsKey(fluid)){
-				List<FluidContainerData> data = bucketCache.get(fluid);
-				for(int i = 0; i < data.size(); i++){
-					FluidContainerData datum = data.get(i);
-					int burn = TileEntityFurnace.getItemBurnTime( datum.filledContainer);
-					if(burn > 0){
-						int volume = FluidContainerRegistry.getFluidForFilledItem(datum.filledContainer).amount;
-						int burnPerBucket = FluidContainerRegistry.BUCKET_VOLUME * burn / volume;
-						burnCache.put(fluid, burnPerBucket);
-						return burnPerBucket;
+			// second, check universal bucket fuel registry
+			ItemStack bucket = new ItemStack(Items.universal_bucket);
+			int vol = Items.universal_bucket.getCapacity(bucket);
+			Items.universal_bucket.fill(bucket,new FluidStack(fluid,vol),true);
+			Float burnTicksPerAmount = (float) FuelRegistry.getActualBurntimeForItem(bucket) / (float) vol;
+			if(burnTicksPerAmount > 0){
+				flammibilityCache.put(fluid,burnTicksPerAmount);
+				return 1000*burnTicksPerAmount;
+			}
+
+			// third, deprecated fluid container registry
+			FluidContainerRegistry.FluidContainerData[] registry = FluidContainerRegistry.getRegisteredFluidContainerData();
+			for(FluidContainerRegistry.FluidContainerData datum : registry){
+				if(datum.fluid.getFluid() == fluid){
+					if(FuelRegistry.getActualBurntimeForItem(datum.filledContainer) > 0){
+						vol = FluidContainerRegistry.getContainerCapacity(datum.filledContainer);
+						Float fuelPerVolume = (float)FuelRegistry.getActualBurntimeForItem(datum.filledContainer) / (float)vol;
+						flammibilityCache.put(fluid,fuelPerVolume);
+						return 1000*fuelPerVolume;
 					}
 				}
-				// no burnables found
-				burnCache.put(fluid, 0);
-				return 0;
-			} else {
-				// no containers (buckets) for this fluid
-				return 0;
 			}
+
+			// it just isn't a fuel
+			flammibilityCache.put(fluid,0f);
 		}
+		// no containers (buckets) for this fluid
+		return 0f;
+
+
 	}
 
 

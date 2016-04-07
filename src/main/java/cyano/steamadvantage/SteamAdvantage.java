@@ -2,6 +2,7 @@ package cyano.steamadvantage;
 
 import cyano.steamadvantage.init.*;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -9,6 +10,9 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /* TODO list
  * + Coal-Fired Steam Boiler
@@ -43,6 +47,7 @@ public class SteamAdvantage
 	public static float MUSKET_DAMAGE = 20;
 	public static int MUSKET_RELOAD = 20*5;
 	public static boolean MUSKET_ENABLE = true;
+	public static Map<String,Float> fluidBurnValues = new HashMap<>();
 
 	/**
 	 * Pre-initialization step. Used for initializing objects and reading the 
@@ -62,6 +67,26 @@ public class SteamAdvantage
 				"Note that 20 ticks is 1 second of real time");
 		MUSKET_ENABLE = config.getBoolean("musket_allowed", "options", MUSKET_ENABLE, 
 				"If true, then the musket gun will be craftable.");
+
+		String[] strs = config.getString("fluid_fuel_values","options","oil=5000;fuel=25000",
+				"A semi-colon delimited list of fuel fluids (by name) and the burn time (in game ticks) \n"
+			+   "for a bucket (1000 units) of the given fluid. Specified in the following format: \n"
+			+   "fluid name=burn time").split(";");
+		for(String e : strs){
+			if(e.contains("=")){
+				String[] comps = e.split("=");
+				String fluidName = comps[0].trim();
+				Float value = 0f;
+				try{
+					value = Float.parseFloat(comps[1].trim());
+				}catch(NumberFormatException ex){
+					FMLLog.severe("Fluid fuel descriptor '%s' is not valid!",e);
+				}
+				FMLLog.info("%s: adding fluid fuel override for fluid '%s' with a burn time of %s game ticks per bucket",MODID,fluidName,value);
+			} else {
+				FMLLog.severe("Fluid fuel descriptor '%s' is not valid!",e);
+			}
+		}
 
 		config.save();
 

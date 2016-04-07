@@ -4,7 +4,6 @@ import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.fluid.FluidRequest;
 import cyano.poweradvantage.init.Fluids;
-import cyano.steamadvantage.SteamAdvantage;
 import cyano.steamadvantage.init.Power;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -13,7 +12,6 @@ import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fluids.*;
-import net.minecraftforge.fml.common.FMLLog;
 
 import static cyano.steamadvantage.util.SoundHelper.playSoundAtTileEntity;
 
@@ -197,7 +195,6 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	 */
 	@Override
     public void writeToNBT(final NBTTagCompound tagRoot) {
-		FMLLog.info("%s: writing NBT data for %s", SteamAdvantage.MODID, this.getClass());// TODO: remove
 		super.writeToNBT(tagRoot);
         NBTTagCompound tankTag = new NBTTagCompound();
         this.getTank().writeToNBT(tankTag);
@@ -211,7 +208,6 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	 */
 	@Override
     public void readFromNBT(final NBTTagCompound tagRoot) {
-		FMLLog.info("%s: reading NBT data for %s", SteamAdvantage.MODID, this.getClass());// TODO: remove
     	super.readFromNBT(tagRoot);
         if (tagRoot.hasKey("Tank")) {
             NBTTagCompound tankTag = tagRoot.getCompoundTag("Tank");
