@@ -30,7 +30,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
@@ -46,8 +45,7 @@ public class MusketItem extends net.minecraft.item.Item{
 	public static final String NBT_DATA_KEY_LOADED = "loaded";
 	public static final double MAX_RANGE = 64;
 	private static final int maxUseTime = 7200;
-	// TODO: item model overrides (like the Bow item)
-	// TODO: make the musket not tell you how much damage it does when held by your feet
+
 	public MusketItem(){
 		super();
 		this.setMaxStackSize(1);
@@ -57,8 +55,7 @@ public class MusketItem extends net.minecraft.item.Item{
 			@SideOnly(Side.CLIENT)
 			public float apply(ItemStack item, World w, EntityLivingBase e)
 			{
-				FMLLog.info("override: loaded=%s",e != null && e.getActiveItemStack() == item && isLoaded(item) ? 1.0F : 0.0F);// TODO: remove
-				return e != null && e.getActiveItemStack() == item && isLoaded(item) ? 1.0F : 0.0F;
+				return isLoaded(item) ? 1.0F : 0.0F;
 			}
 		});
 		this.addPropertyOverride(new ResourceLocation("loading"), new IItemPropertyGetter()
@@ -66,7 +63,6 @@ public class MusketItem extends net.minecraft.item.Item{
 			@SideOnly(Side.CLIENT)
 			public float apply(ItemStack item, World w, EntityLivingBase e)
 			{
-				FMLLog.info("override: loading=%s",e != null && e.isHandActive() && e.getActiveItemStack() == item ? 1.0F : 0.0F);// TODO: remove
 				return e != null && e.isHandActive() && e.getActiveItemStack() == item ? 1.0F : 0.0F;
 			}
 		});
@@ -80,7 +76,7 @@ public class MusketItem extends net.minecraft.item.Item{
 		return SteamAdvantage.MUSKET_DAMAGE;
 	}
 	public static float getMeleeDamage(){
-		return 4;
+		return 3;
 	}
 	
 	@Override
@@ -117,7 +113,7 @@ public class MusketItem extends net.minecraft.item.Item{
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count){
 		if(player.worldObj.isRemote && count % 7 == 3 && isNotLoaded(stack)){
 			// indicator to player that the gun is loading
-			player.playSound(SoundType.STONE.getBreakSound(), 0.5f, 1.0f);
+			player.playSound(SoundType.STONE.getStepSound(), 0.5f, 1.0f);
 		}
 	}
 	/**
@@ -463,6 +459,7 @@ public class MusketItem extends net.minecraft.item.Item{
 	public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack)
 	{
 		Multimap multimap = HashMultimap.create();
+		if(slot != EntityEquipmentSlot.MAINHAND) return multimap;
 		multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getAttributeUnlocalizedName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", (double)getMeleeDamage(), 0));
 		return multimap;
 	}
