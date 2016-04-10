@@ -1,6 +1,6 @@
 package cyano.steamadvantage.init;
 
-import cyano.poweradvantage.PowerAdvantage;
+import cyano.steamadvantage.SteamAdvantage;
 import net.minecraftforge.fml.common.FMLLog;
 import org.apache.logging.log4j.Level;
 
@@ -17,7 +17,7 @@ public class TreasureChests {
 	public static void init(Path configFolder){
 		if(initDone)return;
 
-		Path chestFolder = configFolder.resolve(Paths.get("additional-loot-tables",PowerAdvantage.MODID,"chests"));
+		Path chestFolder = configFolder.resolve(Paths.get("additional-loot-tables", SteamAdvantage.MODID,"chests"));
 		writeLootFile(chestFolder.resolve("abandoned_mineshaft.json"), LOOT_POOL);
 		writeLootFile(chestFolder.resolve("simple_dungeon.json"), LOOT_POOL);
 		writeLootFile(chestFolder.resolve("village_blacksmith.json"), LOOT_POOL);
