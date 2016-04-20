@@ -101,7 +101,7 @@ public class MusketItem extends net.minecraft.item.Item{
 			// instant reload
 			decrementAmmo(playerEntity,srcItemStack);
 			startLoad(srcItemStack);
-			playSound(SoundEvents.block_lever_click,world,playerEntity);
+			playSound(SoundEvents.BLOCK_LEVER_CLICK,world,playerEntity);
 			finishLoad(srcItemStack);
 			return ActionResult.newResult(EnumActionResult.SUCCESS,srcItemStack);
 		}
@@ -126,7 +126,7 @@ public class MusketItem extends net.minecraft.item.Item{
 		if(isNotLoaded(srcItemStack) && hasAmmo(playerEntity,srcItemStack)){
 			decrementAmmo(playerEntity,srcItemStack);
 			startLoad(srcItemStack);
-			playSound(SoundEvents.block_lever_click,world,playerEntity);
+			playSound(SoundEvents.BLOCK_LEVER_CLICK,world,playerEntity);
 		}
 		return srcItemStack;
 	}
@@ -154,8 +154,8 @@ public class MusketItem extends net.minecraft.item.Item{
 			playerEntity.rotationPitch -= 15;
 			return;
 		}
-		playSound(SoundEvents.item_flintandsteel_use,world,playerEntity);
-		playBigSoundAtPosition(playerEntity.posX,playerEntity.posY,playerEntity.posZ, SoundEvents.entity_firework_blast,SoundCategory.PLAYERS,2F,0.5F,world);
+		playSound(SoundEvents.ITEM_FLINTANDSTEEL_USE,world,playerEntity);
+		playBigSoundAtPosition(playerEntity.posX,playerEntity.posY,playerEntity.posZ, SoundEvents.ENTITY_FIREWORK_BLAST,SoundCategory.PLAYERS,2F,0.5F,world);
 		
 		Vec3d start = new Vec3d(playerEntity.posX, playerEntity.posY+playerEntity.getEyeHeight(),playerEntity.posZ);
 		Vec3d end = start.addVector(MAX_RANGE * lookVector.xCoord, MAX_RANGE * lookVector.yCoord, MAX_RANGE * lookVector.zCoord);
@@ -182,19 +182,19 @@ public class MusketItem extends net.minecraft.item.Item{
 			}
 		} else if(rayTrace.typeOfHit == RayTraceResult.Type.BLOCK){
 			playSoundAtPosition(rayTrace.hitVec.xCoord, rayTrace.hitVec.yCoord, rayTrace.hitVec.zCoord, 
-					SoundEvents.block_gravel_hit, SoundCategory.BLOCKS, 1f, 1f, world);
+					SoundEvents.BLOCK_GRAVEL_HIT, SoundCategory.BLOCKS, 1f, 1f, world);
 			BlockPos coord = rayTrace.getBlockPos();
 			if(coord.getY()>= 0 && coord.getY() <= 255 && !world.isAirBlock(coord)){
 				IBlockState bs = world.getBlockState(coord);
 				Material blockMat = bs.getBlock().getMaterial(bs);
-				if(blockMat == net.minecraft.block.material.Material.glass
-						|| blockMat == net.minecraft.block.material.Material.leaves
-						|| blockMat == net.minecraft.block.material.Material.circuits
-						|| blockMat == net.minecraft.block.material.Material.plants
-						|| blockMat == net.minecraft.block.material.Material.vine
-						|| blockMat == net.minecraft.block.material.Material.web){
+				if(blockMat == net.minecraft.block.material.Material.GLASS
+						|| blockMat == net.minecraft.block.material.Material.LEAVES
+						|| blockMat == net.minecraft.block.material.Material.CIRCUITS
+						|| blockMat == net.minecraft.block.material.Material.PLANTS
+						|| blockMat == net.minecraft.block.material.Material.VINE
+						|| blockMat == net.minecraft.block.material.Material.WEB){
 					world.destroyBlock(coord, true);
-				} else if (blockMat == net.minecraft.block.material.Material.tnt){
+				} else if (blockMat == net.minecraft.block.material.Material.TNT){
 					if(world.getBlockState(coord).getBlock() instanceof BlockTNT){
 						((BlockTNT)world.getBlockState(coord).getBlock()).explode(world, coord, world.getBlockState(coord).withProperty(BlockTNT.EXPLODE, (Boolean)true), playerEntity);
 						world.setBlockToAir(coord);
@@ -316,7 +316,7 @@ public class MusketItem extends net.minecraft.item.Item{
 		if(e instanceof EntityPlayer) {
 			EntityPlayer playerEntity = (EntityPlayer) e;
 			if (playerEntity.capabilities.isCreativeMode
-					|| EnchantmentHelper.getEnchantmentLevel(net.minecraft.init.Enchantments.infinity, musket) > 0
+					|| EnchantmentHelper.getEnchantmentLevel(net.minecraft.init.Enchantments.INFINITY, musket) > 0
 					|| EnchantmentHelper.getEnchantmentLevel(Enchantments.powderless, musket) > 0) return true;
 			List<ItemStack> ammoItems = OreDictionary.getOres("ammoBlackpowder");
 			for (int i = 0; i < playerEntity.inventory.mainInventory.length; i++) {
@@ -336,7 +336,7 @@ public class MusketItem extends net.minecraft.item.Item{
 		if(e instanceof EntityPlayer) {
 			EntityPlayer playerEntity = (EntityPlayer) e;
 			if (playerEntity.capabilities.isCreativeMode
-					|| EnchantmentHelper.getEnchantmentLevel(net.minecraft.init.Enchantments.infinity, musket) > 0
+					|| EnchantmentHelper.getEnchantmentLevel(net.minecraft.init.Enchantments.INFINITY, musket) > 0
 					|| EnchantmentHelper.getEnchantmentLevel(Enchantments.powderless, musket) > 0) return;
 			List<ItemStack> ammoItems = OreDictionary.getOres("ammoBlackpowder");
 			for (int i = 0; i < playerEntity.inventory.mainInventory.length; i++) {

@@ -17,7 +17,7 @@ public class SteamElevatorBlock extends cyano.poweradvantage.api.simple.BlockSim
 
 	
 	public SteamElevatorBlock() {
-		super(Material.piston, 0.75f, Power.steam_power);
+		super(Material.PISTON, 0.75f, Power.steam_power);
 	}
 
 	@Override

@@ -23,7 +23,7 @@ public class SteamPumpBlock extends cyano.poweradvantage.api.simple.BlockSimpleP
 
 	
 	public SteamPumpBlock() {
-		super(Material.piston, 0.75f, Power.steam_power, Fluids.fluidConduit_general);
+		super(Material.PISTON, 0.75f, Power.steam_power, Fluids.fluidConduit_general);
 	}
 
 	@Override

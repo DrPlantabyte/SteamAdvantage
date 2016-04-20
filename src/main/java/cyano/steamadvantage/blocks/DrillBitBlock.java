@@ -25,7 +25,7 @@ public class DrillBitBlock extends Block implements ITileEntityProvider {
 
 	
 	public DrillBitBlock() {
-		super(Material.iron);
+		super(Material.IRON);
 		this.setHardness(5.0F).setResistance(2000.0F);
 	}
 

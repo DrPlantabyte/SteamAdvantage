@@ -72,7 +72,7 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 							// play steam sounds occasionally
 							timeSinceLastSteamBurst++;
 							if(timeSinceLastSteamBurst > 50){
-								playSoundAtTileEntity( SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, this);
+								playSoundAtTileEntity( SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.5f, 1f, this);
 								timeSinceLastSteamBurst = 0;
 							}
 						} else if (progress > 0){
@@ -88,7 +88,7 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 							}
 							if(--inventory[0].stackSize <= 0){inventory[0] = null;} // decrement the input slot
 							progress = 0;
-							playSoundAtTileEntity( SoundEvents.block_gravel_break, SoundCategory.AMBIENT, 0.5f, 0.2f, this);
+							playSoundAtTileEntity( SoundEvents.BLOCK_GRAVEL_BREAK, SoundCategory.AMBIENT, 0.5f, 0.2f, this);
 						}
 					} else if (progress > 0){
 						// cannot crush, undo progress
