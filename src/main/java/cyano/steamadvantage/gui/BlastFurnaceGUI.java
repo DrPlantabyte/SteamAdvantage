@@ -1,5 +1,8 @@
 package cyano.steamadvantage.gui;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import cyano.poweradvantage.api.simple.SimpleMachineGUI;
 import cyano.poweradvantage.math.Integer2D;
@@ -13,6 +16,17 @@ public class BlastFurnaceGUI extends SimpleMachineGUI{
 				new ResourceLocation(SteamAdvantage.MODID+":textures/gui/container/steam_furnace.png"), 
 				Integer2D.fromCoordinates(29,80, 93,19, 111,19, 129,19, 93,80, 111,80, 129,80)
 		);
+		for(int i = 4; i < 7; i++)super.specialSlots.put(i, (SlotContext c)->new Slot(c.machineInventory,c.slotIndex,c.screenPositionX,c.screenPositionY){
+			@Override
+			public void onPickupFromSlot(EntityPlayer player, ItemStack stack)
+			{
+				stack.onCrafting(player.getEntityWorld(), player, stack.stackSize);
+				super.onPickupFromSlot(player, stack);
+			}
+			@Override
+			public boolean isItemValid(ItemStack stack){ return false; }
+
+		});
 	}
 	
 	
