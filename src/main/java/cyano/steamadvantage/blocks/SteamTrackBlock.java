@@ -1,6 +1,5 @@
 package cyano.steamadvantage.blocks;
 
-import cyano.poweradvantage.api.ConduitType;
 import cyano.steamadvantage.init.Power;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -18,7 +17,7 @@ import java.util.List;
 public class SteamTrackBlock extends cyano.poweradvantage.api.simple.BlockSimplePowerConduit{
 
 	public SteamTrackBlock() {
-		super(Material.piston, 0.75f, 2f/16f, Power.steam_power);
+		super(Material.PISTON, 0.75f, 2f/16f, Power.steam_power);
 	}
 
 	@Override

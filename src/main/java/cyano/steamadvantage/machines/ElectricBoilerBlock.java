@@ -17,7 +17,7 @@ public class ElectricBoilerBlock  extends cyano.poweradvantage.api.simple.BlockS
 
 	
 	public ElectricBoilerBlock() {
-		super(Material.piston, 0.75f, Power.steam_power, ElectricBoilerTileEntity.ELECTRIC_POWER, Fluids.fluidConduit_general);
+		super(Material.PISTON, 0.75f, Power.steam_power, ElectricBoilerTileEntity.ELECTRIC_POWER, Fluids.fluidConduit_general);
 	}
 
 	@Override

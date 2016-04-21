@@ -31,7 +31,7 @@ public class SteamDrillBlock extends GUIBlock implements ITypedConduit {
 	public static final PropertyDirection FACING = PropertyDirection.create("facing");
 
 	public SteamDrillBlock(){
-		super(Material.piston);
+		super(Material.PISTON);
 		super.setHardness(0.75f);
 	}
 

@@ -50,7 +50,7 @@ public class SteamStillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 					distill();
 					this.subtractEnergy(steamPerDistill, Power.steam_power);
 					if(timeSinceSound > 200){
-						playSoundAtTileEntity(SoundEvents.block_lava_ambient, SoundCategory.AMBIENT, 0.3f, 1.5f, this);
+						playSoundAtTileEntity(SoundEvents.BLOCK_LAVA_AMBIENT, SoundCategory.AMBIENT, 0.3f, 1.5f, this);
 						timeSinceSound = 0;
 					}
 					timeSinceSound++;

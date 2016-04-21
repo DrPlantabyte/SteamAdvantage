@@ -17,7 +17,7 @@ public class BlastFurnaceBlock extends cyano.poweradvantage.api.simple.BlockSimp
 
 	
 	public BlastFurnaceBlock() {
-		super(Material.piston, 0.75f, Power.steam_power);
+		super(Material.PISTON, 0.75f, Power.steam_power);
 	}
 
 	@Override

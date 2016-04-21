@@ -21,7 +21,7 @@ public class PumpPipeBlock extends Block{
 
 	
 	public PumpPipeBlock() {
-		super(Material.iron);
+		super(Material.IRON);
 		this.setHardness(5.0F).setResistance(10.0F);
 	}
 

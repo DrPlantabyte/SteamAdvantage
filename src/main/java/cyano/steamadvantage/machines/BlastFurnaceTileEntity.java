@@ -73,7 +73,7 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 					burnTime = fuel;
 					totalBurnTime = fuel;
 					decrementFuel();
-					playSoundAtTileEntity( SoundEvents.block_furnace_fire_crackle, SoundCategory.AMBIENT, 0.5f, 1f, this);
+					playSoundAtTileEntity( SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.AMBIENT, 0.5f, 1f, this);
 				}
 				energyDecay();
 			}
@@ -98,7 +98,7 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 							doSmelt(slot);
 							if(--inventory[slot].stackSize <= 0){inventory[slot] = null;} // decrement the input slot
 							if(!smeltSuccess){
-								playSoundAtTileEntity(SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, this);
+								playSoundAtTileEntity(SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.5f, 1f, this);
 							}
 							smeltSuccess = true;
 						}

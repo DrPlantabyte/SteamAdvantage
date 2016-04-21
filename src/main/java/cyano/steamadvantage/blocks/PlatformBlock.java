@@ -39,7 +39,7 @@ public class PlatformBlock extends Block{
 	}
 
 	public PlatformBlock() {
-		super(Material.iron);
+		super(Material.IRON);
 		this.setHardness(5.0F).setResistance(2000.0F);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(HEIGHT, 1));
 	}
