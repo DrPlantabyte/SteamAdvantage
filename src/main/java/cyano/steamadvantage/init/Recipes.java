@@ -27,11 +27,11 @@ public class Recipes {
 		OreDictionary.registerOre("blockObsidian", net.minecraft.init.Blocks.OBSIDIAN);
 		
 		if(recipeMode == RecipeMode.TECH_PROGRESSION){
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.steam_governor,1)," t ","srs","btb",'t',"sprocket",'s',"barsSteel",'r',"barsBrass",'b',"ingotBrass"));
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.steam_governor,1)," t ","srs","btb",'t',"sprocket",'s',"rod",'r',"rod",'b',"ingotBrass"));
 			if(SteamAdvantage.MUSKET_ENABLE)GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.blackpowder_musket,1),"fss","w  ",'f',net.minecraft.init.Items.FLINT_AND_STEEL,'s',"ingotSteel",'w',"plankWood"));
 			if(SteamAdvantage.MUSKET_ENABLE)GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.blackpowder_musket,1),"ssf","  w",'f',net.minecraft.init.Items.FLINT_AND_STEEL,'s',"ingotSteel",'w',"plankWood"));
 		} else if(recipeMode == RecipeMode.APOCALYPTIC){
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.steam_governor,1)," t ","srs","btb",'t',"sprocket",'s',"stick",'r',"barsBrass",'b',"ingotBrass"));
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.steam_governor,1)," t ","srs","btb",'t',"sprocket",'s',"rod",'r',"rod",'b',"ingotBrass"));
 			CrusherRecipeRegistry.addNewCrusherRecipe(Items.steam_governor, new ItemStack(cyano.poweradvantage.init.Items.sprocket,2));
 
 			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.steam_crusher, new ItemStack(Items.steam_governor,2));
