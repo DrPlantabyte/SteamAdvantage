@@ -1,7 +1,6 @@
 package cyano.steamadvantage.init;
 
 import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
@@ -24,13 +23,13 @@ public class Recipes {
 		
 		
 		RecipeMode recipeMode = PowerAdvantage.recipeMode;
-		OreDictionary.registerOre("stick", net.minecraft.init.Items.stick);
-		OreDictionary.registerOre("blockObsidian", net.minecraft.init.Blocks.obsidian);
+		OreDictionary.registerOre("stick", net.minecraft.init.Items.STICK);
+		OreDictionary.registerOre("blockObsidian", net.minecraft.init.Blocks.OBSIDIAN);
 		
 		if(recipeMode == RecipeMode.TECH_PROGRESSION){
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.steam_governor,1)," t ","srs","btb",'t',"sprocket",'s',"barsSteel",'r',"barsBrass",'b',"ingotBrass"));
-			if(SteamAdvantage.MUSKET_ENABLE)GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.blackpowder_musket,1),"fss","w  ",'f',net.minecraft.init.Items.flint_and_steel,'s',"ingotSteel",'w',"plankWood"));
-			if(SteamAdvantage.MUSKET_ENABLE)GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.blackpowder_musket,1),"ssf","  w",'f',net.minecraft.init.Items.flint_and_steel,'s',"ingotSteel",'w',"plankWood"));
+			if(SteamAdvantage.MUSKET_ENABLE)GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.blackpowder_musket,1),"fss","w  ",'f',net.minecraft.init.Items.FLINT_AND_STEEL,'s',"ingotSteel",'w',"plankWood"));
+			if(SteamAdvantage.MUSKET_ENABLE)GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.blackpowder_musket,1),"ssf","  w",'f',net.minecraft.init.Items.FLINT_AND_STEEL,'s',"ingotSteel",'w',"plankWood"));
 		} else if(recipeMode == RecipeMode.APOCALYPTIC){
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.steam_governor,1)," t ","srs","btb",'t',"sprocket",'s',"stick",'r',"barsBrass",'b',"ingotBrass"));
 			CrusherRecipeRegistry.addNewCrusherRecipe(Items.steam_governor, new ItemStack(cyano.poweradvantage.init.Items.sprocket,2));
@@ -46,31 +45,31 @@ public class Recipes {
 		} else {
 			// normal
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.steam_governor,1)," t ","srs","btb",'t',"nuggetIron",'s',"stick",'r',"stick",'b',"ingotBrass"));
-			if(SteamAdvantage.MUSKET_ENABLE)GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.blackpowder_musket,1),"fss","w  ",'f',net.minecraft.init.Items.flint_and_steel,'s',"ingotSteel",'w',"plankWood"));
-			if(SteamAdvantage.MUSKET_ENABLE)GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.blackpowder_musket,1),"ssf","  w",'f',net.minecraft.init.Items.flint_and_steel,'s',"ingotSteel",'w',"plankWood"));
-			GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_drill,net.minecraft.init.Items.diamond_pickaxe));
+			if(SteamAdvantage.MUSKET_ENABLE)GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.blackpowder_musket,1),"fss","w  ",'f',net.minecraft.init.Items.FLINT_AND_STEEL,'s',"ingotSteel",'w',"plankWood"));
+			if(SteamAdvantage.MUSKET_ENABLE)GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.blackpowder_musket,1),"ssf","  w",'f',net.minecraft.init.Items.FLINT_AND_STEEL,'s',"ingotSteel",'w',"plankWood"));
+			GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_drill,net.minecraft.init.Items.DIAMOND_PICKAXE));
 		}
 
 		GameRegistry.addRecipe(new ShapedOreRecipe(Items.steam_drill_bit," g "," i ","did",'g',"sprocket",'i',"ingotSteel",'d',"gemDiamond"));
 		
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.steam_pipe,6),"xxx","   ","xxx",'x',"ingotBrass"));
-		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_crusher,net.minecraft.init.Blocks.piston,"blockSteel"));
-		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_furnace,net.minecraft.init.Blocks.furnace));
+		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_crusher,net.minecraft.init.Blocks.PISTON,"blockSteel"));
+		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_furnace,net.minecraft.init.Blocks.FURNACE));
 		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_boiler_coal,"conduitSteam"));
 		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_drill,Items.steam_drill_bit));
-		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_elevator,net.minecraft.init.Blocks.piston,"sprocket"));
+		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_elevator,net.minecraft.init.Blocks.PISTON,"sprocket"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(Blocks.steam_tank,"xgx","xpx","xxx",'x',"plateCopper",'p',"conduitSteam",'g',"governor"));
-		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_boiler_electric,"wire",net.minecraft.init.Items.bucket));
+		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_boiler_electric,"wire",net.minecraft.init.Items.BUCKET));
 		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_boiler_geothermal,"conduitSteam","blockObsidian"));
 		
-		GameRegistry.addRecipe(new ShapedOreRecipe(Items.blackpowder_cartridge,"L","g","p",'L',"nuggetLead",'g',net.minecraft.init.Items.gunpowder,'p',net.minecraft.init.Items.paper));
+		GameRegistry.addRecipe(new ShapedOreRecipe(Items.blackpowder_cartridge,"L","g","p",'L',"nuggetLead",'g',net.minecraft.init.Items.GUNPOWDER,'p',net.minecraft.init.Items.PAPER));
 		
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(Blocks.steam_track),Blocks.steam_pipe, cyano.poweradvantage.init.Blocks.steel_frame));
 		
-		GameRegistry.addRecipe(new ShapedOreRecipe(Blocks.steam_switch," L ","pfp",'L',net.minecraft.init.Blocks.lever,'p',"conduitSteam",'f',"frameSteel"));
-		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_boiler_oil,net.minecraft.init.Blocks.furnace, net.minecraft.init.Items.bucket));
-		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_pump,net.minecraft.init.Blocks.piston,net.minecraft.init.Items.bucket));
-		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_still,net.minecraft.init.Items.bucket,net.minecraft.init.Items.bucket));
+		GameRegistry.addRecipe(new ShapedOreRecipe(Blocks.steam_switch," L ","pfp",'L',net.minecraft.init.Blocks.LEVER,'p',"conduitSteam",'f',"frameSteel"));
+		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_boiler_oil,net.minecraft.init.Blocks.FURNACE, net.minecraft.init.Items.BUCKET));
+		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_pump,net.minecraft.init.Blocks.PISTON,net.minecraft.init.Items.BUCKET));
+		GameRegistry.addRecipe(steamMachineRecipe(Blocks.steam_still,net.minecraft.init.Items.BUCKET,net.minecraft.init.Items.BUCKET));
 		
 		
 		

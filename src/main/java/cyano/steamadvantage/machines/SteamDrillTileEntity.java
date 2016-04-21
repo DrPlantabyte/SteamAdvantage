@@ -83,8 +83,8 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 						progress++;
 						if(progress >= progressGoal){
 							// Mined it!
-							playSoundAtPosition(targetBlockCoord.getX()+0.5, targetBlockCoord.getY()+0.5, targetBlockCoord.getZ()+0.5, targetBlock.getStepSound().getBreakSound(), SoundCategory.BLOCKS, 0.5f, 1f, this.getWorld());
-							playSoundAtTileEntity( SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, this);
+							playSoundAtPosition(targetBlockCoord.getX()+0.5, targetBlockCoord.getY()+0.5, targetBlockCoord.getZ()+0.5, targetBlock.getSoundType().getBreakSound(), SoundCategory.BLOCKS, 0.5f, 1f, this.getWorld());
+							playSoundAtTileEntity( SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.5f, 1f, this);
 							getWorld().setBlockToAir(targetBlockCoord);
 							for(ItemStack item : targetBlockItems){
 								addItem(item);
@@ -352,7 +352,7 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	
 	private boolean canMine(BlockPos coord){
 		Block b = getWorld().getBlockState(coord).getBlock();
-		return !(b == net.minecraft.init.Blocks.bedrock || b == net.minecraft.init.Blocks.barrier);
+		return !(b == net.minecraft.init.Blocks.BEDROCK || b == net.minecraft.init.Blocks.BARRIER);
 	}
 	
 	private int getBlockStrength(BlockPos coord){

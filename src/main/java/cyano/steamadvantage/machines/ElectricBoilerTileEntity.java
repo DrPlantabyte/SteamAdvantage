@@ -49,11 +49,11 @@ public class ElectricBoilerTileEntity extends cyano.poweradvantage.api.simple.Ti
 				boilWater();
 				// play steam sounds occasionally
 				if(getWorld().rand.nextInt(100) == 0){
-					playSoundAtTileEntity( SoundEvents.block_fire_extinguish, SoundCategory.AMBIENT, 0.5f, 1f, this);
+					playSoundAtTileEntity( SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.5f, 1f, this);
 				}
 				if(timeSinceSound > 200){
 					if(getTank().getFluidAmount() > 0){
-						playSoundAtTileEntity( SoundEvents.block_lava_ambient, SoundCategory.AMBIENT, 0.3f, 1f, this);
+						playSoundAtTileEntity( SoundEvents.BLOCK_LAVA_AMBIENT, SoundCategory.AMBIENT, 0.3f, 1f, this);
 					}
 					timeSinceSound = 0;
 				}

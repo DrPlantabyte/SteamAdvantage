@@ -17,7 +17,7 @@ public class RockCrusherBlock extends cyano.poweradvantage.api.simple.BlockSimpl
 
 	
 	public RockCrusherBlock() {
-		super(Material.piston, 0.75f, Power.steam_power);
+		super(Material.PISTON, 0.75f, Power.steam_power);
 	}
 
 	@Override

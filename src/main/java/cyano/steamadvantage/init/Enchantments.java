@@ -23,16 +23,16 @@ public class Enchantments {
 	public static void init(){
 		if(initDone) return;
 
-		Enchantment.enchantmentRegistry.register(getNextEnchantmentID(),
+		Enchantment.REGISTRY.register(getNextEnchantmentID(),
 				new ResourceLocation(SteamAdvantage.MODID+":"+"high_explosive"),
 				new HighExplosiveEnchantment());
-		Enchantment.enchantmentRegistry.register(getNextEnchantmentID(),
+		Enchantment.REGISTRY.register(getNextEnchantmentID(),
 				new ResourceLocation(SteamAdvantage.MODID+":"+"powderless"),
 				new PowderlessEnchantment());
-		Enchantment.enchantmentRegistry.register(getNextEnchantmentID(),
+		Enchantment.REGISTRY.register(getNextEnchantmentID(),
 				new ResourceLocation(SteamAdvantage.MODID+":"+"rapid_reload"),
 				new RapidReloadEnchantment());
-		Enchantment.enchantmentRegistry.register(getNextEnchantmentID(),
+		Enchantment.REGISTRY.register(getNextEnchantmentID(),
 				new ResourceLocation(SteamAdvantage.MODID+":"+"recoil"),
 				new RecoilEnchantment());
 
@@ -44,7 +44,7 @@ public class Enchantments {
 	private static final Set<Integer> reservedIDs = new HashSet<>();
 	private static int getNextEnchantmentID(){
 		for(int i = 0; i < 255; i++){
-			if(Enchantment.enchantmentRegistry.getObjectById(i) == null && reservedIDs.contains(i) == false){
+			if(Enchantment.REGISTRY.getObjectById(i) == null && reservedIDs.contains(i) == false){
 				reservedIDs.add(i);
 				return i;
 			}
