@@ -1,6 +1,5 @@
 package cyano.steamadvantage.machines;
 
-import cyano.basemetals.init.Items;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.fluid.FluidRequest;
@@ -13,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fluids.*;
 
 import java.util.HashMap;
@@ -109,9 +109,9 @@ public class OilBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 				return fuelPerBucket;
 			}
 			// second, check universal bucket fuel registry
-			ItemStack bucket = new ItemStack(Items.universal_bucket);
-			int vol = Items.universal_bucket.getCapacity(bucket);
-			Items.universal_bucket.fill(bucket,new FluidStack(fluid,vol),true);
+			ItemStack bucket = new ItemStack(ForgeModContainer.getInstance().universalBucket);
+			int vol = ForgeModContainer.getInstance().universalBucket.getCapacity(bucket);
+			ForgeModContainer.getInstance().universalBucket.fill(bucket,new FluidStack(fluid,vol),true);
 			Float burnTicksPerAmount = (float) FuelRegistry.getActualBurntimeForItem(bucket) / (float) vol;
 			if(burnTicksPerAmount > 0){
 				flammibilityCache.put(fluid,burnTicksPerAmount);
@@ -242,7 +242,7 @@ public class OilBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 	 * @param tagRoot An NBT tag
 	 */
 	@Override
-	public void writeToNBT(final NBTTagCompound tagRoot) {
+	public NBTTagCompound writeToNBT(final NBTTagCompound tagRoot) {
 		super.writeToNBT(tagRoot);
 		NBTTagCompound tankTag = new NBTTagCompound();
 		this.getWaterTank().writeToNBT(tankTag);
@@ -252,6 +252,7 @@ public class OilBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 		tagRoot.setTag("FuelTank", tankTag2);
 		if(this.burnTime > 0)tagRoot.setInteger("BurnTime", this.burnTime);
 		if(this.totalBurnTime > 0)tagRoot.setInteger("BurnTimeTotal", this.totalBurnTime);
+		return tagRoot;
 	}
 	/**
 	 * Handles data saving and loading

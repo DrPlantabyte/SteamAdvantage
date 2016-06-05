@@ -1,15 +1,15 @@
-package cyano.steamadvantage.enchanments;
+package cyano.steamadvantage.enchantments;
 
 import cyano.steamadvantage.init.Items;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 
-public class RecoilEnchantment extends net.minecraft.enchantment.Enchantment{
+public class RapidReloadEnchantment extends net.minecraft.enchantment.Enchantment{
 
-	public RecoilEnchantment() {
-		super(Rarity.COMMON,EnumEnchantmentType.ALL,new EntityEquipmentSlot[]{EntityEquipmentSlot.MAINHAND});
-		this.setName("recoil");
+	public RapidReloadEnchantment() {
+		super(Rarity.RARE,EnumEnchantmentType.ALL,new EntityEquipmentSlot[]{EntityEquipmentSlot.MAINHAND});
+		this.setName("rapid_reload");
 	}
 
 	
@@ -26,16 +26,16 @@ public class RecoilEnchantment extends net.minecraft.enchantment.Enchantment{
 
 	@Override
 	public int getMinEnchantability(final int lvl) {
-		return Math.max(1,lvl * 5 - 3);
+		return 15;
 	}
 
 	@Override
 	public int getMaxEnchantability(final int lvl) {
-		return this.getMinEnchantability(lvl) + 10;
+		return 50;
 	}
 
 	@Override
 	public int getMaxLevel() {
-		return 5;
+		return 1;
 	}
 }

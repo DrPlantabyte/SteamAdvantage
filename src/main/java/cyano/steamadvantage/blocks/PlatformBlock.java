@@ -102,12 +102,16 @@ public class PlatformBlock extends Block{
 	 * Called when a neighboring block changes.
 	 */
 	@Override
-	public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock)
-	{
-		if (!this.canBlockStay(world, pos))
-		{
-			world.destroyBlock(pos, true);
+	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
+		if(world instanceof World) {
+			if (!this.canBlockStay((World)world, pos)) {
+				((World)world).destroyBlock(pos, true);
+			}
 		}
+	}
+	@Override
+	public void neighborChanged(IBlockState state, World w, BlockPos pos, Block b){
+		onNeighborChange(w,pos,pos);
 	}
 
 	public boolean canBlockStay(World worldIn, BlockPos pos)

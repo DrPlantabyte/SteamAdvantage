@@ -162,12 +162,13 @@ public class ElectricBoilerTileEntity extends cyano.poweradvantage.api.simple.Ti
 	 * @param tagRoot An NBT tag
 	 */
 	@Override
-    public void writeToNBT(final NBTTagCompound tagRoot) {
+    public NBTTagCompound writeToNBT(final NBTTagCompound tagRoot) {
 		super.writeToNBT(tagRoot);
         NBTTagCompound tankTag = new NBTTagCompound();
         this.getTank().writeToNBT(tankTag);
         tagRoot.setTag("Tank", tankTag);
 		if(getEnergy(ELECTRIC_POWER) > 0)tagRoot.setFloat("Electricity", getEnergy(ELECTRIC_POWER));
+		return tagRoot;
 	}
 	/**
 	 * Handles data saving and loading

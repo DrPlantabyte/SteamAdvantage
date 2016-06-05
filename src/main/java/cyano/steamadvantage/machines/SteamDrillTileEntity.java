@@ -402,7 +402,7 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound tagRoot){
+	public NBTTagCompound writeToNBT(NBTTagCompound tagRoot){
 		super.writeToNBT(tagRoot);
 		tagRoot.setShort("progress",(short)progress);
 		if(targetBlockCoord != null){
@@ -410,6 +410,7 @@ public class SteamDrillTileEntity extends cyano.poweradvantage.api.simple.TileEn
 			tagRoot.setInteger("targetY", targetBlockCoord.getY());
 			tagRoot.setInteger("targetZ", targetBlockCoord.getZ());
 		}
+		return tagRoot;
 	}
 	
 	@Override

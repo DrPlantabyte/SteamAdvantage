@@ -27,7 +27,7 @@ public class SoundHelper {
 				x - range, y - range, z - range,
 				x + range, y + range, z + range));
 		for(EntityPlayerMP player : players){
-			player.playerNetServerHandler.sendPacket(new SPacketCustomSound(sound.getRegistryName().toString(), soundType,
+			player.connection.sendPacket(new SPacketCustomSound(sound.getRegistryName().toString(), soundType,
 					x, y, z, (float)volume, (float)pitch));
 		}
 	}
@@ -39,7 +39,7 @@ public class SoundHelper {
 				x - range, y - range, z - range,
 				x + range, y + range, z + range));
 		for(EntityPlayerMP player : players){
-			player.playerNetServerHandler.sendPacket(new SPacketCustomSound(sound.getRegistryName().toString(), soundType,
+			player.connection.sendPacket(new SPacketCustomSound(sound.getRegistryName().toString(), soundType,
 					x, y, z, (float)volume, (float)pitch));
 		}
 	}

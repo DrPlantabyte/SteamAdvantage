@@ -195,12 +195,13 @@ public class GeothermalBoilerTileEntity extends cyano.poweradvantage.api.simple.
 	 * @param tagRoot An NBT tag
 	 */
 	@Override
-    public void writeToNBT(final NBTTagCompound tagRoot) {
+    public NBTTagCompound writeToNBT(final NBTTagCompound tagRoot) {
 		super.writeToNBT(tagRoot);
         NBTTagCompound tankTag = new NBTTagCompound();
         this.getTank().writeToNBT(tankTag);
         tagRoot.setTag("Tank", tankTag);
 		if(this.temperature > 0)tagRoot.setFloat("Temperature", this.temperature);
+		return tagRoot;
 	}
 	/**
 	 * Handles data saving and loading

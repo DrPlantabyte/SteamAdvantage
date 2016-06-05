@@ -172,9 +172,10 @@ public class SteamElevatorTileEntity extends cyano.poweradvantage.api.simple.Til
 
 	
 	@Override
-	public void writeToNBT(NBTTagCompound tagRoot){
+	public NBTTagCompound writeToNBT(NBTTagCompound tagRoot){
 		super.writeToNBT(tagRoot);
 		tagRoot.setBoolean("up",up);
+		return tagRoot;
 	}
 	
 	@Override

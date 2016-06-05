@@ -1,10 +1,10 @@
 package cyano.steamadvantage.init;
 
 import cyano.steamadvantage.SteamAdvantage;
-import cyano.steamadvantage.enchanments.HighExplosiveEnchantment;
-import cyano.steamadvantage.enchanments.PowderlessEnchantment;
-import cyano.steamadvantage.enchanments.RapidReloadEnchantment;
-import cyano.steamadvantage.enchanments.RecoilEnchantment;
+import cyano.steamadvantage.enchantments.HighExplosiveEnchantment;
+import cyano.steamadvantage.enchantments.PowderlessEnchantment;
+import cyano.steamadvantage.enchantments.RapidReloadEnchantment;
+import cyano.steamadvantage.enchantments.RecoilEnchantment;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;

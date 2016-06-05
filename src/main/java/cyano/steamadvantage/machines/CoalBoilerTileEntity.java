@@ -194,13 +194,14 @@ public class CoalBoilerTileEntity extends cyano.poweradvantage.api.simple.TileEn
 	 * @param tagRoot An NBT tag
 	 */
 	@Override
-    public void writeToNBT(final NBTTagCompound tagRoot) {
+    public NBTTagCompound writeToNBT(final NBTTagCompound tagRoot) {
 		super.writeToNBT(tagRoot);
         NBTTagCompound tankTag = new NBTTagCompound();
         this.getTank().writeToNBT(tankTag);
         tagRoot.setTag("Tank", tankTag);
 		if(this.burnTime > 0)tagRoot.setInteger("BurnTime", this.burnTime);
 		if(this.totalBurnTime > 0)tagRoot.setInteger("BurnTimeTotal", this.totalBurnTime);
+		return tagRoot;
 	}
 	/**
 	 * Handles data saving and loading

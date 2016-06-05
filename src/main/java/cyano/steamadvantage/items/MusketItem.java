@@ -231,7 +231,7 @@ public class MusketItem extends net.minecraft.item.Item{
 					c * recoil * lookVector.zCoord * lateral);
 			if(!world.isRemote){
 				// send update packet from server
-				((EntityPlayerMP) playerEntity).playerNetServerHandler.sendPacket(new SPacketEntityVelocity(playerEntity));
+				((EntityPlayerMP) playerEntity).connection.sendPacket(new SPacketEntityVelocity(playerEntity));
 			}
 		}
 	}

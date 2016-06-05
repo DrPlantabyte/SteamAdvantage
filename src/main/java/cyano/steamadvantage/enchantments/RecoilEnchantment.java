@@ -1,18 +1,18 @@
-package cyano.steamadvantage.enchanments;
+package cyano.steamadvantage.enchantments;
 
 import cyano.steamadvantage.init.Items;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 
-public class HighExplosiveEnchantment extends net.minecraft.enchantment.Enchantment{
+public class RecoilEnchantment extends net.minecraft.enchantment.Enchantment{
 
-	public HighExplosiveEnchantment() {
-		super(Rarity.UNCOMMON,EnumEnchantmentType.ALL,new EntityEquipmentSlot[]{EntityEquipmentSlot.MAINHAND});
-		this.setName("high_explosive");
+	public RecoilEnchantment() {
+		super(Rarity.COMMON,EnumEnchantmentType.ALL,new EntityEquipmentSlot[]{EntityEquipmentSlot.MAINHAND});
+		this.setName("recoil");
 	}
 
-
+	
 	@Override
 	public boolean canApply(ItemStack item){
 		return item.getItem() == Items.blackpowder_musket;
@@ -26,7 +26,7 @@ public class HighExplosiveEnchantment extends net.minecraft.enchantment.Enchantm
 
 	@Override
 	public int getMinEnchantability(final int lvl) {
-		return lvl * 7;
+		return Math.max(1,lvl * 5 - 3);
 	}
 
 	@Override

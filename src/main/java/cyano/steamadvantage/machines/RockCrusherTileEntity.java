@@ -178,9 +178,10 @@ public class RockCrusherTileEntity extends cyano.poweradvantage.api.simple.TileE
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound tagRoot){
+	public NBTTagCompound writeToNBT(NBTTagCompound tagRoot){
 		super.writeToNBT(tagRoot);
 		tagRoot.setShort("progress",(short)progress);
+		return tagRoot;
 	}
 	
 	@Override

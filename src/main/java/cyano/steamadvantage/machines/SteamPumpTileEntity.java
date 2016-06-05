@@ -6,12 +6,13 @@ import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 import cyano.poweradvantage.init.Fluids;
 import cyano.steamadvantage.init.Power;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -143,11 +144,14 @@ public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 	
 	private boolean isSourceBlock( BlockPos coord){
 		IBlockState bs = getWorld().getBlockState(coord);
-		if(bs.getBlock() instanceof BlockLiquid){
-			return (Integer)bs.getValue(BlockDynamicLiquid.LEVEL) == 0;
-		} else if(bs.getBlock() instanceof BlockFluidClassic){
-			return ((BlockFluidClassic)bs.getBlock()).isSourceBlock(getWorld(), coord);
-		}else{
+		Block block = bs.getBlock();
+		if(block instanceof IFluidBlock){
+			return ((IFluidBlock)block).canDrain(getWorld(),coord);
+		} else if(block  == Blocks.WATER){
+			return  getWorld().getBlockState(coord).getValue(BlockLiquid.LEVEL) == 0;
+		} else if(block  == Blocks.LAVA){
+			return  getWorld().getBlockState(coord).getValue(BlockLiquid.LEVEL) == 0;
+		} else {
 			return false;
 		}
 	}
@@ -182,12 +186,27 @@ public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 	public void powerUpdate(){
 		// deliberately NOT calling super.powerUpdate()
 		if(this.getTank().getFluidAmount() > 0){
-			ConduitType type = Fluids.fluidToConduitType(getTank().getFluid().getFluid());
+			FluidStack fluid = getTank().getFluid();
+			ConduitType type = Fluids.fluidToConduitType(fluid.getFluid());
 			float availableAmount = getTank().getFluidAmount();
 			float delta = ConduitRegistry.transmitPowerToConsumers(availableAmount, cyano.poweradvantage.init.Fluids.fluidConduit_general, type, 
-					this.getMinimumSinkPriority(), getWorld(), getPos(), this);
+					PowerRequest.LAST_PRIORITY, getWorld(), getPos(), this);
 			if(delta > 0){
 				getTank().drain(Math.max((int)delta,1),true); // no free energy!
+			} else {
+				// try passing to a fluid handler
+				for(int i = 1; i < EnumFacing.values().length; i++){
+					if(getTank().getFluidAmount() <= 0) break;
+					EnumFacing dir = EnumFacing.values()[i];
+					BlockPos nPos = getPos().offset(dir);
+					TileEntity neighbor = getWorld().getTileEntity(nPos);
+					if(neighbor instanceof IFluidHandler
+							&& ((IFluidHandler)neighbor).canFill(dir.getOpposite(),fluid.getFluid())){
+						int d = ((IFluidHandler)neighbor).fill(dir.getOpposite(),fluid,true);
+						getTank().drain(Math.max(d,1),true); // no free energy!
+						fluid = getTank().getFluid();
+					}
+				}
 			}
 		}
 		// powerUpdate occurs once every 8 world ticks and is scheduled such that neighboring 
@@ -253,12 +272,13 @@ public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 	 * @param tagRoot An NBT tag
 	 */
 	@Override
-	public void writeToNBT(final NBTTagCompound tagRoot) {
+	public NBTTagCompound writeToNBT(final NBTTagCompound tagRoot) {
 		super.writeToNBT(tagRoot);
 		NBTTagCompound tankTag = new NBTTagCompound();
 		this.getTank().writeToNBT(tankTag);
 		tagRoot.setTag("Tank", tankTag);
 		tagRoot.setByte("NextPump", (byte)this.timeUntilNextPump);
+		return tagRoot;
 	}
 	/**
 	 * Handles data saving and loading
@@ -295,7 +315,7 @@ public class SteamPumpTileEntity extends cyano.poweradvantage.api.simple.TileEnt
 
 	@Override
 	public boolean isPowerSource(ConduitType type){
-		return !ConduitType.areSameType(Power.steam_power, type);
+		return cyano.poweradvantage.init.Fluids.isFluidType(type);
 	}
 	/**
 	 * Adds "energy" as a fluid to the FluidTank returned by getTank(). This implementation ignores 

@@ -1,15 +1,15 @@
-package cyano.steamadvantage.enchanments;
+package cyano.steamadvantage.enchantments;
 
 import cyano.steamadvantage.init.Items;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 
-public class RapidReloadEnchantment extends net.minecraft.enchantment.Enchantment{
+public class PowderlessEnchantment extends net.minecraft.enchantment.Enchantment{
 
-	public RapidReloadEnchantment() {
-		super(Rarity.RARE,EnumEnchantmentType.ALL,new EntityEquipmentSlot[]{EntityEquipmentSlot.MAINHAND});
-		this.setName("rapid_reload");
+	public PowderlessEnchantment() {
+		super(Rarity.VERY_RARE,EnumEnchantmentType.ALL,new EntityEquipmentSlot[]{EntityEquipmentSlot.MAINHAND});
+		this.setName("powderless");
 	}
 
 	
@@ -26,7 +26,7 @@ public class RapidReloadEnchantment extends net.minecraft.enchantment.Enchantmen
 
 	@Override
 	public int getMinEnchantability(final int lvl) {
-		return 15;
+		return 20;
 	}
 
 	@Override

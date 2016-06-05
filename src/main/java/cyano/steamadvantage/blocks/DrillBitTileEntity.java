@@ -3,7 +3,6 @@ package cyano.steamadvantage.blocks;
 import cyano.steamadvantage.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -62,9 +61,10 @@ public class DrillBitTileEntity extends TileEntity implements ITickable{
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound root){
+	public NBTTagCompound writeToNBT(NBTTagCompound root){
 		super.writeToNBT(root);
 		root.setByte("dir", (byte)direction.getIndex());
+		return root;
 	}
 	
 
@@ -80,7 +80,7 @@ public class DrillBitTileEntity extends TileEntity implements ITickable{
 	 * Turns the data field NBT into a network packet
 	 */
 	@Override 
-	public Packet getDescriptionPacket(){
+	public SPacketUpdateTileEntity getUpdatePacket(){
 		NBTTagCompound nbtTag = new NBTTagCompound();
 		nbtTag.setByte("d",(byte)direction.getIndex());
 		return new SPacketUpdateTileEntity(this.pos, 0, nbtTag);

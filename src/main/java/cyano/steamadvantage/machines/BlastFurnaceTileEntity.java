@@ -247,10 +247,11 @@ public class BlastFurnaceTileEntity extends cyano.poweradvantage.api.simple.Tile
 	
 
 	@Override
-	public void writeToNBT(NBTTagCompound tagRoot){
+	public NBTTagCompound writeToNBT(NBTTagCompound tagRoot){
 		super.writeToNBT(tagRoot);
 		prepareDataFieldsForSync();
 		tagRoot.setIntArray("Data", getDataFieldArray());
+		return tagRoot;
 	}
 	
 	@Override
