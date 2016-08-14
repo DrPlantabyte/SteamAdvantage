@@ -31,12 +31,12 @@ javadoc {
     failOnError = false
 }
 
-version = "2.1.0"
+version = "2.2.0"
 group= "cyano.steamadvantage"
-archivesBaseName = "SteamAdvantage_1.9.4"
+archivesBaseName = "SteamAdvantage_1.10.2"
 
 minecraft {
-	version = "1.9.4-12.17.0.1922-1.9.4"
+    version = "1.10.2-12.18.1.2011"
 	runDir = "run"
 	mappings = "snapshot_20160518"
 }
